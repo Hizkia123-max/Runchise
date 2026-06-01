@@ -20,9 +20,9 @@
         body { font-family: 'Inter', sans-serif; background: var(--bg-dark); color: var(--text-primary); height: 100vh; overflow: hidden; }
 
         /* Layout */
-        .pos-layout { display: flex; height: 100vh; }
-        .pos-products { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-        .pos-cart { width: 360px; min-width: 360px; background: var(--bg-card); border-left: 1px solid var(--border); display: flex; flex-direction: column; }
+        .pos-layout { display: flex; height: 100vh; width: calc(100vw - 280px); max-width: calc(100vw - 280px); overflow: hidden; }
+        .pos-products { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+        .pos-cart { width: 360px; min-width: 360px; max-width: 360px; background: var(--bg-card); border-left: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
 
         /* Header */
         .pos-header {
