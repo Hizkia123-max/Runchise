@@ -11,6 +11,91 @@ class POSController extends BaseController
         $productModel = new \App\Modules\Inventory\Models\ProductModel();
         $db = \Config\Database::connect();
         
+        // Dynamic self-healing database seeding for rich products
+        $productsCount = $productModel->countAllResults();
+        if ($productsCount <= 5) {
+            $tenantId = 1; // Default tenant
+            
+            // Fetch or insert categories
+            $categories = ['Food & Beverage', 'Retail', 'Electronics', 'Fashion', 'Services'];
+            $categoryIds = [];
+            foreach ($categories as $catName) {
+                $existingCat = $db->table('categories')->where('name', $catName)->get()->getRowArray();
+                if ($existingCat) {
+                    $categoryIds[$catName] = $existingCat['id'];
+                } else {
+                    $db->table('categories')->insert([
+                        'tenant_id'  => $tenantId,
+                        'name'       => $catName,
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'updated_at' => date('Y-m-d H:i:s'),
+                    ]);
+                    $categoryIds[$catName] = $db->insertID();
+                }
+            }
+            
+            // Build rich list of products
+            $richProducts = [
+                // Food & Beverage
+                ['sku' => 'FB-001', 'name' => 'Nasi Goreng Spesial', 'price' => 35000, 'cost' => 15000, 'reorder_point' => 5, 'category_id' => $categoryIds['Food & Beverage']],
+                ['sku' => 'FB-002', 'name' => 'Es Teh Manis', 'price' => 8000, 'cost' => 2000, 'reorder_point' => 10, 'category_id' => $categoryIds['Food & Beverage']],
+                ['sku' => 'FB-003', 'name' => 'Kopi Susu Aren', 'price' => 22000, 'cost' => 8000, 'reorder_point' => 5, 'category_id' => $categoryIds['Food & Beverage']],
+                ['sku' => 'FB-004', 'name' => 'Ayam Bakar Taliwang', 'price' => 45000, 'cost' => 20000, 'reorder_point' => 3, 'category_id' => $categoryIds['Food & Beverage']],
+                ['sku' => 'FB-005', 'name' => 'Roti Bakar Cokelat', 'price' => 18000, 'cost' => 7000, 'reorder_point' => 5, 'category_id' => $categoryIds['Food & Beverage']],
+                
+                // Retail
+                ['sku' => 'RT-001', 'name' => 'Sabun Mandi Cair 500ml', 'price' => 32000, 'cost' => 18000, 'reorder_point' => 5, 'category_id' => $categoryIds['Retail']],
+                ['sku' => 'RT-002', 'name' => 'Pasta Gigi Herbal', 'price' => 15000, 'cost' => 8000, 'reorder_point' => 10, 'category_id' => $categoryIds['Retail']],
+                ['sku' => 'RT-003', 'name' => 'Minyak Goreng 2L', 'price' => 38000, 'cost' => 28000, 'reorder_point' => 5, 'category_id' => $categoryIds['Retail']],
+                ['sku' => 'RT-004', 'name' => 'Tissue Wajah 250s', 'price' => 12000, 'cost' => 6000, 'reorder_point' => 8, 'category_id' => $categoryIds['Retail']],
+                ['sku' => 'RT-005', 'name' => 'Deterjen Bubuk 1kg', 'price' => 26000, 'cost' => 16000, 'reorder_point' => 5, 'category_id' => $categoryIds['Retail']],
+                
+                // Electronics
+                ['sku' => 'EL-001', 'name' => 'Wireless Mouse', 'price' => 150000, 'cost' => 80000, 'reorder_point' => 5, 'category_id' => $categoryIds['Electronics']],
+                ['sku' => 'EL-002', 'name' => 'USB-C Cable 2m', 'price' => 45000, 'cost' => 20000, 'reorder_point' => 10, 'category_id' => $categoryIds['Electronics']],
+                ['sku' => 'EL-003', 'name' => 'Mechanical Keyboard', 'price' => 450000, 'cost' => 250000, 'reorder_point' => 3, 'category_id' => $categoryIds['Electronics']],
+                ['sku' => 'EL-004', 'name' => 'LED Monitor 24"', 'price' => 1800000, 'cost' => 1200000, 'reorder_point' => 2, 'category_id' => $categoryIds['Electronics']],
+                ['sku' => 'EL-005', 'name' => 'Powerbank 10000mAh', 'price' => 195000, 'cost' => 110000, 'reorder_point' => 5, 'category_id' => $categoryIds['Electronics']],
+                
+                // Fashion
+                ['sku' => 'FS-001', 'name' => 'Kemeja Flannel Pria', 'price' => 185000, 'cost' => 95000, 'reorder_point' => 5, 'category_id' => $categoryIds['Fashion']],
+                ['sku' => 'FS-002', 'name' => 'Celana Chino Slimfit', 'price' => 220000, 'cost' => 115000, 'reorder_point' => 5, 'category_id' => $categoryIds['Fashion']],
+                ['sku' => 'FS-003', 'name' => 'Kaos Polos Cotton 30s', 'price' => 55000, 'cost' => 25000, 'reorder_point' => 10, 'category_id' => $categoryIds['Fashion']],
+                ['sku' => 'FS-004', 'name' => 'Jaket Hoodie Fleece', 'price' => 250000, 'cost' => 130000, 'reorder_point' => 3, 'category_id' => $categoryIds['Fashion']],
+                ['sku' => 'FS-005', 'name' => 'Rok Plisket Wanita', 'price' => 110000, 'cost' => 55000, 'reorder_point' => 5, 'category_id' => $categoryIds['Fashion']],
+                
+                // Services
+                ['sku' => 'SV-001', 'name' => 'Cuci Sepatu Standard', 'price' => 45000, 'cost' => 10000, 'reorder_point' => 5, 'category_id' => $categoryIds['Services']],
+                ['sku' => 'SV-002', 'name' => 'Potong Rambut Pria + Pijat', 'price' => 65000, 'cost' => 15000, 'reorder_point' => 5, 'category_id' => $categoryIds['Services']],
+                ['sku' => 'SV-003', 'name' => 'Jasa Setrika Premium /kg', 'price' => 12000, 'cost' => 2000, 'reorder_point' => 10, 'category_id' => $categoryIds['Services']],
+                ['sku' => 'SV-004', 'name' => 'Cuci Helm Full Face', 'price' => 35000, 'cost' => 8000, 'reorder_point' => 5, 'category_id' => $categoryIds['Services']],
+                ['sku' => 'SV-005', 'name' => 'Deep Cleaning Sepeda', 'price' => 85000, 'cost' => 20000, 'reorder_point' => 3, 'category_id' => $categoryIds['Services']],
+            ];
+            
+            // Insert each product if it doesn't already exist by SKU
+            foreach ($richProducts as $rp) {
+                $existing = $db->table('products')->where('sku', $rp['sku'])->get()->getRowArray();
+                if (!$existing) {
+                    $db->table('products')->insert(array_merge($rp, [
+                        'tenant_id'  => $tenantId,
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'updated_at' => date('Y-m-d H:i:s'),
+                    ]));
+                    $newProdId = $db->insertID();
+                    
+                    // Insert stock levels so it isn't out of stock
+                    $db->table('inventory_stocks')->insert([
+                        'tenant_id'  => $tenantId,
+                        'branch_id'  => 1,
+                        'product_id' => $newProdId,
+                        'quantity'   => rand(20, 80),
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'updated_at' => date('Y-m-d H:i:s'),
+                    ]);
+                }
+            }
+        }
+        
         $products = $productModel->select('products.*, categories.name as category_name')
             ->join('categories', 'categories.id = products.category_id', 'left')
             ->findAll();
