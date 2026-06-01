@@ -9,7 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         :root {
-            --primary: #0d9488; --primary-dark: #0f766e;
+            --primary: #E2A794; --primary-dark: #c98570;
             --secondary: #4f46e5; --bg-dark: #0f172a;
             --bg-card: #1e293b; --bg-sidebar: #0f172a;
             --text-primary: #f1f5f9; --text-muted: #94a3b8;
@@ -66,7 +66,7 @@
             border-radius: 14px; padding: 1rem; cursor: pointer;
             transition: all 0.2s; position: relative; overflow: hidden;
         }
-        .product-card:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 8px 25px rgba(13,148,136,0.2); }
+        .product-card:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 8px 25px rgba(226,167,148,0.2); }
         .product-card.out-of-stock { opacity: 0.5; pointer-events: none; }
         .product-icon { font-size: 2rem; margin-bottom: 0.5rem; }
         .product-name { font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem; }
@@ -120,13 +120,13 @@
             background: transparent; color: var(--text-muted); font-size: 0.8rem;
             cursor: pointer; transition: all 0.2s; text-align: center;
         }
-        .pay-btn:hover, .pay-btn.active { background: rgba(13,148,136,0.2); border-color: var(--primary); color: var(--primary); }
+        .pay-btn:hover, .pay-btn.active { background: rgba(226,167,148,0.2); border-color: var(--primary); color: var(--primary); }
         .pay-now-btn {
             width: 100%; padding: 1rem; background: linear-gradient(135deg, var(--primary), var(--secondary));
             border: none; border-radius: 12px; color: white; font-weight: 700; font-size: 1rem;
             cursor: pointer; transition: all 0.3s;
         }
-        .pay-now-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(13,148,136,0.4); }
+        .pay-now-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(226,167,148,0.4); }
         .pay-now-btn:disabled { opacity: 0.5; transform: none; cursor: not-allowed; }
 
         /* Empty cart */
@@ -237,6 +237,22 @@ const TAX_RATE = 0.11;
 // Format currency
 const fmt = (n) => 'Rp ' + Math.round(n).toLocaleString('id-ID');
 
+// Restore pending cart on load if exists
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        const pending = localStorage.getItem('runchise_pending_cart');
+        if (pending) {
+            const items = JSON.parse(pending);
+            if (items && items.length > 0) {
+                items.forEach(i => cart.push(i));
+                renderCart();
+            }
+        }
+    } catch (e) {
+        console.error("Failed to restore pending cart", e);
+    }
+});
+
 // Add product to cart
 document.querySelectorAll('.product-card:not(.out-of-stock)').forEach(card => {
     card.addEventListener('click', () => {
@@ -283,6 +299,7 @@ document.getElementById('payNowBtn').addEventListener('click', () => {
         if (res.success) {
             alert(`✅ Payment Success!\nInvoice: ${res.data.invoice_number}\nTotal: Rp ${res.data.grand_total.toLocaleString('id-ID')}`);
             cart.length = 0;
+            localStorage.removeItem('runchise_pending_cart');
             renderCart();
         } else {
             alert('❌ Transaction failed: ' + res.message);
@@ -315,6 +332,7 @@ function renderCart() {
         emptyEl.style.display = 'block';
         document.getElementById('payNowBtn').disabled = true;
         updateTotals(0, 0, 0);
+        localStorage.removeItem('runchise_pending_cart');
         return;
     }
     emptyEl.style.display = 'none';
@@ -344,6 +362,9 @@ function renderCart() {
     const total = subtotal + tax;
     updateTotals(subtotal, tax, total);
     document.getElementById('payNowBtn').disabled = false;
+    
+    // Save to localStorage
+    localStorage.setItem('runchise_pending_cart', JSON.stringify(cart));
 }
 
 function updateTotals(sub, tax, grand) {

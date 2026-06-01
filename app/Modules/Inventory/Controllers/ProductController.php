@@ -10,9 +10,16 @@ class ProductController extends BaseController
     {
         $productModel = new \App\Modules\Inventory\Models\ProductModel();
         $catModel     = new \App\Modules\Inventory\Models\CategoryModel();
+        $wastedModel  = new \App\Modules\Inventory\Models\WastedProductModel();
 
         $products = $productModel->findAll();
         $categories = $catModel->findAll();
+        
+        $wastedLogs = $wastedModel
+            ->select('wasted_products.*, products.name as product_name, products.sku as product_sku')
+            ->join('products', 'products.id = wasted_products.product_id')
+            ->orderBy('wasted_products.created_at', 'DESC')
+            ->findAll();
 
         // Create a lookup map for category names
         $catMap = [];
@@ -26,6 +33,7 @@ class ProductController extends BaseController
 
         $data['products']   = $products;
         $data['categories'] = $categories;
+        $data['wastedLogs'] = $wastedLogs;
 
         return view('App\Modules\Inventory\Views\products', $data);
     }
@@ -91,5 +99,66 @@ class ProductController extends BaseController
             return redirect()->to('/inventory/products')->with('success', 'Category added successfully.');
         }
         return redirect()->to('/inventory/products')->with('error', implode(', ', $model->errors()));
+    }
+
+    public function wastedStore()
+    {
+        $wastedModel = new \App\Modules\Inventory\Models\WastedProductModel();
+        $productModel = new \App\Modules\Inventory\Models\ProductModel();
+        $stockModel   = new \App\Modules\Inventory\Models\InventoryStockModel();
+
+        $input = $this->request->getPost();
+        $tenantId = service('tenant')->getId();
+        $branchId = 1; // Default Main Branch
+
+        $productId = (int) ($input['product_id'] ?? 0);
+        $qty       = (int) ($input['quantity'] ?? 0);
+        $reason    = $input['reason'] ?? '';
+
+        $product = $productModel->find($productId);
+        if (!$product) {
+            return redirect()->to('/inventory/products#wasted-pane')->with('error', 'Product not found.');
+        }
+
+        if ($qty <= 0) {
+            return redirect()->to('/inventory/products#wasted-pane')->with('error', 'Quantity must be greater than 0.');
+        }
+
+        // Deduct inventory stock
+        $stock = $stockModel
+            ->where('tenant_id', $tenantId)
+            ->where('branch_id', $branchId)
+            ->where('product_id', $productId)
+            ->first();
+
+        if (!$stock || $stock['quantity'] < $qty) {
+            $currentStock = $stock ? $stock['quantity'] : 0;
+            return redirect()->to('/inventory/products#wasted-pane')->with('error', "Insufficient stock. Current available: {$currentStock}.");
+        }
+
+        // DB Transaction for atomicity
+        $db = \Config\Database::connect();
+        $db->transStart();
+
+        $stockModel->update($stock['id'], [
+            'quantity' => $stock['quantity'] - $qty
+        ]);
+
+        $wastedModel->insert([
+            'tenant_id'  => $tenantId,
+            'branch_id'  => $branchId,
+            'product_id' => $productId,
+            'quantity'   => $qty,
+            'cost_price' => $product['cost'],
+            'reason'     => $reason
+        ]);
+
+        $db->transComplete();
+
+        if ($db->transStatus() === false) {
+            return redirect()->to('/inventory/products#wasted-pane')->with('error', 'Failed to save wasted product log.');
+        }
+
+        return redirect()->to('/inventory/products#wasted-pane')->with('success', 'Wasted product logged and stock deducted.');
     }
 }

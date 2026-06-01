@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        :root { --primary:#0d9488; --bg-dark:#0f172a; --bg-card:#1e293b; --text-primary:#f1f5f9; --text-muted:#94a3b8; --border:rgba(148,163,184,0.1); }
+        :root { --primary:#E2A794; --bg-dark:#0f172a; --bg-card:#1e293b; --text-primary:#f1f5f9; --text-muted:#94a3b8; --border:rgba(148,163,184,0.1); }
         body { font-family:'Inter',sans-serif; background:var(--bg-dark); color:var(--text-primary); min-height:100vh; }
         .page-header { padding:2rem; border-bottom:1px solid var(--border); background:var(--bg-card); }
         .page-header h1 { font-size:1.5rem; font-weight:700; }
@@ -24,66 +24,92 @@
 </head>
 <body>
 
-<!-- Runchise Premium Interactive Header -->
-<div class="d-flex align-items-center justify-content-between px-4 py-3 border-bottom" style="border-color:var(--border) !important; background:var(--bg-card);">
-    <a href="/dashboard" id="white-title" style="text-decoration:none; color:white; display:flex; align-items:center; gap:0.5rem; transition: transform 0.2s;">
-        <span style="font-size:1.5rem;">⚡</span>
-        <span style="font-weight:700; font-size:1.25rem; letter-spacing:-0.02em;">Runchise</span>
-    </a>
-    <span class="text-muted" style="font-size:0.85rem; font-weight: 500;">Inventory Management</span>
+<div class="d-flex" style="min-height: 100vh;">
+    <!-- Shared Premium Sidebar -->
+    <?= view('partials/sidebar') ?>
+
+    <!-- Main Content Area -->
+    <div class="flex-grow-1" style="overflow-x: hidden; padding-bottom: 3rem;">
+        <!-- Header Navigation Title -->
+        <div class="d-flex align-items-center justify-content-between px-4 py-3 border-bottom" style="border-color:var(--border) !important; background:var(--bg-card);">
+            <h2 style="font-size: 1.15rem; font-weight: 700; margin: 0; color: var(--text-primary);">📈 Stock Levels</h2>
+            <span class="text-muted" style="font-size:0.85rem; font-weight: 500;">Inventory Management</span>
+        </div>
+
+        <div class="page-header d-flex align-items-center justify-content-between p-4" style="border-bottom:1px solid var(--border); background:rgba(30,41,59,0.3);">
+            <div>
+                <h1 style="font-size:1.5rem; font-weight:700;"><i class="bi bi-boxes"></i> Inventory Stock</h1>
+                <p class="mb-0" style="color:var(--text-muted);font-size:0.9rem;">Real-time stock levels across all branches</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="/inventory/products#wasted-pane" class="btn btn-outline-danger btn-sm" style="border-radius:10px; font-weight:600;"><i class="bi bi-trash"></i> Catat Barang Rusak</a>
+                <a href="/inventory/opname" class="btn btn-outline-secondary btn-sm" style="border-radius:10px; font-weight:600;">📋 Stock Opname</a>
+                <a href="/inventory/transfers" class="btn btn-outline-secondary btn-sm" style="border-radius:10px; font-weight:600;">🔄 Transfer</a>
+            </div>
+        </div>
+
+        <div class="content p-4">
+            <div class="card-nexapos">
+                <div class="p-3 d-flex justify-content-between align-items-center" style="border-bottom:1px solid var(--border);">
+                    <input type="text" id="stockSearchInput" class="form-control" style="max-width:300px;background:rgba(15,23,42,0.6);border:1px solid var(--border);color:var(--text-primary);" placeholder="🔍 Search products...">
+                </div>
+                <div class="table-responsive">
+                    <table class="table mb-0" id="stockTable">
+                        <thead>
+                            <tr>
+                                <th>SKU</th>
+                                <th>Product Name</th>
+                                <th>Branch</th>
+                                <th>Qty</th>
+                                <th>Reorder Point</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <?php if (!empty($stocks)): ?>
+                            <?php foreach ($stocks as $stock): ?>
+                            <tr class="stock-row" data-name="<?= esc(strtolower($stock['product_name'])) ?>">
+                                <td style="font-family:monospace; font-weight:bold; color:var(--primary);"><?= esc($stock['product_sku']) ?></td>
+                                <td style="font-weight:600;"><?= esc($stock['product_name']) ?></td>
+                                <td class="text-muted"><?= esc($stock['branch_name']) ?></td>
+                                <td><strong><?= esc(round($stock['quantity'])) ?></strong></td>
+                                <td class="text-muted"><?= esc($stock['reorder_point'] ?? '10') ?></td>
+                                <td>
+                                    <?php if ($stock['quantity'] <= 0): ?>
+                                        <span class="badge-out">Out of Stock</span>
+                                    <?php elseif ($stock['quantity'] <= ($stock['reorder_point'] ?? 10)): ?>
+                                        <span class="badge-low">Low Stock</span>
+                                    <?php else: ?>
+                                        <span class="badge-ok">In Stock</span>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr><td colspan="6" class="text-center py-4" style="color:var(--text-muted);">No stock records found. <a href="/inventory/products/new">Add products</a>.</td></tr>
+                        <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="page-header d-flex align-items-center justify-content-between">
-    <div>
-        <h1><i class="bi bi-boxes"></i> Inventory Stock</h1>
-        <p class="mb-0" style="color:var(--text-muted);font-size:0.9rem;">Real-time stock levels across all branches</p>
-    </div>
-    <div class="d-flex gap-2">
-        <a href="/inventory/opname" class="btn btn-outline-secondary btn-sm">📋 Stock Opname</a>
-        <a href="/inventory/transfers" class="btn btn-outline-secondary btn-sm">🔄 Transfer</a>
-    </div>
-</div>
-<div class="content">
-    <div class="card-nexapos">
-        <div class="p-3" style="border-bottom:1px solid var(--border);">
-            <input type="text" class="form-control" style="max-width:300px;background:rgba(15,23,42,0.6);border:1px solid var(--border);color:var(--text-primary);" placeholder="🔍 Search products...">
-        </div>
-        <div class="table-responsive">
-            <table class="table mb-0">
-                <thead>
-                    <tr>
-                        <th>SKU</th><th>Product Name</th><th>Branch</th>
-                        <th>Qty</th><th>Reorder Point</th><th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                <?php if (!empty($stocks)): ?>
-                    <?php foreach ($stocks as $stock): ?>
-                    <tr>
-                        <td style="font-family:monospace;color:var(--text-muted);"><?= esc($stock['product_id']) ?></td>
-                        <td><?= esc($stock['product_id']) ?></td>
-                        <td><?= esc($stock['branch_id']) ?></td>
-                        <td><strong><?= esc($stock['quantity']) ?></strong></td>
-                        <td><?= esc($stock['reorder_point'] ?? '—') ?></td>
-                        <td>
-                            <?php if ($stock['quantity'] <= 0): ?>
-                                <span class="badge-out">Out of Stock</span>
-                            <?php elseif ($stock['quantity'] <= ($stock['reorder_point'] ?? 10)): ?>
-                                <span class="badge-low">Low Stock</span>
-                            <?php else: ?>
-                                <span class="badge-ok">In Stock</span>
-                            <?php endif; ?>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <tr><td colspan="6" class="text-center py-4" style="color:var(--text-muted);">No stock records found. <a href="/inventory/products/new">Add products</a>.</td></tr>
-                <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Stock Client-Side Live Search filter
+        const searchInput = document.getElementById('stockSearchInput');
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                const q = this.value.toLowerCase();
+                document.querySelectorAll('.stock-row').forEach(row => {
+                    row.style.display = row.dataset.name.includes(q) ? '' : 'none';
+                });
+            });
+        }
+    });
+</script>
 </body>
 </html>

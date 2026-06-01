@@ -16,6 +16,7 @@ $routes->group('inventory', ['namespace' => 'App\Modules\Inventory\Controllers',
     $routes->post('products/update/(:num)', 'ProductController::update/$1');
     $routes->get('products/delete/(:num)', 'ProductController::delete/$1');
     $routes->post('categories',            'ProductController::categoryStore');
+    $routes->post('wasted',                'ProductController::wastedStore');
 });
 
 // Inventory API Routes

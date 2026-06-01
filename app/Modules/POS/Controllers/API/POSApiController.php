@@ -86,7 +86,11 @@ class POSApiController extends BaseController
             ]);
         }
 
-        $transaction['items'] = $itemModel->where('transaction_id', $id)->findAll();
+        $transaction['items'] = $itemModel
+            ->select('transaction_items.*, products.name as product_name')
+            ->join('products', 'products.id = transaction_items.product_id', 'left')
+            ->where('transaction_id', $id)
+            ->findAll();
 
         return $this->response->setStatusCode(200)->setJSON([
             'success' => true,
