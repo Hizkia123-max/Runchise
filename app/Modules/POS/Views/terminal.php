@@ -159,40 +159,31 @@
         </div>
 
         <div class="product-grid" id="productGrid">
-            <!-- Products loaded via JS/AJAX -->
-            <div class="product-card" data-id="1" data-name="Wireless Mouse" data-price="150000" data-stock="45">
-                <div class="product-icon">🖱️</div>
-                <div class="product-name">Wireless Mouse</div>
-                <div class="product-price">Rp 150,000</div>
-                <div class="product-stock">Stock: 45</div>
-            </div>
-            <div class="product-card" data-id="2" data-name="USB-C Cable" data-price="45000" data-stock="120">
-                <div class="product-icon">🔌</div>
-                <div class="product-name">USB-C Cable 2m</div>
-                <div class="product-price">Rp 45,000</div>
-                <div class="product-stock">Stock: 120</div>
-            </div>
-            <div class="product-card" data-id="3" data-name="Keyboard Mech" data-price="450000" data-stock="8">
-                <span class="stock-badge low">Low</span>
-                <div class="product-icon">⌨️</div>
-                <div class="product-name">Mechanical Keyboard</div>
-                <div class="product-price">Rp 450,000</div>
-                <div class="product-stock">Stock: 8</div>
-            </div>
-            <div class="product-card" data-id="4" data-name="Monitor 24"" data-price="1800000" data-stock="3">
-                <span class="stock-badge low">Low</span>
-                <div class="product-icon">🖥️</div>
-                <div class="product-name">LED Monitor 24"</div>
-                <div class="product-price">Rp 1,800,000</div>
-                <div class="product-stock">Stock: 3</div>
-            </div>
-            <div class="product-card out-of-stock" data-id="5" data-name="HDMI Cable" data-price="85000" data-stock="0">
-                <span class="stock-badge out">Out</span>
-                <div class="product-icon">📺</div>
-                <div class="product-name">HDMI Cable 3m</div>
-                <div class="product-price">Rp 85,000</div>
-                <div class="product-stock">Out of Stock</div>
-            </div>
+            <?php if (!empty($products)): ?>
+                <?php foreach ($products as $p): ?>
+                    <?php 
+                    $isOut = ($p['stock'] <= 0);
+                    $isLow = ($p['stock'] > 0 && $p['stock'] <= ($p['reorder_point'] ?? 5));
+                    ?>
+                    <div class="product-card <?= $isOut ? 'out-of-stock' : '' ?>" 
+                         data-id="<?= $p['id'] ?>" 
+                         data-name="<?= esc($p['name']) ?>" 
+                         data-price="<?= $p['price'] ?>" 
+                         data-stock="<?= $p['stock'] ?>">
+                        <?php if ($isOut): ?>
+                            <span class="stock-badge out">Out</span>
+                        <?php elseif ($isLow): ?>
+                            <span class="stock-badge low">Low</span>
+                        <?php endif; ?>
+                        <div class="product-icon">📦</div>
+                        <div class="product-name" style="font-size:0.85rem; font-weight:600;"><?= esc($p['name']) ?></div>
+                        <div class="product-price">Rp <?= number_format($p['price']) ?></div>
+                        <div class="product-stock"><?= $isOut ? 'Out of Stock' : 'Stock: ' . $p['stock'] ?></div>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div class="text-center py-4 text-muted w-100">No products available in the catalog.</div>
+            <?php endif; ?>
         </div>
     </div>
 
