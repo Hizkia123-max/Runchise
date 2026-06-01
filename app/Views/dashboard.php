@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexaPOS ERP — Overview Dashboard</title>
+    <title>Runchise — Overview Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -209,7 +209,7 @@
     <header class="navbar-premium">
         <a href="/dashboard" class="navbar-brand-premium">
             <div class="navbar-logo">⚡</div>
-            <h1 class="navbar-title">NexaPOS ERP</h1>
+            <h1 class="navbar-title">Runchise</h1>
         </a>
         <div class="navbar-user-profile">
             <div class="user-details">

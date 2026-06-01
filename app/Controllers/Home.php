@@ -53,7 +53,7 @@ class Home extends BaseController
             'lowStockCount'  => $lowStockCount,
             'activeSessions' => $activeSessions,
             'lowStockItems'  => $lowStockItems,
-            'userName'       => session()->get('user_name') ?? 'Admin NexaPOS',
+            'userName'       => session()->get('user_name') ?? 'Admin Runchise',
             'userRole'       => session()->get('user_role') ?? 'TenantOwner',
         ];
 

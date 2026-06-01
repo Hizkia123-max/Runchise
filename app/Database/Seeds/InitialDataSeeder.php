@@ -10,7 +10,7 @@ class InitialDataSeeder extends Seeder
     {
         // Seed default tenant
         $this->db->table('tenants')->insert([
-            'company_name' => 'NexaPOS Demo Store',
+            'company_name' => 'Runchise Demo Store',
             'subdomain'    => 'demo',
             'status'       => 'Active',
             'created_at'   => date('Y-m-d H:i:s'),
@@ -19,11 +19,14 @@ class InitialDataSeeder extends Seeder
         $tenantId = $this->db->insertID();
 
         // Seed default admin user
+        $email = getenv('admin.email') ?: 'admin@runchise.com';
+        $password = getenv('admin.password') ?: 'Admin@12345';
+
         $this->db->table('users')->insert([
             'tenant_id'     => $tenantId,
-            'name'          => 'Admin NexaPOS',
-            'email'         => 'admin@nexapos.id',
-            'password_hash' => password_hash('Admin@12345', PASSWORD_BCRYPT),
+            'name'          => 'Admin Runchise',
+            'email'         => $email,
+            'password_hash' => password_hash($password, PASSWORD_BCRYPT),
             'role'          => 'TenantOwner',
             'created_at'    => date('Y-m-d H:i:s'),
             'updated_at'    => date('Y-m-d H:i:s'),
@@ -72,6 +75,6 @@ class InitialDataSeeder extends Seeder
         }
 
         echo "✅ Initial data seeded successfully!\n";
-        echo "   Login: admin@nexapos.id / Admin@12345\n";
+        echo "   Login: " . $email . " / " . $password . "\n";
     }
 }

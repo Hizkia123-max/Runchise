@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexaPOS — Inventory Stock</title>
+    <title>Runchise — Inventory Stock</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
@@ -23,6 +23,16 @@
     </style>
 </head>
 <body>
+
+<!-- Runchise Premium Interactive Header -->
+<div class="d-flex align-items-center justify-content-between px-4 py-3 border-bottom" style="border-color:var(--border) !important; background:var(--bg-card);">
+    <a href="/dashboard" id="white-title" style="text-decoration:none; color:white; display:flex; align-items:center; gap:0.5rem; transition: transform 0.2s;">
+        <span style="font-size:1.5rem;">⚡</span>
+        <span style="font-weight:700; font-size:1.25rem; letter-spacing:-0.02em;">Runchise</span>
+    </a>
+    <span class="text-muted" style="font-size:0.85rem; font-weight: 500;">Inventory Management</span>
+</div>
+
 <div class="page-header d-flex align-items-center justify-content-between">
     <div>
         <h1><i class="bi bi-boxes"></i> Inventory Stock</h1>

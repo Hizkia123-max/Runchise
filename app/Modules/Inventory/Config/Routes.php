@@ -12,6 +12,9 @@ $routes->group('inventory', ['namespace' => 'App\Modules\Inventory\Controllers',
     $routes->get('products',    'ProductController::index');
     $routes->get('products/new','ProductController::create');
     $routes->post('products',   'ProductController::store');
+    $routes->get('products/edit/(:num)', 'ProductController::edit/$1');
+    $routes->post('products/update/(:num)', 'ProductController::update/$1');
+    $routes->get('products/delete/(:num)', 'ProductController::delete/$1');
 });
 
 // Inventory API Routes
