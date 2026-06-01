@@ -62,22 +62,58 @@
         .product-grid::-webkit-scrollbar { width: 4px; }
         .product-grid::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
         .product-card {
-            background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: 14px; padding: 1rem; cursor: pointer;
-            transition: all 0.2s; position: relative; overflow: hidden;
+            background: var(--bg-card); 
+            border: 1px solid var(--border);
+            border-radius: 16px; 
+            padding: 1.25rem; 
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
+            position: relative; 
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            min-height: 160px;
+            box-shadow: 0 4px 12px rgba(226, 167, 148, 0.05);
         }
-        .product-card:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 8px 25px rgba(226,167,148,0.2); }
+        .product-card:hover { 
+            border-color: var(--primary); 
+            transform: translateY(-4px); 
+            box-shadow: 0 8px 25px rgba(226, 167, 148, 0.2); 
+        }
         .product-card.out-of-stock { opacity: 0.5; pointer-events: none; }
-        .product-icon { font-size: 2rem; margin-bottom: 0.5rem; }
-        .product-name { font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem; }
-        .product-price { font-size: 0.9rem; color: var(--primary); font-weight: 700; }
-        .product-stock { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem; }
+        .product-icon { font-size: 2.2rem; margin-bottom: 0.5rem; display: block; }
+        .product-name { 
+            font-size: 0.88rem; 
+            font-weight: 600; 
+            color: var(--text-primary); 
+            margin-bottom: 0.35rem; 
+            min-height: 2.4em;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .product-price { 
+            font-size: 0.95rem; 
+            color: #b07765; 
+            font-weight: 700; 
+            margin-bottom: 0.25rem; 
+        }
+        .product-stock { 
+            font-size: 0.75rem; 
+            color: var(--text-muted); 
+            font-weight: 500;
+        }
         .stock-badge {
             position: absolute; top: 0.5rem; right: 0.5rem;
             font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 20px;
+            font-weight: 600;
         }
-        .stock-badge.low { background: rgba(245,158,11,0.2); color: var(--warning); }
-        .stock-badge.out { background: rgba(239,68,68,0.2); color: var(--danger); }
+        .stock-badge.low { background: rgba(245,158,11,0.15); color: var(--warning); }
+        .stock-badge.out { background: rgba(239,68,68,0.15); color: var(--danger); }
 
         /* Cart */
         .cart-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); }
@@ -184,6 +220,21 @@
                         $catCode = 'services';
                     }
                     ?>
+                    <?php
+                    // Map category code to beautiful icons
+                    $emoji = '📦';
+                    if ($catCode === 'food') {
+                        $emoji = '🍛';
+                    } elseif ($catCode === 'retail') {
+                        $emoji = '🧴';
+                    } elseif ($catCode === 'electronics') {
+                        $emoji = '🔌';
+                    } elseif ($catCode === 'fashion') {
+                        $emoji = '👕';
+                    } elseif ($catCode === 'services') {
+                        $emoji = '🧹';
+                    }
+                    ?>
                     <div class="product-card <?= $isOut ? 'out-of-stock' : '' ?>" 
                          data-id="<?= $p['id'] ?>" 
                          data-name="<?= esc($p['name']) ?>" 
@@ -195,8 +246,8 @@
                         <?php elseif ($isLow): ?>
                             <span class="stock-badge low">Low</span>
                         <?php endif; ?>
-                        <div class="product-icon">📦</div>
-                        <div class="product-name" style="font-size:0.85rem; font-weight:600;"><?= esc($p['name']) ?></div>
+                        <div class="product-icon"><?= $emoji ?></div>
+                        <div class="product-name"><?= esc($p['name']) ?></div>
                         <div class="product-price">Rp <?= number_format($p['price']) ?></div>
                         <div class="product-stock"><?= $isOut ? 'Out of Stock' : 'Stock: ' . $p['stock'] ?></div>
                     </div>
