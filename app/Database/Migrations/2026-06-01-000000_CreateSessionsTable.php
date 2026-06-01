@@ -11,7 +11,7 @@ class CreateSessionsTable extends Migration
         $this->forge->addField([
             'id'         => ['type' => 'VARCHAR', 'constraint' => 128, 'null' => false],
             'ip_address' => ['type' => 'VARCHAR', 'constraint' => 45, 'null' => false],
-            'timestamp'  => ['type' => 'TIMESTAMP', 'null' => false, 'default' => 'CURRENT_TIMESTAMP'],
+            'timestamp'  => ['type' => 'INT', 'unsigned' => true, 'null' => false, 'default' => 0],
             'data'       => ['type' => 'BLOB', 'null' => false],
         ]);
         $this->forge->addKey('id', true);
