@@ -204,13 +204,33 @@
                 <div class="collapse show" id="menu-kasir">
                     <ul class="submenu-list">
                         <li>
-                            <a href="/pos/terminal" class="submenu-link <?= (uri_string() === 'pos/terminal') ? 'active' : '' ?>">
-                                <i class="bi bi-calculator me-1"></i> POS Terminal
+                            <a href="/pos/terminal" class="submenu-link <?= (uri_string() === 'pos/terminal' && empty(service('request')->getGet('cat'))) ? 'active' : '' ?>">
+                                <i class="bi bi-calculator me-1"></i> Produk Item
                             </a>
                         </li>
                         <li>
-                            <a href="/pos/sessions" class="submenu-link <?= (uri_string() === 'pos/sessions') ? 'active' : '' ?>">
-                                <i class="bi bi-clock-history me-1"></i> POS Shifts & Sessions
+                            <a href="/pos/terminal?cat=food" class="submenu-link <?= (uri_string() === 'pos/terminal' && service('request')->getGet('cat') === 'food') ? 'active' : '' ?>">
+                                <i class="bi bi-egg-fried me-1"></i> Food & Beverage
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/pos/terminal?cat=retail" class="submenu-link <?= (uri_string() === 'pos/terminal' && service('request')->getGet('cat') === 'retail') ? 'active' : '' ?>">
+                                <i class="bi bi-bag-check me-1"></i> Retail
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/pos/terminal?cat=electronics" class="submenu-link <?= (uri_string() === 'pos/terminal' && service('request')->getGet('cat') === 'electronics') ? 'active' : '' ?>">
+                                <i class="bi bi-laptop me-1"></i> Electronics
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/pos/terminal?cat=fashion" class="submenu-link <?= (uri_string() === 'pos/terminal' && service('request')->getGet('cat') === 'fashion') ? 'active' : '' ?>">
+                                <i class="bi bi-sunglasses me-1"></i> Fashion
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/pos/terminal?cat=services" class="submenu-link <?= (uri_string() === 'pos/terminal' && service('request')->getGet('cat') === 'services') ? 'active' : '' ?>">
+                                <i class="bi bi-tools me-1"></i> Services
                             </a>
                         </li>
                     </ul>

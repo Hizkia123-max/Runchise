@@ -159,7 +159,7 @@
             <button class="cat-btn" data-cat="retail">Retail</button>
             <button class="cat-btn" data-cat="electronics">Electronics</button>
             <button class="cat-btn" data-cat="fashion">Fashion</button>
-            <button class="cat-btn" data-cat="service">Services</button>
+            <button class="cat-btn" data-cat="services">Services</button>
         </div>
 
         <div class="product-grid" id="productGrid">
@@ -168,12 +168,28 @@
                     <?php 
                     $isOut = ($p['stock'] <= 0);
                     $isLow = ($p['stock'] > 0 && $p['stock'] <= ($p['reorder_point'] ?? 5));
+                    
+                    // Map category name to lower-case code matching button data-cat
+                    $rawCat = strtolower($p['category_name'] ?? '');
+                    $catCode = 'all';
+                    if (strpos($rawCat, 'food') !== false) {
+                        $catCode = 'food';
+                    } elseif (strpos($rawCat, 'retail') !== false) {
+                        $catCode = 'retail';
+                    } elseif (strpos($rawCat, 'electro') !== false) {
+                        $catCode = 'electronics';
+                    } elseif (strpos($rawCat, 'fashion') !== false) {
+                        $catCode = 'fashion';
+                    } elseif (strpos($rawCat, 'serv') !== false) {
+                        $catCode = 'services';
+                    }
                     ?>
                     <div class="product-card <?= $isOut ? 'out-of-stock' : '' ?>" 
                          data-id="<?= $p['id'] ?>" 
                          data-name="<?= esc($p['name']) ?>" 
                          data-price="<?= $p['price'] ?>" 
-                         data-stock="<?= $p['stock'] ?>">
+                         data-stock="<?= $p['stock'] ?>"
+                         data-cat="<?= $catCode ?>">
                         <?php if ($isOut): ?>
                             <span class="stock-badge out">Out</span>
                         <?php elseif ($isLow): ?>
@@ -259,6 +275,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     } catch (e) {
         console.error("Failed to restore pending cart", e);
+    }
+    
+    // Handle URL category filtering if present
+    const urlParams = new URLSearchParams(window.location.search);
+    const catParam = urlParams.get('cat');
+    if (catParam) {
+        const targetBtn = document.querySelector(`.cat-btn[data-cat="${catParam}"]`);
+        if (targetBtn) {
+            targetBtn.click();
+        }
     }
 });
 
@@ -354,18 +380,32 @@ document.getElementById('holdOrderBtn').addEventListener('click', () => {
 });
 
 // Search filter
-document.getElementById('searchInput').addEventListener('input', function () {
-    const q = this.value.toLowerCase();
+function filterProducts() {
+    const q = document.getElementById('searchInput').value.toLowerCase();
+    const activeBtn = document.querySelector('.cat-btn.active');
+    const cat = activeBtn ? activeBtn.dataset.cat : 'all';
+    
     document.querySelectorAll('.product-card').forEach(card => {
-        card.style.display = card.dataset.name.toLowerCase().includes(q) ? '' : 'none';
+        const matchesSearch = card.dataset.name.toLowerCase().includes(q);
+        const matchesCategory = (cat === 'all' || card.dataset.cat === cat);
+        
+        if (matchesSearch && matchesCategory) {
+            card.style.display = '';
+        } else {
+            card.style.display = 'none';
+        }
     });
-});
+}
+
+// Search filter
+document.getElementById('searchInput').addEventListener('input', filterProducts);
 
 // Category filter
 document.querySelectorAll('.cat-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
+        filterProducts();
     });
 });
 

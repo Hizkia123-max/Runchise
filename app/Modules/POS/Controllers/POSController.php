@@ -11,7 +11,9 @@ class POSController extends BaseController
         $productModel = new \App\Modules\Inventory\Models\ProductModel();
         $db = \Config\Database::connect();
         
-        $products = $productModel->findAll();
+        $products = $productModel->select('products.*, categories.name as category_name')
+            ->join('categories', 'categories.id = products.category_id', 'left')
+            ->findAll();
         
         // Let's get actual quantities from stocks table
         $stocks = [];
