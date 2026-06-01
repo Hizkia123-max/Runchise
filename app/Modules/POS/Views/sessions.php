@@ -68,9 +68,88 @@ body{font-family:'Inter',sans-serif;background:var(--bg-dark);color:var(--text-p
                 </table>
             </div>
         </div>
+
+        <!-- Hanging / Pending Purchases Section -->
+        <div id="pendingCartSection" class="mt-5" style="display: none;">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h4 style="font-weight:700; margin:0; font-size:1.1rem; color: var(--text-primary);">⚡ Transaksi Kasir Tertunda (Hanging Cart)</h4>
+                <div class="d-flex gap-2">
+                    <button id="clearPendingCartBtn" class="btn btn-sm btn-outline-danger" style="border-radius: 8px; font-weight: 600;"><i class="bi bi-trash"></i> Batalkan Transaksi</button>
+                    <a href="/pos/terminal" class="btn btn-sm btn-primary-nexapos" style="font-size: 0.85rem;"><i class="bi bi-arrow-right-circle"></i> Lanjutkan Pembayaran</a>
+                </div>
+            </div>
+
+            <div class="card-nexapos p-4">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Produk</th>
+                                <th class="text-center">Kuantitas</th>
+                                <th class="text-end">Harga Satuan</th>
+                                <th class="text-end">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pendingCartItemsList">
+                            <!-- Rendered dynamically via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const pendingCartSection = document.getElementById('pendingCartSection');
+    const pendingCartItemsList = document.getElementById('pendingCartItemsList');
+    const clearPendingCartBtn = document.getElementById('clearPendingCartBtn');
+
+    const fmt = (n) => 'Rp ' + Math.round(n).toLocaleString('id-ID');
+
+    function renderPendingCart() {
+        const pending = localStorage.getItem('runchise_pending_cart');
+        if (pending) {
+            const cartItems = JSON.parse(pending);
+            if (cartItems && cartItems.length > 0) {
+                pendingCartItemsList.innerHTML = '';
+                cartItems.forEach(item => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="font-weight:600; color: var(--text-primary);"><span style="font-size:1.25rem; margin-right:0.5rem;">📦</span> ${item.name}</td>
+                        <td class="text-center" style="font-weight:700; color: var(--text-primary);">${item.qty}x</td>
+                        <td class="text-end" style="color:var(--text-muted);">${fmt(item.price)}</td>
+                        <td class="text-end" style="font-weight:700; color: var(--text-primary);">${fmt(item.price * item.qty)}</td>
+                    `;
+                    pendingCartItemsList.appendChild(tr);
+                });
+                pendingCartSection.style.display = 'block';
+                return;
+            }
+        }
+        pendingCartSection.style.display = 'none';
+    }
+
+    if (clearPendingCartBtn) {
+        clearPendingCartBtn.addEventListener('click', () => {
+            if (confirm('Apakah Anda yakin ingin membatalkan transaksi tertunda ini?')) {
+                localStorage.removeItem('runchise_pending_cart');
+                renderPendingCart();
+                // Trigger sidebar widget reload if exists
+                if (window.refreshPendingCartWidget) {
+                    window.refreshPendingCartWidget();
+                } else {
+                    location.reload();
+                }
+            }
+        });
+    }
+
+    renderPendingCart();
+});
+</script>
 </body>
 </html>
