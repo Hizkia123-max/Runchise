@@ -136,9 +136,13 @@
 </head>
 <body>
 
-<div class="pos-layout">
-    <!-- LEFT: Products -->
-    <div class="pos-products">
+<div class="d-flex" style="min-height: 100vh; overflow: hidden; background: var(--bg-dark);">
+    <!-- Shared Premium Sidebar -->
+    <?= view('partials/sidebar') ?>
+
+    <div class="flex-grow-1 pos-layout">
+        <!-- LEFT: Products -->
+        <div class="pos-products">
         <div class="pos-header">
             <a href="/dashboard" class="brand" style="text-decoration:none;">⚡ Runchise</a>
             <div class="pos-search">
@@ -226,6 +230,7 @@
             </button>
         </div>
     </div>
+</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
