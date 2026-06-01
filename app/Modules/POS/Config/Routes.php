@@ -5,16 +5,16 @@ use CodeIgniter\Router\RouteCollection;
 /** @var RouteCollection $routes */
 
 // POS Web Routes
-$routes->group('pos', ['filter' => 'session'], function ($routes) {
-    $routes->get('terminal',  'App\Modules\POS\Controllers\POSController::terminal');
-    $routes->get('sessions',  'App\Modules\POS\Controllers\POSController::sessions');
+$routes->group('pos', ['namespace' => 'App\Modules\POS\Controllers', 'filter' => 'session'], function ($routes) {
+    $routes->get('terminal',  'POSController::terminal');
+    $routes->get('sessions',  'POSController::sessions');
 });
 
 // POS API Routes
-$routes->group('api/v1/pos', function ($routes) {
-    $routes->post('transactions',     'App\Modules\POS\Controllers\API\POSApiController::createTransaction');
-    $routes->post('sessions/open',    'App\Modules\POS\Controllers\API\POSApiController::openSession');
-    $routes->post('sessions/close',   'App\Modules\POS\Controllers\API\POSApiController::closeSession');
-    $routes->get('transactions',      'App\Modules\POS\Controllers\API\POSApiController::listTransactions');
-    $routes->get('transactions/(:num)', 'App\Modules\POS\Controllers\API\POSApiController::getTransaction/$1');
+$routes->group('api/v1/pos', ['namespace' => 'App\Modules\POS\Controllers\API'], function ($routes) {
+    $routes->post('transactions',     'POSApiController::createTransaction');
+    $routes->post('sessions/open',    'POSApiController::openSession');
+    $routes->post('sessions/close',   'POSApiController::closeSession');
+    $routes->get('transactions',      'POSApiController::listTransactions');
+    $routes->get('transactions/(:num)', 'POSApiController::getTransaction/$1');
 });

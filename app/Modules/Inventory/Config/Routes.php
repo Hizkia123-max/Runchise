@@ -5,20 +5,20 @@ use CodeIgniter\Router\RouteCollection;
 /** @var RouteCollection $routes */
 
 // Inventory Web Routes
-$routes->group('inventory', ['filter' => 'session'], function ($routes) {
-    $routes->get('stock',       'App\Modules\Inventory\Controllers\InventoryController::stock');
-    $routes->get('transfers',   'App\Modules\Inventory\Controllers\InventoryController::transfers');
-    $routes->get('opname',      'App\Modules\Inventory\Controllers\InventoryController::opname');
-    $routes->get('products',    'App\Modules\Inventory\Controllers\ProductController::index');
-    $routes->get('products/new','App\Modules\Inventory\Controllers\ProductController::create');
-    $routes->post('products',   'App\Modules\Inventory\Controllers\ProductController::store');
+$routes->group('inventory', ['namespace' => 'App\Modules\Inventory\Controllers', 'filter' => 'session'], function ($routes) {
+    $routes->get('stock',       'InventoryController::stock');
+    $routes->get('transfers',   'InventoryController::transfers');
+    $routes->get('opname',      'InventoryController::opname');
+    $routes->get('products',    'ProductController::index');
+    $routes->get('products/new','ProductController::create');
+    $routes->post('products',   'ProductController::store');
 });
 
 // Inventory API Routes
-$routes->group('api/v1/inventory', function ($routes) {
-    $routes->get('stocks',       'App\Modules\Inventory\Controllers\API\InventoryApiController::getStocks');
-    $routes->post('transfers',   'App\Modules\Inventory\Controllers\API\InventoryApiController::createTransfer');
-    $routes->get('products',     'App\Modules\Inventory\Controllers\API\InventoryApiController::getProducts');
-    $routes->post('products',    'App\Modules\Inventory\Controllers\API\InventoryApiController::createProduct');
-    $routes->get('products/(:num)', 'App\Modules\Inventory\Controllers\API\InventoryApiController::getProduct/$1');
+$routes->group('api/v1/inventory', ['namespace' => 'App\Modules\Inventory\Controllers\API'], function ($routes) {
+    $routes->get('stocks',       'InventoryApiController::getStocks');
+    $routes->post('transfers',   'InventoryApiController::createTransfer');
+    $routes->get('products',     'InventoryApiController::getProducts');
+    $routes->post('products',    'InventoryApiController::createProduct');
+    $routes->get('products/(:num)', 'InventoryApiController::getProduct/$1');
 });

@@ -5,13 +5,13 @@ use CodeIgniter\Router\RouteCollection;
 /** @var RouteCollection $routes */
 
 // Authentication Module Routes
-$routes->group('auth', function ($routes) {
-    $routes->get('login',  'App\Modules\Authentication\Controllers\AuthController::login');
-    $routes->post('login', 'App\Modules\Authentication\Controllers\AuthController::loginPost');
-    $routes->get('logout', 'App\Modules\Authentication\Controllers\AuthController::logout');
+$routes->group('auth', ['namespace' => 'App\Modules\Authentication\Controllers'], function ($routes) {
+    $routes->get('login',  'AuthController::login');
+    $routes->post('login', 'AuthController::loginPost');
+    $routes->get('logout', 'AuthController::logout');
 });
 
 // Authentication API Routes
-$routes->group('api/v1/auth', ['filter' => ''], function ($routes) {
-    $routes->post('login', 'App\Modules\Authentication\Controllers\API\AuthApiController::login');
+$routes->group('api/v1/auth', ['namespace' => 'App\Modules\Authentication\Controllers\API'], function ($routes) {
+    $routes->post('login', 'AuthApiController::login');
 });
