@@ -172,12 +172,12 @@
         </div>
 
         <!-- Pending Cart Session Resume Notification Widget -->
-        <a href="/pos/terminal?restore=1" class="pending-cart-alert" id="pendingCartNotification">
+        <a href="/pos/sessions" class="pending-cart-alert" id="pendingCartNotification">
             <div class="d-flex align-items-center gap-2">
                 <span class="spinner-grow spinner-grow-sm text-light" role="status"></span>
-                <span style="font-weight:700; font-size:0.8rem; letter-spacing:0.02em;">⚡ Keranjang Tertunda!</span>
+                <span style="font-weight:700; font-size:0.8rem; letter-spacing:0.02em;" id="pendingCartCountText">⚡ Antrean Tertunda (0)</span>
             </div>
-            <div style="font-size:0.75rem; color:rgba(255,255,255,0.9); margin-top:0.25rem;">Klik untuk melanjutkan transaksi kasir.</div>
+            <div style="font-size:0.75rem; color:rgba(255,255,255,0.9); margin-top:0.25rem;">Klik untuk mengelola transaksi tertunda.</div>
         </a>
 
         <!-- Sidebar Navigation List -->
@@ -292,20 +292,55 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Client-side local storage scan for pending POS carts
-        try {
-            const pendingCartStr = localStorage.getItem('runchise_pending_cart');
-            if (pendingCartStr) {
-                const pendingCart = JSON.parse(pendingCartStr);
-                if (pendingCart && pendingCart.length > 0) {
-                    const notifyEl = document.getElementById('pendingCartNotification');
+        window.refreshPendingCartWidget = function() {
+            try {
+                const notifyEl = document.getElementById('pendingCartNotification');
+                const textEl = document.getElementById('pendingCartCountText');
+                
+                // Migrate legacy single pending cart to runchise_pending_carts array if present
+                const singleCart = localStorage.getItem('runchise_pending_cart');
+                let pendingCarts = [];
+                const multiplePending = localStorage.getItem('runchise_pending_carts');
+                if (multiplePending) {
+                    pendingCarts = JSON.parse(multiplePending);
+                }
+                
+                if (singleCart) {
+                    try {
+                        const items = JSON.parse(singleCart);
+                        if (items && items.length > 0) {
+                            pendingCarts.unshift({
+                                id: Date.now(),
+                                name: 'Order Tertunda #' + (pendingCarts.length + 1),
+                                created_at: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+                                items: items
+                            });
+                            localStorage.setItem('runchise_pending_carts', JSON.stringify(pendingCarts));
+                        }
+                    } catch (e) {
+                        console.error("Migration error: ", e);
+                    }
+                    localStorage.removeItem('runchise_pending_cart');
+                }
+                
+                if (pendingCarts && pendingCarts.length > 0) {
+                    if (textEl) {
+                        textEl.textContent = `⚡ Antrean Tertunda (${pendingCarts.length})`;
+                    }
                     if (notifyEl) {
                         notifyEl.style.display = 'block';
                     }
+                } else {
+                    if (notifyEl) {
+                        notifyEl.style.display = 'none';
+                    }
                 }
+            } catch (e) {
+                console.error("Failed to parse pending carts from localStorage", e);
             }
-        } catch (e) {
-            console.error("Failed to parse pending cart from localStorage", e);
-        }
+        };
+
+        // Initialize on load
+        window.refreshPendingCartWidget();
     });
 </script>

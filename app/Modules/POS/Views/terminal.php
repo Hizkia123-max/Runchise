@@ -225,6 +225,10 @@
                 <button class="pay-btn" data-method="QRIS" id="payQRIS"><i class="bi bi-qr-code"></i> QRIS</button>
             </div>
 
+            <button class="btn btn-outline-warning w-100 mb-2 py-2" id="holdOrderBtn" style="border-radius:12px; font-weight:600; font-size:0.9rem;" disabled>
+                <i class="bi bi-pause-circle"></i> Tunda Pesanan (Hold Order)
+            </button>
+
             <button class="pay-now-btn" id="payNowBtn" disabled>
                 <i class="bi bi-check-circle"></i> Pay Now — <span id="payNowTotal">Rp 0</span>
             </button>
@@ -313,6 +317,42 @@ document.getElementById('payNowBtn').addEventListener('click', () => {
     .catch(err => alert('⚠️ Network error: ' + err.message));
 });
 
+// Hold current order
+document.getElementById('holdOrderBtn').addEventListener('click', () => {
+    if (!cart.length) return;
+    
+    let pendingCarts = [];
+    const multiplePending = localStorage.getItem('runchise_pending_carts');
+    if (multiplePending) {
+        try {
+            pendingCarts = JSON.parse(multiplePending);
+        } catch(e) {
+            pendingCarts = [];
+        }
+    }
+    
+    const nextNum = pendingCarts.length + 1;
+    const newHeld = {
+        id: Date.now(),
+        name: 'Order Tertunda #' + nextNum,
+        created_at: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+        items: [...cart]
+    };
+    
+    pendingCarts.push(newHeld);
+    localStorage.setItem('runchise_pending_carts', JSON.stringify(pendingCarts));
+    
+    // Clear active cart
+    cart.length = 0;
+    localStorage.removeItem('runchise_pending_cart');
+    
+    alert(`Order ditunda sebagai "${newHeld.name}"!\nAnda sekarang dapat melayani pelanggan berikutnya.`);
+    
+    renderCart();
+    
+    if (window.refreshPendingCartWidget) window.refreshPendingCartWidget();
+});
+
 // Search filter
 document.getElementById('searchInput').addEventListener('input', function () {
     const q = this.value.toLowerCase();
@@ -336,6 +376,7 @@ function renderCart() {
         container.innerHTML = '';
         emptyEl.style.display = 'block';
         document.getElementById('payNowBtn').disabled = true;
+        document.getElementById('holdOrderBtn').disabled = true;
         updateTotals(0, 0, 0);
         localStorage.removeItem('runchise_pending_cart');
         return;
@@ -367,6 +408,7 @@ function renderCart() {
     const total = subtotal + tax;
     updateTotals(subtotal, tax, total);
     document.getElementById('payNowBtn').disabled = false;
+    document.getElementById('holdOrderBtn').disabled = false;
     
     // Save to localStorage
     localStorage.setItem('runchise_pending_cart', JSON.stringify(cart));
