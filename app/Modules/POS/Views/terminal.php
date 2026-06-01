@@ -193,11 +193,12 @@
             <h6><i class="bi bi-cart3"></i> Current Order</h6>
         </div>
 
-        <div class="cart-items" id="cartItems">
-            <div class="cart-empty" id="emptyCart">
-                <i class="bi bi-cart-x d-block"></i>
+        <div style="flex: 1; display: flex; flex-direction: column; overflow-y: auto;">
+            <div class="cart-empty" id="emptyCart" style="padding: 2rem; text-align: center; color: var(--text-muted);">
+                <i class="bi bi-cart-x d-block" style="font-size: 2.5rem; margin-bottom: 0.75rem; opacity: 0.4;"></i>
                 Scan or click a product to add it to the cart
             </div>
+            <div class="cart-items" id="cartItems" style="padding: 1rem; overflow-y: auto;"></div>
         </div>
 
         <div class="cart-footer">
@@ -311,8 +312,7 @@ function renderCart() {
     const emptyEl   = document.getElementById('emptyCart');
     if (!cart.length) {
         container.innerHTML = '';
-        container.appendChild(emptyEl);
-        emptyEl.style.display = '';
+        emptyEl.style.display = 'block';
         document.getElementById('payNowBtn').disabled = true;
         updateTotals(0, 0, 0);
         return;

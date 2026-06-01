@@ -16,6 +16,6 @@ class ProductModel extends BaseTenantModel
     protected $validationRules = [
         'sku'   => 'required|max_length[50]',
         'name'  => 'required|min_length[2]',
-        'price' => 'required|decimal',
+        'price' => 'required|numeric',
     ];
 }
