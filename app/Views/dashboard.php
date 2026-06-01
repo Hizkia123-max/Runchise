@@ -308,6 +308,47 @@
                     </table>
                 </div>
             <?php endif; ?>
+        <!-- Recent Sales Transactions Panel -->
+        <div class="section-title">📊 Recent Sales Transactions</div>
+        <div class="glass-panel">
+            <?php if (empty($recentTransactions)): ?>
+                <div class="text-center py-4 text-muted" style="font-size: 0.95rem;">
+                    💸 No transactions recorded yet. Open the POS Terminal to make a sale!
+                </div>
+            <?php else: ?>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Invoice Number</th>
+                                <th>Payment Method</th>
+                                <th class="text-center">Subtotal</th>
+                                <th class="text-center">PPN Tax</th>
+                                <th class="text-center">Grand Total</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-center">Date & Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($recentTransactions as $tx): ?>
+                                <tr>
+                                    <td style="font-family: monospace; font-weight: bold; color: var(--primary);"><?= esc($tx['invoice_number']) ?></td>
+                                    <td>
+                                        <span class="badge bg-secondary"><?= esc($tx['payment_method']) ?></span>
+                                    </td>
+                                    <td class="text-center">Rp <?= number_format($tx['subtotal']) ?></td>
+                                    <td class="text-center text-muted">Rp <?= number_format($tx['tax_amount']) ?></td>
+                                    <td class="text-center" style="font-weight: bold; color: #2dd4bf;">Rp <?= number_format($tx['total']) ?></td>
+                                    <td class="text-center">
+                                        <span class="badge bg-success" style="background-color: rgba(16, 185, 129, 0.2) !important; color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3);"><?= esc($tx['payment_status']) ?></span>
+                                    </td>
+                                    <td class="text-center" style="font-size:0.85rem; color:var(--text-muted);"><?= esc($tx['created_at']) ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 

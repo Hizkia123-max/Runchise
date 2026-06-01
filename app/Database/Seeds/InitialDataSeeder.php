@@ -46,13 +46,26 @@ class InitialDataSeeder extends Seeder
         ]);
         $branchId = $this->db->insertID();
 
+        // Seed default categories
+        $categories = ['Food & Beverage', 'Retail', 'Electronics', 'Fashion', 'Services'];
+        $categoryIds = [];
+        foreach ($categories as $cat) {
+            $this->db->table('categories')->insert([
+                'tenant_id'  => $tenantId,
+                'name'       => $cat,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ]);
+            $categoryIds[$cat] = $this->db->insertID();
+        }
+
         // Seed sample products
         $products = [
-            ['sku' => 'PROD-001', 'name' => 'Wireless Mouse',       'price' => 150000, 'cost' => 80000,  'reorder_point' => 5],
-            ['sku' => 'PROD-002', 'name' => 'USB-C Cable 2m',       'price' => 45000,  'cost' => 20000,  'reorder_point' => 10],
-            ['sku' => 'PROD-003', 'name' => 'Mechanical Keyboard',  'price' => 450000, 'cost' => 250000, 'reorder_point' => 3],
-            ['sku' => 'PROD-004', 'name' => 'LED Monitor 24"',      'price' => 1800000,'cost' => 1200000,'reorder_point' => 2],
-            ['sku' => 'PROD-005', 'name' => 'HDMI Cable 3m',        'price' => 85000,  'cost' => 40000,  'reorder_point' => 8],
+            ['sku' => 'PROD-001', 'name' => 'Wireless Mouse',       'price' => 150000, 'cost' => 80000,  'reorder_point' => 5,  'category_id' => $categoryIds['Electronics']],
+            ['sku' => 'PROD-002', 'name' => 'USB-C Cable 2m',       'price' => 45000,  'cost' => 20000,  'reorder_point' => 10, 'category_id' => $categoryIds['Electronics']],
+            ['sku' => 'PROD-003', 'name' => 'Mechanical Keyboard',  'price' => 450000, 'cost' => 250000, 'reorder_point' => 3,  'category_id' => $categoryIds['Electronics']],
+            ['sku' => 'PROD-004', 'name' => 'LED Monitor 24"',      'price' => 1800000,'cost' => 1200000,'reorder_point' => 2,  'category_id' => $categoryIds['Electronics']],
+            ['sku' => 'PROD-005', 'name' => 'HDMI Cable 3m',        'price' => 85000,  'cost' => 40000,  'reorder_point' => 8,  'category_id' => $categoryIds['Electronics']],
         ];
 
         foreach ($products as $product) {

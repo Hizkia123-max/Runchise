@@ -48,13 +48,24 @@ class Home extends BaseController
                 ->getResultArray();
         }
 
+        // 4. Recent sales transactions list
+        $recentTransactions = [];
+        if ($db->tableExists('transactions')) {
+            $recentTransactions = $db->table('transactions')
+                ->orderBy('created_at', 'DESC')
+                ->limit(5)
+                ->get()
+                ->getResultArray();
+        }
+
         $data = [
-            'totalProducts'  => $totalProducts,
-            'lowStockCount'  => $lowStockCount,
-            'activeSessions' => $activeSessions,
-            'lowStockItems'  => $lowStockItems,
-            'userName'       => session()->get('user_name') ?? 'Admin Runchise',
-            'userRole'       => session()->get('user_role') ?? 'TenantOwner',
+            'totalProducts'      => $totalProducts,
+            'lowStockCount'      => $lowStockCount,
+            'activeSessions'     => $activeSessions,
+            'lowStockItems'      => $lowStockItems,
+            'recentTransactions' => $recentTransactions,
+            'userName'           => session()->get('user_name') ?? 'Admin Runchise',
+            'userRole'           => session()->get('user_role') ?? 'TenantOwner',
         ];
 
         return view('dashboard', $data);

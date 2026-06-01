@@ -45,6 +45,19 @@ body{font-family:'Inter',sans-serif;background:var(--bg-dark);color:var(--text-p
             </div>
         </div>
         <div class="row">
+            <div class="col-md-12 mb-3">
+                <label class="form-label">Product Category *</label>
+                <select name="category_id" class="form-control" required style="background: rgba(15,23,42,0.7); color: var(--text-primary);">
+                    <option value="">-- Select Product Category --</option>
+                    <?php if (!empty($categories)): ?>
+                        <?php foreach ($categories as $cat): ?>
+                            <option value="<?= $cat['id'] ?>" <?= (isset($product) && $product['category_id'] == $cat['id']) ? 'selected' : '' ?>><?= esc($cat['name']) ?></option>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </select>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-md-6 mb-3">
                 <label class="form-label">Barcode</label>
                 <input type="text" name="barcode" class="form-control" placeholder="Scan or enter barcode" value="<?= esc($product['barcode'] ?? '') ?>">
