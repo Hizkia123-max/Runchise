@@ -8,7 +8,9 @@ use CodeIgniter\Router\RouteCollection;
 $routes->group('inventory', ['namespace' => 'App\Modules\Inventory\Controllers', 'filter' => 'session'], function ($routes) {
     $routes->get('stock',       'InventoryController::stock');
     $routes->get('transfers',   'InventoryController::transfers');
+    $routes->post('transfers/apply', 'InventoryController::applyTransfer');
     $routes->get('opname',      'InventoryController::opname');
+    $routes->post('opname/apply', 'InventoryController::applyOpname');
     $routes->get('products',    'ProductController::index');
     $routes->get('products/new','ProductController::create');
     $routes->post('products',   'ProductController::store');
