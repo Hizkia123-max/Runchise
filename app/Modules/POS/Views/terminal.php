@@ -339,17 +339,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Add product to cart
-document.querySelectorAll('.product-card:not(.out-of-stock)').forEach(card => {
-    card.addEventListener('click', () => {
-        const id    = card.dataset.id;
-        const name  = card.dataset.name;
-        const price = parseFloat(card.dataset.price);
-        const existing = cart.find(i => i.id === id);
-        if (existing) { existing.qty++; }
-        else { cart.push({ id, name, price, qty: 1, discount: 0 }); }
-        renderCart();
-    });
+// Add product to cart (using event delegation for 100% reliability and dynamic elements support)
+document.getElementById('productGrid').addEventListener('click', (e) => {
+    const card = e.target.closest('.product-card');
+    if (!card || card.classList.contains('out-of-stock')) return;
+    
+    const id    = card.dataset.id;
+    const name  = card.dataset.name;
+    const price = parseFloat(card.dataset.price);
+    const existing = cart.find(i => i.id === id);
+    if (existing) { 
+        existing.qty++; 
+    } else { 
+        cart.push({ id, name, price, qty: 1, discount: 0 }); 
+    }
+    renderCart();
 });
 
 // Payment method selection
