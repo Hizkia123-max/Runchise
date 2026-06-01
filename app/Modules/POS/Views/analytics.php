@@ -12,11 +12,11 @@
             --primary: #E2A794;
             --primary-dark: #c98570;
             --secondary: #4f46e5;
-            --bg-dark: #0f172a;
-            --bg-card: rgba(30, 41, 59, 0.7);
-            --border-light: rgba(148, 163, 184, 0.1);
-            --text-primary: #f1f5f9;
-            --text-muted: #94a3b8;
+            --bg-dark: #140f0e;
+            --bg-card: rgba(34, 26, 24, 0.85);
+            --border-light: rgba(226, 167, 148, 0.15);
+            --text-primary: #f5eae6;
+            --text-muted: #bdafa9;
             --success: #10b981;
             --danger: #ef4444;
         }
@@ -27,8 +27,8 @@
             color: var(--text-primary);
             min-height: 100vh;
             background-image:
-                radial-gradient(ellipse at 10% 20%, rgba(226, 167, 148, 0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at 90% 80%, rgba(79,70,229,0.08) 0%, transparent 50%);
+                radial-gradient(ellipse at 10% 20%, rgba(226, 167, 148, 0.18) 0%, transparent 50%),
+                radial-gradient(ellipse at 90% 80%, rgba(226, 167, 148, 0.1) 0%, transparent 50%);
         }
         .main-container {
             max-width: 1200px;

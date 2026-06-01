@@ -8,13 +8,13 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         :root {
-            --primary: #0d9488;
-            --primary-dark: #0f766e;
+            --primary: #E2A794;
+            --primary-dark: #c98570;
             --secondary: #4f46e5;
-            --bg-dark: #0f172a;
-            --bg-card: #1e293b;
-            --text-primary: #f1f5f9;
-            --text-muted: #94a3b8;
+            --bg-dark: #140f0e;
+            --bg-card: #221a18;
+            --text-primary: #f5eae6;
+            --text-muted: #bdafa9;
         }
         * { box-sizing: border-box; }
         body {
@@ -25,8 +25,8 @@
             align-items: center;
             justify-content: center;
             background-image:
-                radial-gradient(ellipse at 20% 50%, rgba(13,148,136,0.15) 0%, transparent 60%),
-                radial-gradient(ellipse at 80% 10%, rgba(79,70,229,0.15) 0%, transparent 60%);
+                radial-gradient(ellipse at 20% 50%, rgba(226, 167, 148, 0.18) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 10%, rgba(226, 167, 148, 0.1) 0%, transparent 60%);
         }
         .login-wrapper {
             width: 100%;
@@ -50,16 +50,16 @@
         }
         .brand p { color: var(--text-muted); font-size: 0.9rem; margin-top: 0.3rem; }
         .login-card {
-            background: rgba(30, 41, 59, 0.8);
-            border: 1px solid rgba(148, 163, 184, 0.1);
+            background: rgba(34, 26, 24, 0.85);
+            border: 1px solid rgba(226, 167, 148, 0.15);
             border-radius: 20px;
             padding: 2.5rem;
             backdrop-filter: blur(20px);
         }
         .form-label { color: var(--text-muted); font-size: 0.85rem; font-weight: 500; margin-bottom: 0.5rem; }
         .form-control {
-            background: rgba(15, 23, 42, 0.7);
-            border: 1px solid rgba(148, 163, 184, 0.15);
+            background: rgba(20, 15, 14, 0.7);
+            border: 1px solid rgba(226, 167, 148, 0.15);
             color: var(--text-primary);
             border-radius: 10px;
             padding: 0.75rem 1rem;
@@ -67,16 +67,16 @@
             transition: all 0.2s;
         }
         .form-control:focus {
-            background: rgba(15, 23, 42, 0.9);
+            background: rgba(20, 15, 14, 0.9);
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.2);
+            box-shadow: 0 0 0 3px rgba(226, 167, 148, 0.25);
             color: var(--text-primary);
         }
         .form-control::placeholder { color: rgba(148, 163, 184, 0.5); }
         .btn-login {
             width: 100%;
             padding: 0.85rem;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             border: none;
             border-radius: 12px;
             color: white;
@@ -88,7 +88,7 @@
         }
         .btn-login:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(13, 148, 136, 0.4);
+            box-shadow: 0 8px 25px rgba(226, 167, 148, 0.35);
         }
         .btn-login:active { transform: translateY(0); }
         .alert-error {

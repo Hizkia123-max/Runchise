@@ -3,11 +3,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-:root{--bg-dark:#0f172a;--bg-card:#1e293b;--text-primary:#f1f5f9;--text-muted:#94a3b8;--border:rgba(148,163,184,0.1);--primary:#E2A794;}
+:root{--bg-dark:#140f0e;--bg-card:#221a18;--text-primary:#f5eae6;--text-muted:#bdafa9;--border:rgba(226,167,148,0.15);--primary:#E2A794;}
 body{font-family:'Inter',sans-serif;background:var(--bg-dark);color:var(--text-primary);min-height:100vh;padding:2rem;}
 .card-nexapos{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;overflow:hidden;}
 .table{color:var(--text-primary);}
-.table th{background:rgba(15,23,42,0.5);color:var(--text-muted);font-size:0.8rem;text-transform:uppercase;border-bottom:1px solid var(--border);padding:0.75rem 1rem;}
+.table th{background:rgba(20,15,14,0.5);color:var(--text-muted);font-size:0.8rem;text-transform:uppercase;border-bottom:1px solid var(--border);padding:0.75rem 1rem;}
 .table td{border-bottom:1px solid var(--border);vertical-align:middle;padding:1rem;}
 .badge-open{background:rgba(16,185,129,0.2);color:#10b981;border-radius:20px;padding:0.25rem 0.75rem;font-size:0.75rem;}
 .badge-closed{background:rgba(148,163,184,0.1);color:var(--text-muted);border-radius:20px;padding:0.25rem 0.75rem;font-size:0.75rem;}

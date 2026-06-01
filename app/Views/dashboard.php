@@ -11,11 +11,11 @@
             --primary: #E2A794;
             --primary-dark: #c98570;
             --secondary: #4f46e5;
-            --bg-dark: #0f172a;
-            --bg-card: rgba(30, 41, 59, 0.7);
-            --border-light: rgba(148, 163, 184, 0.1);
-            --text-primary: #f1f5f9;
-            --text-muted: #94a3b8;
+            --bg-dark: #140f0e;
+            --bg-card: rgba(34, 26, 24, 0.85);
+            --border-light: rgba(226, 167, 148, 0.15);
+            --text-primary: #f5eae6;
+            --text-muted: #bdafa9;
         }
         * { box-sizing: border-box; }
         body {
@@ -24,13 +24,13 @@
             color: var(--text-primary);
             min-height: 100vh;
             background-image:
-                radial-gradient(ellipse at 10% 20%, rgba(226, 167, 148, 0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at 90% 80%, rgba(79,70,229,0.08) 0%, transparent 50%);
+                radial-gradient(ellipse at 10% 20%, rgba(226, 167, 148, 0.18) 0%, transparent 50%),
+                radial-gradient(ellipse at 90% 80%, rgba(226, 167, 148, 0.1) 0%, transparent 50%);
             padding-bottom: 3rem;
         }
         /* Top Navigation Navbar */
         .navbar-premium {
-            background: rgba(15, 23, 42, 0.8);
+            background: rgba(20, 15, 14, 0.8);
             backdrop-filter: blur(15px);
             border-bottom: 1px solid var(--border-light);
             padding: 1rem 2rem;
@@ -46,7 +46,7 @@
         }
         .navbar-logo {
             width: 40px; height: 40px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             border-radius: 10px;
             display: flex; align-items: center; justify-content: center;
             font-size: 1.25rem; font-weight: bold; color: white;
@@ -94,7 +94,7 @@
  
         /* Welcome Message Banner */
         .welcome-banner {
-            background: linear-gradient(135deg, rgba(226, 167, 148, 0.15), rgba(79, 70, 229, 0.1));
+            background: linear-gradient(135deg, rgba(226, 167, 148, 0.2), rgba(34, 26, 24, 0.85));
             border: 1px solid var(--border-light);
             border-radius: 16px;
             padding: 2rem;
@@ -103,7 +103,7 @@
         }
         .welcome-banner h2 { font-weight: 700; font-size: 1.75rem; margin-bottom: 0.5rem; }
         .welcome-banner p { color: var(--text-muted); margin: 0; font-size: 0.95rem; }
-
+ 
         /* KPI Card grid */
         .kpi-grid {
             display: grid;
@@ -124,8 +124,8 @@
         }
         .kpi-card:hover {
             transform: translateY(-3px);
-            border-color: rgba(148, 163, 184, 0.2);
-            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.3);
+            border-color: rgba(226, 167, 148, 0.3);
+            box-shadow: 0 10px 30px rgba(20, 15, 14, 0.5);
         }
         .kpi-icon {
             width: 48px; height: 48px;
@@ -133,9 +133,9 @@
             display: flex; align-items: center; justify-content: center;
             font-size: 1.5rem;
         }
-        .icon-products { background: rgba(13, 148, 136, 0.15); color: #2dd4bf; }
+        .icon-products { background: rgba(226, 167, 148, 0.2); color: #E2A794; }
         .icon-stock { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
-        .icon-sessions { background: rgba(79, 70, 229, 0.15); color: #818cf8; }
+        .icon-sessions { background: rgba(226, 167, 148, 0.2); color: #ffbe98; }
         .kpi-details h3 { font-size: 1.75rem; font-weight: 700; margin: 0 0 0.25rem 0; }
         .kpi-details p { font-size: 0.85rem; color: var(--text-muted); margin: 0; font-weight: 500; }
 
@@ -368,39 +368,39 @@
 <!-- Invoice Details Bootstrap Modal popup -->
 <div class="modal fade" id="invoiceDetailsModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" style="background: #1e293b; border: 1px solid rgba(148,163,184,0.15); color: #f1f5f9; border-radius: 16px; backdrop-filter: blur(15px); box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+        <div class="modal-content" style="background: #221a18; border: 1px solid rgba(226, 167, 148, 0.15); color: #f5eae6; border-radius: 16px; backdrop-filter: blur(15px); box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
             <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title" style="font-weight: 700; color: #2dd4bf;"><i class="bi bi-receipt"></i> Rincian Struk Pembayaran</h5>
+                <h5 class="modal-title" style="font-weight: 700; color: #E2A794;"><i class="bi bi-receipt"></i> Rincian Struk Pembayaran</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body py-4">
                 <div id="modalInvoiceLoader" class="text-center py-4">
-                    <div class="spinner-border text-teal" style="color: #0dbca6;" role="status"></div>
+                    <div class="spinner-border text-teal" style="color: #E2A794;" role="status"></div>
                     <div class="text-muted mt-2" style="font-size:0.85rem;">Memuat rincian struk belanja...</div>
                 </div>
                 <div id="modalInvoiceContent" style="display: none;">
                     <div class="text-center mb-4">
-                        <div style="font-size: 1.5rem; font-weight: 800; color: #f1f5f9; letter-spacing:-0.02em;">⚡ RUNCHISE</div>
+                        <div style="font-size: 1.5rem; font-weight: 800; color: #f5eae6; letter-spacing:-0.02em;">⚡ RUNCHISE</div>
                         <div class="text-muted" style="font-size:0.8rem;">Main Branch Store</div>
                         <hr style="border-top: 1px dashed rgba(255,255,255,0.15); margin: 0.75rem 0;">
-                        <div class="d-flex justify-content-between text-start px-2" style="font-size: 0.8rem; color: #94a3b8;">
-                            <div>Invoice: <strong id="invoiceReceiptNo" style="color: #f1f5f9;"></strong></div>
+                        <div class="d-flex justify-content-between text-start px-2" style="font-size: 0.8rem; color: #bdafa9;">
+                            <div>Invoice: <strong id="invoiceReceiptNo" style="color: #f5eae6;"></strong></div>
                             <div class="text-end" id="invoiceReceiptDate"></div>
                         </div>
                     </div>
                     
                     <!-- Items Purchased -->
                     <div class="px-2 mb-3">
-                        <table class="table table-sm table-borderless" style="font-size: 0.85rem; color: #f1f5f9 !important;">
+                        <table class="table table-sm table-borderless" style="font-size: 0.85rem; color: #f5eae6 !important;">
                             <thead>
-                                <tr style="border-bottom: 1px dashed rgba(255,255,255,0.15); color: #94a3b8 !important; font-size: 0.75rem; text-transform: uppercase;">
+                                <tr style="border-bottom: 1px dashed rgba(255,255,255,0.15); color: #bdafa9 !important; font-size: 0.75rem; text-transform: uppercase;">
                                     <th>Item</th>
                                     <th class="text-center">Qty</th>
                                     <th class="text-end">Harga</th>
                                     <th class="text-end">Total</th>
                                 </tr>
                             </thead>
-                            <tbody id="invoiceReceiptItems" style="color: #f1f5f9 !important;">
+                            <tbody id="invoiceReceiptItems" style="color: #f5eae6 !important;">
                                 <!-- Dynamically Rendered -->
                             </tbody>
                         </table>
@@ -411,18 +411,18 @@
                     <!-- Pricing Totals -->
                     <div class="px-2" style="font-size: 0.85rem;">
                         <div class="d-flex justify-content-between mb-1">
-                            <span style="color:#94a3b8;">Subtotal</span>
+                            <span style="color:#bdafa9;">Subtotal</span>
                             <span id="invoiceReceiptSubtotal"></span>
                         </div>
                         <div class="d-flex justify-content-between mb-1">
-                            <span style="color:#94a3b8;">Diskon</span>
+                            <span style="color:#bdafa9;">Diskon</span>
                             <span id="invoiceReceiptDiscount"></span>
                         </div>
                         <div class="d-flex justify-content-between mb-1">
-                            <span style="color:#94a3b8;">PPN (11%)</span>
+                            <span style="color:#bdafa9;">PPN (11%)</span>
                             <span id="invoiceReceiptTax"></span>
                         </div>
-                        <div class="d-flex justify-content-between font-weight-bold" style="font-size: 1.05rem; font-weight: 700; color: #2dd4bf; border-top: 1px solid rgba(255,255,255,0.1); padding-top:0.5rem; margin-top:0.5rem;">
+                        <div class="d-flex justify-content-between font-weight-bold" style="font-size: 1.05rem; font-weight: 700; color: #E2A794; border-top: 1px solid rgba(255,255,255,0.1); padding-top:0.5rem; margin-top:0.5rem;">
                             <span>Grand Total</span>
                             <span id="invoiceReceiptGrandTotal"></span>
                         </div>
@@ -430,7 +430,7 @@
                     
                     <hr style="border-top: 1px dashed rgba(255,255,255,0.15); margin: 1.25rem 0;">
                     
-                    <div class="text-center px-2" style="font-size: 0.8rem; color: #94a3b8;">
+                    <div class="text-center px-2" style="font-size: 0.8rem; color: #bdafa9;">
                         <div class="mb-2">Metode Pembayaran: <span class="badge" id="invoiceReceiptMethod" style="background-color: rgba(16, 185, 129, 0.2) !important; color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 0.3rem 0.6rem;"></span></div>
                         <div>Terima kasih atas kunjungan Anda di Runchise!</div>
                     </div>

@@ -4,12 +4,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-:root{--bg-dark:#0f172a;--bg-card:#1e293b;--text-primary:#f1f5f9;--text-muted:#94a3b8;--border:rgba(148,163,184,0.1);--primary:#E2A794;}
+:root{--bg-dark:#140f0e;--bg-card:#221a18;--text-primary:#f5eae6;--text-muted:#bdafa9;--border:rgba(226, 167, 148, 0.15);--primary:#E2A794;}
 body{font-family:'Inter',sans-serif;background:var(--bg-dark);color:var(--text-primary);min-height:100vh;}
 .card-nexapos{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:2rem;max-width:640px;}
 .form-label{color:var(--text-muted);font-size:0.85rem;font-weight:500;}
-.form-control{background:rgba(15,23,42,0.7);border:1px solid var(--border);color:var(--text-primary);border-radius:10px;}
-.form-control:focus{background:rgba(15,23,42,0.9);border-color:var(--primary);box-shadow:0 0 0 3px rgba(226,167,148,0.25);color:var(--text-primary);}
+.form-control{background:rgba(20,15,14,0.7);border:1px solid var(--border);color:var(--text-primary);border-radius:10px;}
+.form-control:focus{background:rgba(20,15,14,0.9);border-color:var(--primary);box-shadow:0 0 0 3px rgba(226,167,148,0.25);color:var(--text-primary);}
 .form-control::placeholder{color:rgba(148,163,184,0.5);}
 .btn-save{background:linear-gradient(135deg,#E2A794,#d97757);border:none;color:white;padding:0.65rem 2rem;border-radius:10px;font-weight:600;}
 .alert-error{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);border-radius:10px;color:#fca5a5;padding:0.75rem 1rem;margin-bottom:1.5rem;}
@@ -53,7 +53,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg-dark);color:var(--text-p
         <div class="row">
             <div class="col-md-12 mb-3">
                 <label class="form-label">Product Category *</label>
-                <select name="category_id" class="form-control" required style="background: rgba(15,23,42,0.7); color: var(--text-primary);">
+                <select name="category_id" class="form-control" required style="background: rgba(20,15,14,0.7); color: var(--text-primary);">
                     <option value="">-- Select Product Category --</option>
                     <?php if (!empty($categories)): ?>
                         <?php foreach ($categories as $cat): ?>
