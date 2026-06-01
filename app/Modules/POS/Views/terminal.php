@@ -10,10 +10,10 @@
     <style>
         :root {
             --primary: #E2A794; --primary-dark: #c98570;
-            --secondary: #4f46e5; --bg-dark: #140f0e;
-            --bg-card: #221a18; --bg-sidebar: #140f0e;
-            --text-primary: #f5eae6; --text-muted: #bdafa9;
-            --border: rgba(226,167,148,0.15);
+            --secondary: #4f46e5; --bg-dark: #FAF6F3;
+            --bg-card: #FFFFFF; --bg-sidebar: #FAF6F3;
+            --text-primary: #2C1E1A; --text-muted: #8A756E;
+            --border: rgba(226,167,148,0.25);
             --success: #10b981; --danger: #ef4444; --warning: #f59e0b;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -33,7 +33,7 @@
         .pos-header .brand { font-weight: 700; font-size: 1.1rem; color: var(--primary); }
         .pos-search { flex: 1; }
         .pos-search input {
-            width: 100%; background: rgba(20,15,14,0.8);
+            width: 100%; background: #ffffff;
             border: 1px solid var(--border); color: var(--text-primary);
             border-radius: 10px; padding: 0.6rem 1rem; font-size: 0.95rem;
         }
@@ -86,7 +86,7 @@
         .cart-items::-webkit-scrollbar { display: none; }
         .cart-item {
             display: flex; align-items: center; gap: 0.75rem;
-            padding: 0.75rem; border-radius: 12px; background: rgba(20,15,14,0.5);
+            padding: 0.75rem; border-radius: 12px; background: #faf5f2;
             margin-bottom: 0.5rem; border: 1px solid var(--border);
         }
         .cart-item-info { flex: 1; }
@@ -107,7 +107,7 @@
         .cart-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--border); }
         .cart-customer { margin-bottom: 1rem; }
         .cart-customer select {
-            width: 100%; background: rgba(20,15,14,0.8);
+            width: 100%; background: #ffffff;
             border: 1px solid var(--border); color: var(--text-primary);
             border-radius: 10px; padding: 0.5rem 0.75rem; font-size: 0.85rem;
         }

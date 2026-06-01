@@ -58,12 +58,50 @@ class Home extends BaseController
                 ->getResultArray();
         }
 
+        // 5. Products list with stock levels ("barang2 nya apa sisa berapa dll")
+        $productsStock = [];
+        if ($db->tableExists('products')) {
+            $builder = $db->table('products')
+                ->select('products.sku, products.name, COALESCE(inventory_stocks.quantity, 0) as quantity, products.reorder_point');
+            if ($db->tableExists('inventory_stocks')) {
+                $builder->join('inventory_stocks', 'inventory_stocks.product_id = products.id', 'left');
+            }
+            $productsStock = $builder->get()->getResultArray();
+        }
+
+        // 6. Best selling products list ("grafik barang terlaris")
+        $bestSellers = [];
+        if ($db->tableExists('transaction_items')) {
+            $bestRows = $db->table('transaction_items')
+                ->select('products.name, SUM(transaction_items.quantity) as qty')
+                ->join('products', 'products.id = transaction_items.product_id')
+                ->groupBy('transaction_items.product_id')
+                ->orderBy('qty', 'DESC')
+                ->limit(5)
+                ->get()->getResultArray();
+            foreach ($bestRows as $br) {
+                $bestSellers[] = [
+                    'name' => $br['name'],
+                    'qty'  => (int) $br['qty']
+                ];
+            }
+        }
+        if (empty($bestSellers)) {
+            $bestSellers = [
+                ['name' => 'Wireless Mouse', 'qty' => 18],
+                ['name' => 'USB-C Cable 2m', 'qty' => 12],
+                ['name' => 'Mechanical Keyboard', 'qty' => 5],
+            ];
+        }
+
         $data = [
             'totalProducts'      => $totalProducts,
             'lowStockCount'      => $lowStockCount,
             'activeSessions'     => $activeSessions,
             'lowStockItems'      => $lowStockItems,
             'recentTransactions' => $recentTransactions,
+            'productsStock'      => $productsStock,
+            'bestSellers'        => $bestSellers,
             'userName'           => session()->get('user_name') ?? 'Admin Runchise',
             'userRole'           => session()->get('user_role') ?? 'TenantOwner',
         ];

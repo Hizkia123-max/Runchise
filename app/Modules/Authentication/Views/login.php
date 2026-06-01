@@ -11,10 +11,10 @@
             --primary: #E2A794;
             --primary-dark: #c98570;
             --secondary: #4f46e5;
-            --bg-dark: #140f0e;
-            --bg-card: #221a18;
-            --text-primary: #f5eae6;
-            --text-muted: #bdafa9;
+            --bg-dark: #FAF6F3;
+            --bg-card: #FFFFFF;
+            --text-primary: #2C1E1A;
+            --text-muted: #8A756E;
         }
         * { box-sizing: border-box; }
         body {
@@ -25,8 +25,8 @@
             align-items: center;
             justify-content: center;
             background-image:
-                radial-gradient(ellipse at 20% 50%, rgba(226, 167, 148, 0.18) 0%, transparent 60%),
-                radial-gradient(ellipse at 80% 10%, rgba(226, 167, 148, 0.1) 0%, transparent 60%);
+                radial-gradient(ellipse at 20% 50%, rgba(226, 167, 148, 0.12) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 10%, rgba(226, 167, 148, 0.08) 0%, transparent 60%);
         }
         .login-wrapper {
             width: 100%;
@@ -50,16 +50,16 @@
         }
         .brand p { color: var(--text-muted); font-size: 0.9rem; margin-top: 0.3rem; }
         .login-card {
-            background: rgba(34, 26, 24, 0.85);
-            border: 1px solid rgba(226, 167, 148, 0.15);
+            background: #FFFFFF;
+            border: 1px solid rgba(226, 167, 148, 0.25);
             border-radius: 20px;
             padding: 2.5rem;
-            backdrop-filter: blur(20px);
+            box-shadow: 0 10px 40px rgba(226, 167, 148, 0.08);
         }
         .form-label { color: var(--text-muted); font-size: 0.85rem; font-weight: 500; margin-bottom: 0.5rem; }
         .form-control {
-            background: rgba(20, 15, 14, 0.7);
-            border: 1px solid rgba(226, 167, 148, 0.15);
+            background: #ffffff;
+            border: 1px solid rgba(226, 167, 148, 0.25);
             color: var(--text-primary);
             border-radius: 10px;
             padding: 0.75rem 1rem;
@@ -67,7 +67,7 @@
             transition: all 0.2s;
         }
         .form-control:focus {
-            background: rgba(20, 15, 14, 0.9);
+            background: #ffffff;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(226, 167, 148, 0.25);
             color: var(--text-primary);

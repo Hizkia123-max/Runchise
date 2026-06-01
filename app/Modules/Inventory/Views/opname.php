@@ -9,11 +9,11 @@
     <style>
         :root {
             --primary: #E2A794;
-            --bg-dark: #140f0e;
-            --bg-card: #221a18;
-            --text-primary: #f5eae6;
-            --text-muted: #bdafa9;
-            --border: rgba(226,167,148,0.15);
+            --bg-dark: #FAF6F3;
+            --bg-card: #FFFFFF;
+            --text-primary: #2C1E1A;
+            --text-muted: #8A756E;
+            --border: rgba(226,167,148,0.25);
         }
         body { font-family: 'Inter', sans-serif; background: var(--bg-dark); color: var(--text-primary); min-height: 100vh; }
         .card-nexapos { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; max-width: 640px; }

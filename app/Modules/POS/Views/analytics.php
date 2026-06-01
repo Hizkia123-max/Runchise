@@ -12,11 +12,11 @@
             --primary: #E2A794;
             --primary-dark: #c98570;
             --secondary: #4f46e5;
-            --bg-dark: #140f0e;
-            --bg-card: rgba(34, 26, 24, 0.85);
-            --border-light: rgba(226, 167, 148, 0.15);
-            --text-primary: #f5eae6;
-            --text-muted: #bdafa9;
+            --bg-dark: #FAF6F3;
+            --bg-card: #FFFFFF;
+            --border-light: rgba(226, 167, 148, 0.25);
+            --text-primary: #2C1E1A;
+            --text-muted: #8A756E;
             --success: #10b981;
             --danger: #ef4444;
         }
@@ -27,8 +27,8 @@
             color: var(--text-primary);
             min-height: 100vh;
             background-image:
-                radial-gradient(ellipse at 10% 20%, rgba(226, 167, 148, 0.18) 0%, transparent 50%),
-                radial-gradient(ellipse at 90% 80%, rgba(226, 167, 148, 0.1) 0%, transparent 50%);
+                radial-gradient(ellipse at 10% 20%, rgba(226, 167, 148, 0.12) 0%, transparent 60%),
+                radial-gradient(ellipse at 90% 80%, rgba(226, 167, 148, 0.08) 0%, transparent 60%);
         }
         .main-container {
             max-width: 1200px;
@@ -60,14 +60,16 @@
             border: 1px solid var(--border-light);
             border-radius: 14px;
             padding: 1.25rem;
-            backdrop-filter: blur(10px);
             display: flex;
             align-items: center;
             gap: 1rem;
             transition: transform 0.2s;
+            box-shadow: 0 4px 20px rgba(226, 167, 148, 0.06);
         }
         .metric-card:hover {
             transform: translateY(-2px);
+            border-color: rgba(226, 167, 148, 0.4);
+            box-shadow: 0 8px 25px rgba(226, 167, 148, 0.12);
         }
         .metric-icon {
             width: 44px; height: 44px;
@@ -75,11 +77,11 @@
             display: flex; align-items: center; justify-content: center;
             font-size: 1.25rem;
         }
-        .icon-revenue { background: rgba(16, 185, 129, 0.15); color: var(--success); }
-        .icon-cogs { background: rgba(79, 70, 229, 0.15); color: #818cf8; }
-        .icon-waste { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
-        .icon-profit { background: rgba(13, 148, 136, 0.15); color: #2dd4bf; }
-        .metric-details h4 { font-size: 1.35rem; font-weight: 700; margin: 0 0 0.15rem 0; }
+        .icon-revenue { background: rgba(16, 185, 129, 0.12); color: #059669; }
+        .icon-cogs { background: rgba(79, 70, 229, 0.12); color: #4f46e5; }
+        .icon-waste { background: rgba(239, 68, 68, 0.12); color: #dc2626; }
+        .icon-profit { background: rgba(226, 167, 148, 0.15); color: #b07765; }
+        .metric-details h4 { font-size: 1.35rem; font-weight: 700; margin: 0 0 0.15rem 0; color: var(--text-primary); }
         .metric-details p { font-size: 0.75rem; color: var(--text-muted); margin: 0; font-weight: 500; text-transform: uppercase; }
 
         /* P&L Statement */
@@ -88,11 +90,11 @@
             width: 100%;
         }
         .pl-table tr {
-            border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+            border-bottom: 1px solid rgba(226, 167, 148, 0.1);
         }
         .pl-table tr.total-row {
-            border-top: 1px solid rgba(148, 163, 184, 0.2);
-            border-bottom: 2px double rgba(148, 163, 184, 0.3);
+            border-top: 1px solid rgba(226, 167, 148, 0.3);
+            border-bottom: 2px double rgba(226, 167, 148, 0.4);
             font-weight: 700;
         }
         .pl-table td {
@@ -113,7 +115,7 @@
     <!-- Main Content Area -->
     <div class="flex-grow-1" style="overflow-x: hidden; padding-bottom: 3rem;">
         <!-- Header Navigation Bar -->
-        <header class="navbar-premium" style="background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(15px); border-bottom: 1px solid var(--border-light); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;">
+        <header class="navbar-premium" style="background: rgba(250, 246, 243, 0.8); backdrop-filter: blur(15px); border-bottom: 1px solid var(--border-light); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;">
             <div>
                 <h2 style="font-size: 1.15rem; font-weight: 700; margin: 0; color: var(--text-primary);">📈 Laporan Keuangan & Laba Rugi</h2>
             </div>
@@ -122,7 +124,7 @@
                     <div class="user-name" style="font-size: 0.9rem; font-weight: 600; color: var(--text-primary);"><?= esc($userName) ?></div>
                     <div class="user-role" style="font-size: 0.75rem; color: var(--text-muted);"><?= esc($userRole) ?></div>
                 </div>
-                <a href="/auth/logout" class="btn-logout-premium" style="padding: 0.5rem 1rem; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 8px; color: #fca5a5; font-size: 0.85rem; text-decoration: none;">Sign Out →</a>
+                <a href="/auth/logout" class="btn-logout-premium" style="padding: 0.5rem 1rem; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.15); border-radius: 8px; color: #d94646; font-size: 0.85rem; text-decoration: none; font-weight: 500; transition: all 0.2s;">Sign Out →</a>
             </div>
         </header>
 
@@ -205,7 +207,7 @@
                             <!-- Revenue -->
                             <tr>
                                 <td style="font-weight: 600;"><i class="bi bi-arrow-right-circle text-success me-1"></i> Pendapatan Operasional (Sales Revenue)</td>
-                                <td class="text-end" style="font-weight: 600; color: #E2A794;">Rp <?= number_format($totalRevenue) ?></td>
+                                <td class="text-end" style="font-weight: 600; color: #b07765;">Rp <?= number_format($totalRevenue) ?></td>
                             </tr>
                             
                             <!-- Cost of Goods Sold -->
@@ -215,7 +217,7 @@
                             </tr>
                             
                             <!-- Gross Profit -->
-                            <tr style="background: rgba(148,163,184,0.05); font-weight: 600;">
+                            <tr style="background: rgba(226, 167, 148, 0.05); font-weight: 600;">
                                 <td>Laba Kotor Operasional (Gross Profit)</td>
                                 <td class="text-end" style="color:var(--text-primary);">Rp <?= number_format($grossProfit) ?></td>
                             </tr>
@@ -223,13 +225,13 @@
                             <!-- Operational Expense - Waste Goods -->
                             <tr>
                                 <td class="pl-indent text-muted">Dikurangi: Kerugian Barang Rusak & Expired (Wasted Cost)</td>
-                                <td class="text-end" style="color: #fca5a5;">(Rp <?= number_format($totalWasteCost) ?>)</td>
+                                <td class="text-end" style="color: #d94646;">(Rp <?= number_format($totalWasteCost) ?>)</td>
                             </tr>
                             
                             <!-- Net Profit -->
                             <tr class="total-row" style="background: rgba(226, 167, 148, 0.15);">
-                                <td style="font-size: 1rem; color: #E2A794;"><i class="bi bi-cash-coin me-1"></i> Laba Bersih Toko (Net Income)</td>
-                                <td class="text-end" style="font-size: 1rem; color: #E2A794;">Rp <?= number_format($netProfit) ?></td>
+                                <td style="font-size: 1rem; color: #b07765;"><i class="bi bi-cash-coin me-1"></i> Laba Bersih Toko (Net Income)</td>
+                                <td class="text-end" style="font-size: 1rem; color: #b07765;">Rp <?= number_format($netProfit) ?></td>
                             </tr>
                         </tbody>
                     </table>
@@ -271,13 +273,13 @@
                 },
                 scales: {
                     x: {
-                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                        ticks: { color: '#94a3b8', font: { family: 'Inter', size: 10 } }
+                        grid: { color: 'rgba(226, 167, 148, 0.1)' },
+                        ticks: { color: '#8A756E', font: { family: 'Inter', size: 10 } }
                     },
                     y: {
-                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        grid: { color: 'rgba(226, 167, 148, 0.1)' },
                         ticks: {
-                            color: '#94a3b8',
+                            color: '#8A756E',
                             font: { family: 'Inter', size: 10 },
                             callback: function(val) {
                                 return 'Rp ' + (val >= 1000000 ? (val/1000000).toFixed(1) + 'M' : (val/1000).toFixed(0) + 'k');
@@ -299,8 +301,8 @@
                 datasets: [{
                     label: 'Unit Terjual',
                     data: favorites.map(f => f.qty),
-                    backgroundColor: 'rgba(79, 70, 229, 0.75)',
-                    hoverBackgroundColor: '#4f46e5',
+                    backgroundColor: 'rgba(226, 167, 148, 0.75)',
+                    hoverBackgroundColor: '#E2A794',
                     borderWidth: 0,
                     borderRadius: 6
                 }]
@@ -315,11 +317,11 @@
                 scales: {
                     x: {
                         grid: { display: false },
-                        ticks: { color: '#94a3b8', font: { family: 'Inter', size: 10 } }
+                        ticks: { color: '#8A756E', font: { family: 'Inter', size: 10 } }
                     },
                     y: {
                         grid: { display: false },
-                        ticks: { color: '#f1f5f9', font: { family: 'Inter', size: 10 } }
+                        ticks: { color: '#2C1E1A', font: { family: 'Inter', size: 10 } }
                     }
                 }
             }

@@ -6,16 +6,17 @@
     <title>Runchise — Overview Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --primary: #E2A794;
             --primary-dark: #c98570;
             --secondary: #4f46e5;
-            --bg-dark: #140f0e;
-            --bg-card: rgba(34, 26, 24, 0.85);
-            --border-light: rgba(226, 167, 148, 0.15);
-            --text-primary: #f5eae6;
-            --text-muted: #bdafa9;
+            --bg-dark: #FAF6F3;
+            --bg-card: #FFFFFF;
+            --border-light: rgba(226, 167, 148, 0.25);
+            --text-primary: #2C1E1A;
+            --text-muted: #8A756E;
         }
         * { box-sizing: border-box; }
         body {
@@ -24,13 +25,13 @@
             color: var(--text-primary);
             min-height: 100vh;
             background-image:
-                radial-gradient(ellipse at 10% 20%, rgba(226, 167, 148, 0.18) 0%, transparent 50%),
-                radial-gradient(ellipse at 90% 80%, rgba(226, 167, 148, 0.1) 0%, transparent 50%);
+                radial-gradient(ellipse at 10% 20%, rgba(226, 167, 148, 0.12) 0%, transparent 60%),
+                radial-gradient(ellipse at 90% 80%, rgba(226, 167, 148, 0.08) 0%, transparent 60%);
             padding-bottom: 3rem;
         }
         /* Top Navigation Navbar */
         .navbar-premium {
-            background: rgba(20, 15, 14, 0.8);
+            background: rgba(250, 246, 243, 0.8);
             backdrop-filter: blur(15px);
             border-bottom: 1px solid var(--border-light);
             padding: 1rem 2rem;
@@ -71,17 +72,18 @@
         }
         .btn-logout-premium {
             padding: 0.5rem 1rem;
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.2);
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.15);
             border-radius: 8px;
-            color: #fca5a5;
+            color: #d94646;
             font-size: 0.85rem; font-weight: 500;
             text-decoration: none;
             transition: all 0.2s;
         }
         .btn-logout-premium:hover {
-            background: rgba(239, 68, 68, 0.25);
-            border-color: rgba(239, 68, 68, 0.4);
+            background: rgba(239, 68, 68, 0.15);
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #b91c1c;
             transform: translateY(-1px);
         }
  
@@ -94,14 +96,15 @@
  
         /* Welcome Message Banner */
         .welcome-banner {
-            background: linear-gradient(135deg, rgba(226, 167, 148, 0.2), rgba(34, 26, 24, 0.85));
+            background: linear-gradient(135deg, rgba(226, 167, 148, 0.18), rgba(250, 246, 243, 0.95));
             border: 1px solid var(--border-light);
             border-radius: 16px;
             padding: 2rem;
             margin-bottom: 2.5rem;
             backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(226, 167, 148, 0.05);
         }
-        .welcome-banner h2 { font-weight: 700; font-size: 1.75rem; margin-bottom: 0.5rem; }
+        .welcome-banner h2 { font-weight: 700; font-size: 1.75rem; margin-bottom: 0.5rem; color: var(--text-primary); }
         .welcome-banner p { color: var(--text-muted); margin: 0; font-size: 0.95rem; }
  
         /* KPI Card grid */
@@ -116,16 +119,16 @@
             border: 1px solid var(--border-light);
             border-radius: 16px;
             padding: 1.5rem;
-            backdrop-filter: blur(10px);
             display: flex;
             align-items: center;
             gap: 1.25rem;
             transition: all 0.2s;
+            box-shadow: 0 4px 20px rgba(226, 167, 148, 0.06);
         }
         .kpi-card:hover {
             transform: translateY(-3px);
-            border-color: rgba(226, 167, 148, 0.3);
-            box-shadow: 0 10px 30px rgba(20, 15, 14, 0.5);
+            border-color: rgba(226, 167, 148, 0.4);
+            box-shadow: 0 10px 30px rgba(226, 167, 148, 0.15);
         }
         .kpi-icon {
             width: 48px; height: 48px;
@@ -133,10 +136,10 @@
             display: flex; align-items: center; justify-content: center;
             font-size: 1.5rem;
         }
-        .icon-products { background: rgba(226, 167, 148, 0.2); color: #E2A794; }
-        .icon-stock { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
-        .icon-sessions { background: rgba(226, 167, 148, 0.2); color: #ffbe98; }
-        .kpi-details h3 { font-size: 1.75rem; font-weight: 700; margin: 0 0 0.25rem 0; }
+        .icon-products { background: rgba(226, 167, 148, 0.15); color: #b07765; }
+        .icon-stock { background: rgba(245, 158, 11, 0.1); color: #d97706; }
+        .icon-sessions { background: rgba(226, 167, 148, 0.15); color: #b07765; }
+        .kpi-details h3 { font-size: 1.75rem; font-weight: 700; margin: 0 0 0.25rem 0; color: var(--text-primary); }
         .kpi-details p { font-size: 0.85rem; color: var(--text-muted); margin: 0; font-weight: 500; }
 
         /* Quick Action Panels */
@@ -155,21 +158,21 @@
             border: 1px solid var(--border-light);
             border-radius: 14px;
             padding: 1.25rem;
-            backdrop-filter: blur(10px);
             text-decoration: none;
             color: var(--text-primary);
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
             transition: all 0.2s;
+            box-shadow: 0 4px 20px rgba(226, 167, 148, 0.05);
         }
         .action-card:hover {
             transform: translateY(-2px);
             border-color: var(--primary);
-            box-shadow: 0 8px 20px rgba(13, 148, 136, 0.15);
+            box-shadow: 0 8px 25px rgba(226, 167, 148, 0.12);
             color: var(--text-primary);
         }
-        .action-title { font-weight: 600; font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem; }
+        .action-title { font-weight: 600; font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem; color: var(--text-primary); }
         .action-desc { font-size: 0.8rem; color: var(--text-muted); margin: 0; line-height: 1.4; }
 
         /* Table Design */
@@ -178,27 +181,27 @@
             border: 1px solid var(--border-light);
             border-radius: 16px;
             padding: 1.5rem;
-            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(226, 167, 148, 0.06);
         }
         .table {
             color: var(--text-primary);
             margin: 0;
         }
         .table th {
-            border-bottom: 2px solid rgba(148, 163, 184, 0.15);
+            border-bottom: 2px solid rgba(226, 167, 148, 0.2);
             color: var(--text-muted);
             font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
             padding: 0.75rem 1rem;
         }
         .table td {
-            border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+            border-bottom: 1px solid rgba(226, 167, 148, 0.1);
             font-size: 0.9rem; padding: 1rem;
             vertical-align: middle;
         }
         .table tr:last-child td { border-bottom: none; }
         .badge-alert {
-            background: rgba(239, 68, 68, 0.15);
-            color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.3);
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2);
             border-radius: 6px; padding: 0.25rem 0.5rem; font-size: 0.75rem; font-weight: 600;
         }
     </style>
@@ -276,6 +279,62 @@
                     <div class="action-title">📦 Product Catalog</div>
                     <p class="action-desc">View registered SKU catalog products, configure sales prices, purchase costs, and SKU details.</p>
                 </a>
+            </div>
+
+            <!-- Top Selling & Stock Grid -->
+            <div class="row mb-4">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <div class="section-title">⭐ Best Selling Products (Popularity)</div>
+                    <div class="glass-panel" style="height: 380px; display: flex; flex-direction: column; justify-content: center;">
+                        <canvas id="bestSellersDashboardChart" style="max-height: 320px;"></canvas>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="section-title">📦 Product Stock Levels & Availability</div>
+                    <div class="glass-panel" style="height: 380px; overflow-y: auto;">
+                        <div class="mb-3 d-flex align-items-center">
+                            <input type="text" id="dashboardStockSearch" class="form-control form-control-sm" placeholder="🔍 Search product stock..." style="border-radius: 8px; border: 1px solid var(--border-light); font-size: 0.85rem; background: var(--bg-card); color: var(--text-primary);">
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle" id="dashboardStockTable">
+                                <thead>
+                                    <tr style="font-size: 0.75rem; color: var(--text-muted);">
+                                        <th>Product</th>
+                                        <th class="text-center">SKU</th>
+                                        <th class="text-center">Stock</th>
+                                        <th class="text-center">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php if (!empty($productsStock)): ?>
+                                        <?php foreach ($productsStock as $ps): ?>
+                                            <tr class="stock-row-item">
+                                                <td style="font-weight: 600; font-size: 0.85rem; color: var(--text-primary);"><?= esc($ps['name']) ?></td>
+                                                <td class="text-center"><code style="font-size: 0.75rem; color: var(--text-muted);"><?= esc($ps['sku']) ?></code></td>
+                                                <td class="text-center font-weight-bold" style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary);">
+                                                    <?= esc($ps['quantity']) ?>
+                                                </td>
+                                                <td class="text-center">
+                                                    <?php if ($ps['quantity'] <= 0): ?>
+                                                        <span class="badge" style="background-color: rgba(239, 68, 68, 0.1) !important; color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); font-size: 0.7rem; padding: 0.25rem 0.5rem;">Habis</span>
+                                                    <?php elseif ($ps['quantity'] < $ps['reorder_point']): ?>
+                                                        <span class="badge" style="background-color: rgba(245, 158, 11, 0.1) !important; color: #d97706; border: 1px solid rgba(245, 158, 11, 0.2); font-size: 0.7rem; padding: 0.25rem 0.5rem;">Tipis</span>
+                                                    <?php else: ?>
+                                                        <span class="badge" style="background-color: rgba(16, 185, 129, 0.1) !important; color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); font-size: 0.7rem; padding: 0.25rem 0.5rem;">Aman</span>
+                                                    <?php endif; ?>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    <?php else: ?>
+                                        <tr>
+                                            <td colspan="4" class="text-center py-4 text-muted">No products found.</td>
+                                        </tr>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Low Stock Alerts Panel -->
@@ -478,7 +537,7 @@
                         tbody.innerHTML = '';
                         tx.items.forEach(item => {
                             const tr = document.createElement('tr');
-                            tr.style.color = '#f1f5f9';
+                            tr.style.color = '#2C1E1A';
                             tr.innerHTML = `
                                 <td>${item.product_name || '📦 SKU Produk'}</td>
                                 <td class="text-center">${Math.round(item.quantity)}</td>
@@ -501,6 +560,70 @@
                 });
             });
         });
+
+        // Real-time Dashboard Stock Search Filter
+        const stockSearch = document.getElementById('dashboardStockSearch');
+        if (stockSearch) {
+            stockSearch.addEventListener('input', function(e) {
+                const query = e.target.value.toLowerCase();
+                const rows = document.querySelectorAll('#dashboardStockTable tbody tr.stock-row-item');
+                rows.forEach(row => {
+                    const name = row.cells[0].textContent.toLowerCase();
+                    const sku = row.cells[1].textContent.toLowerCase();
+                    if (name.includes(query) || sku.includes(query)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        }
+
+        // Best Sellers horizontal bar chart
+        const bestSellersCtx = document.getElementById('bestSellersDashboardChart');
+        if (bestSellersCtx) {
+            const bestSellersData = <?= json_encode($bestSellers) ?>;
+            new Chart(bestSellersCtx.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: bestSellersData.map(item => item.name),
+                    datasets: [{
+                        label: 'Qty Terjual',
+                        data: bestSellersData.map(item => item.qty),
+                        backgroundColor: 'rgba(226, 167, 148, 0.75)',
+                        borderColor: '#E2A794',
+                        borderWidth: 1.5,
+                        borderRadius: 8,
+                        barPercentage: 0.6
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#2C1E1A',
+                            titleColor: '#f5eae6',
+                            bodyColor: '#f5eae6',
+                            borderWidth: 1,
+                            borderColor: 'rgba(226, 167, 148, 0.3)'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(226, 167, 148, 0.1)' },
+                            ticks: { color: '#8A756E', font: { family: 'Inter', size: 10 } }
+                        },
+                        y: {
+                            grid: { display: false },
+                            ticks: { color: '#2C1E1A', font: { family: 'Inter', size: 11, weight: '500' } }
+                        }
+                    }
+                }
+            });
+        }
     });
 </script>
 </body>
