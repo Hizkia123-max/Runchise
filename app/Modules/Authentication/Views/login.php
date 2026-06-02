@@ -117,7 +117,7 @@
     </div>
 
     <div class="login-card">
-        <h4 style="color: #f1f5f9; font-weight: 600; margin-bottom: 1.5rem;">Sign In to Your Workspace</h4>
+        <h4 style="color: var(--text-primary); font-weight: 600; margin-bottom: 1.5rem; text-align: center;">Sign in to Runchise</h4>
 
         <?php if (session()->getFlashdata('error')): ?>
             <div class="alert-error">⚠ <?= esc(session()->getFlashdata('error')) ?></div>

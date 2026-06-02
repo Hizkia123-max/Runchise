@@ -34,5 +34,20 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www/html
 
+# Copy composer config files first to leverage Docker cache
+COPY composer.json composer.lock ./
+
+# Install dependencies (no-dev, no-scripts, no-autoloader first to speed up and cache downloads)
+RUN composer install --no-interaction --no-scripts --no-autoloader --no-dev
+
+# Copy the rest of the application
+COPY . .
+
+# Run composer dump-autoload to optimize the autoloader
+RUN composer install --no-interaction --optimize-autoloader --no-dev
+
+# Ensure write permissions for storage/writable directory
+RUN chown -R www-data:www-data /var/www/html/writable
+
 EXPOSE 9000
 CMD ["php-fpm"]
