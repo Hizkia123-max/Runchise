@@ -28,6 +28,8 @@ services:
       - database.default.password=root_secret
       - database.default.DBDriver=MySQLi
       - database.default.port=3306
+      - admin.email=admin@runchise.com
+      - admin.password=Admin@12345
     depends_on:
       - db
       - redis
