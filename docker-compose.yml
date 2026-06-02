@@ -21,15 +21,7 @@ services:
       - ./:/var/www/html
       - /var/www/html/vendor
     environment:
-      - CI_ENVIRONMENT=development
-      - database.default.hostname=db
-      - database.default.database=nexapos_db
-      - database.default.username=root
-      - database.default.password=root_secret
-      - database.default.DBDriver=MySQLi
-      - database.default.port=3306
-      - admin.email=Admin@runchise.com
-      - admin.password=Admin@runchise
+      - CI_ENVIRONMENT=production
     depends_on:
       - db
       - redis
