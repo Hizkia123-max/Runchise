@@ -20,6 +20,7 @@ services:
     volumes:
       - ./:/var/www/html
       - /var/www/html/vendor
+      - /var/www/html/writable
     environment:
       - CI_ENVIRONMENT=development
     depends_on:
