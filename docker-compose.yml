@@ -22,6 +22,12 @@ services:
       - /var/www/html/vendor
     environment:
       - CI_ENVIRONMENT=development
+      - database.default.hostname=db
+      - database.default.database=nexapos_db
+      - database.default.username=root
+      - database.default.password=root_secret
+      - database.default.DBDriver=MySQLi
+      - database.default.port=3306
     depends_on:
       - db
       - redis
