@@ -116,7 +116,9 @@ class InitialDataSeeder extends Seeder
             ]);
         }
 
-        echo "✅ Initial data seeded successfully!\n";
-        echo "   Login: " . $email . " / " . $password . "\n";
+        if (ENVIRONMENT !== 'testing') {
+            echo "✅ Initial data seeded successfully!\n";
+            echo "   Login: " . $email . " / " . $password . "\n";
+        }
     }
 }

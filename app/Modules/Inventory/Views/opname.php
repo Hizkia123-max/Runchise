@@ -184,6 +184,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 visibleCount++;
             } else {
                 row.style.display = 'none';
+                // Reset value of hidden inputs
+                const input = row.querySelector('.physical-input');
+                if (input) {
+                    input.value = '';
+                    const stockId = input.dataset.id;
+                    const varianceEl = document.getElementById(`variance-${stockId}`);
+                    if (varianceEl) {
+                        varianceEl.textContent = '0';
+                        varianceEl.style.color = 'var(--text-primary)';
+                    }
+                }
+                const reasonInput = row.querySelector('input[type="text"]');
+                if (reasonInput) {
+                    reasonInput.value = '';
+                }
             }
         });
     }
