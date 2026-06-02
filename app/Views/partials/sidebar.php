@@ -1,7 +1,7 @@
 <style>
     .runchise-sidebar {
-        width: 280px;
-        min-width: 280px;
+        width: 240px;
+        min-width: 240px;
         background-color: #E2A794;
         color: white;
         height: 100vh;
@@ -24,7 +24,7 @@
     }
     /* Top Outlet Header */
     .sidebar-outlet-header {
-        padding: 1.25rem 1.5rem;
+        padding: 1rem 1.25rem;
         border-bottom: 1px solid rgba(255, 255, 255, 0.18);
         display: flex;
         align-items: center;
@@ -36,22 +36,22 @@
         gap: 0.75rem;
     }
     .outlet-icon {
-        font-size: 1.75rem;
+        font-size: 1.5rem;
         color: white;
     }
     .outlet-name {
-        font-size: 0.95rem;
+        font-size: 0.85rem;
         font-weight: 700;
         line-height: 1.2;
     }
     .outlet-sub {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         color: rgba(255, 255, 255, 0.88);
         font-weight: 500;
     }
     .outlet-toggle-btn {
-        width: 32px;
-        height: 32px;
+        width: 28px;
+        height: 28px;
         border-radius: 50%;
         background: rgba(255, 255, 255, 0.15);
         display: flex;
@@ -69,7 +69,7 @@
     /* Navigation Items */
     .sidebar-menu {
         flex: 1;
-        padding: 1rem 0.75rem;
+        padding: 0.75rem 0.5rem;
         list-style: none;
         margin: 0;
     }
@@ -80,11 +80,11 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 0.75rem 1rem;
+        padding: 0.6rem 0.8rem;
         color: rgba(255, 255, 255, 0.95);
         text-decoration: none;
-        border-radius: 10px;
-        font-size: 0.9rem;
+        border-radius: 8px;
+        font-size: 0.82rem;
         font-weight: 600;
         transition: all 0.2s;
         border: none;
@@ -104,26 +104,26 @@
     .menu-link-content {
         display: flex;
         align-items: center;
-        gap: 0.85rem;
+        gap: 0.65rem;
     }
     .menu-link i {
-        font-size: 1.15rem;
+        font-size: 1rem;
     }
 
     /* Submenu styling */
     .submenu-list {
         list-style: none;
-        padding-left: 2.85rem;
+        padding-left: 2.1rem;
         margin: 0.15rem 0 0.5rem 0;
     }
     .submenu-link {
         display: block;
-        padding: 0.45rem 1rem;
+        padding: 0.35rem 0.8rem;
         color: rgba(255, 255, 255, 0.88);
         text-decoration: none;
-        font-size: 0.85rem;
+        font-size: 0.78rem;
         font-weight: 500;
-        border-radius: 8px;
+        border-radius: 6px;
         transition: all 0.2s;
     }
     .submenu-link:hover, .submenu-link.active {
@@ -133,10 +133,10 @@
 
     /* Pending Cart Pulse Notification */
     .pending-cart-alert {
-        margin: 0.75rem 1rem 0.25rem 1rem;
+        margin: 0.5rem 0.75rem 0.2rem 0.75rem;
         background: linear-gradient(135deg, #ff9f00, #ff5e00);
-        border-radius: 12px;
-        padding: 0.75rem;
+        border-radius: 8px;
+        padding: 0.6rem;
         box-shadow: 0 4px 15px rgba(255, 94, 0, 0.4);
         display: none;
         animation: pulse-border 2s infinite;
@@ -175,9 +175,9 @@
         <a href="/pos/sessions" class="pending-cart-alert" id="pendingCartNotification">
             <div class="d-flex align-items-center gap-2">
                 <span class="spinner-grow spinner-grow-sm text-light" role="status"></span>
-                <span style="font-weight:700; font-size:0.8rem; letter-spacing:0.02em;" id="pendingCartCountText">⚡ Antrean Tertunda (0)</span>
+                <span style="font-weight:700; font-size:0.72rem; letter-spacing:0.02em;" id="pendingCartCountText">⚡ Antrean Tertunda (0)</span>
             </div>
-            <div style="font-size:0.75rem; color:rgba(255,255,255,0.9); margin-top:0.25rem;">Klik untuk mengelola transaksi tertunda.</div>
+            <div style="font-size:0.68rem; color:rgba(255,255,255,0.9); margin-top:0.25rem;">Klik untuk mengelola transaksi tertunda.</div>
         </a>
 
         <!-- Sidebar Navigation List -->
