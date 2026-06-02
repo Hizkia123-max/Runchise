@@ -23,6 +23,7 @@ services:
       - /var/www/html/writable
     environment:
       - CI_ENVIRONMENT=development
+    command: sh -c "chmod -R 777 /var/www/html/writable && php-fpm"
     depends_on:
       - db
       - redis
