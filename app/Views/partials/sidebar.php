@@ -243,12 +243,72 @@
         width: 100vw !important;
         max-width: 100vw !important;
     }
+
+    /* Mobile responsive overrides for sidebar sliding/swipe */
+    @media (max-width: 768px) {
+        .runchise-sidebar {
+            position: fixed !important;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            height: 100vh !important;
+            z-index: 1050 !important;
+            width: 240px !important;
+            min-width: 240px !important;
+            transform: translateX(0);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+
+        body.sidebar-collapsed .runchise-sidebar {
+            width: 240px !important;
+            min-width: 240px !important;
+            transform: translateX(-100%);
+            box-shadow: none;
+            overflow: visible !important; /* Allow drag handle/swiping to be responsive */
+        }
+
+        /* Overlay background when sidebar is active on mobile */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(2px);
+            z-index: 1040;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body:not(.sidebar-collapsed) .sidebar-overlay {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .sidebar-floating-toggle {
+            width: 36px;
+            height: 36px;
+            left: 10px;
+            top: 10px;
+        }
+
+        /* Adjust content and header styling for mobile collapsed state to avoid unnecessary wide paddings */
+        body.sidebar-collapsed .flex-grow-1 > :first-child,
+        body.sidebar-collapsed .pos-header {
+            padding-left: 3.5rem !important; /* Leave room for floating button on mobile */
+        }
+    }
 </style>
 
 <!-- Floating Toggle Button (Visible when sidebar is collapsed) -->
 <button class="sidebar-floating-toggle" id="sidebarFloatingToggle" onclick="toggleSidebar(event)">
     <i class="bi bi-list"></i>
 </button>
+
+<!-- Sidebar overlay backdrop for mobile viewports -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar(event)"></div>
 
 <div class="runchise-sidebar">
     <div>
@@ -457,6 +517,153 @@
 
         // Initialize on load
         window.refreshPendingCartWidget();
+
+        // Touch Swipe/Drag gesture implementation for mobile sidebar
+        const sidebar = document.querySelector('.runchise-sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        if (sidebar) {
+            let touchStartX = 0;
+            let touchStartY = 0;
+            let touchCurrentX = 0;
+            let isDragging = false;
+            let sidebarWidth = 240;
+            let initialTranslateX = 0;
+
+            // Detect if device supports touch
+            const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+            if (isTouchDevice) {
+                function getTranslateX() {
+                    const style = window.getComputedStyle(sidebar);
+                    const transform = style.transform;
+                    if (!transform || transform === 'none') {
+                        return document.body.classList.contains('sidebar-collapsed') ? -sidebarWidth : 0;
+                    }
+                    const DOMMatrixClass = window.DOMMatrix || window.WebKitCSSMatrix;
+                    if (DOMMatrixClass) {
+                        try {
+                            const matrix = new DOMMatrixClass(transform);
+                            return matrix.m41;
+                        } catch (e) {
+                            console.warn("Failed to parse transform matrix via DOMMatrix:", e);
+                        }
+                    }
+                    // Fallback string parsing
+                    try {
+                        const values = transform.split('(')[1].split(')')[0].split(',');
+                        return parseFloat(values[4] || 0);
+                    } catch (e) {
+                        return 0;
+                    }
+                }
+
+                document.addEventListener('touchstart', (e) => {
+                    if (window.innerWidth > 768) return;
+
+                    const touch = e.touches[0];
+                    touchStartX = touch.clientX;
+                    touchStartY = touch.clientY;
+                    const isCollapsed = document.body.classList.contains('sidebar-collapsed');
+
+                    if (isCollapsed) {
+                        // Start drag open if touch starts near left edge (< 40px)
+                        if (touchStartX < 40) {
+                            isDragging = true;
+                            initialTranslateX = -sidebarWidth;
+                            sidebar.style.transition = 'none';
+                            if (overlay) overlay.style.transition = 'none';
+                        }
+                    } else {
+                        // Start drag close if touch starts on sidebar or overlay
+                        const target = e.target;
+                        if (sidebar.contains(target) || (overlay && overlay.contains(target))) {
+                            isDragging = true;
+                            initialTranslateX = 0;
+                            sidebar.style.transition = 'none';
+                            if (overlay) overlay.style.transition = 'none';
+                        }
+                    }
+                }, { passive: true });
+
+                document.addEventListener('touchmove', (e) => {
+                    if (!isDragging) return;
+
+                    const touch = e.touches[0];
+                    touchCurrentX = touch.clientX;
+                    const deltaX = touchCurrentX - touchStartX;
+                    const deltaY = touch.clientY - touchStartY;
+
+                    // If scroll is mostly vertical, ignore to allow page scrolling
+                    if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaX) < 10) {
+                        return;
+                    }
+
+                    let newTranslateX = initialTranslateX + deltaX;
+                    // Clamp translateX between -sidebarWidth and 0
+                    newTranslateX = Math.max(-sidebarWidth, Math.min(0, newTranslateX));
+
+                    sidebar.style.transform = `translateX(${newTranslateX}px)`;
+                    
+                    if (overlay) {
+                        const progress = (newTranslateX + sidebarWidth) / sidebarWidth;
+                        overlay.style.opacity = progress;
+                        overlay.style.pointerEvents = progress > 0.1 ? 'auto' : 'none';
+                    }
+                }, { passive: false });
+
+                document.addEventListener('touchend', () => {
+                    if (!isDragging) return;
+                    isDragging = false;
+
+                    // Reset inline styles to fallback to CSS transition classes
+                    sidebar.style.transition = '';
+                    if (overlay) overlay.style.transition = '';
+
+                    const currentTranslate = getTranslateX();
+                    const isCollapsed = document.body.classList.contains('sidebar-collapsed');
+                    const threshold = -sidebarWidth / 2;
+
+                    if (isCollapsed) {
+                        // Dragged past threshold -> Open
+                        if (currentTranslate > threshold) {
+                            document.body.classList.remove('sidebar-collapsed');
+                            localStorage.setItem('sidebar_collapsed', 'false');
+                            sidebar.style.transform = '';
+                            if (overlay) {
+                                overlay.style.opacity = '';
+                                overlay.style.pointerEvents = '';
+                            }
+                        } else {
+                            // Cancel open
+                            document.body.classList.add('sidebar-collapsed');
+                            sidebar.style.transform = '';
+                            if (overlay) {
+                                overlay.style.opacity = '';
+                                overlay.style.pointerEvents = '';
+                            }
+                        }
+                    } else {
+                        // Dragged past threshold -> Close
+                        if (currentTranslate < threshold) {
+                            document.body.classList.add('sidebar-collapsed');
+                            localStorage.setItem('sidebar_collapsed', 'true');
+                            sidebar.style.transform = '';
+                            if (overlay) {
+                                overlay.style.opacity = '';
+                                overlay.style.pointerEvents = '';
+                            }
+                        } else {
+                            // Cancel close (stay open)
+                            document.body.classList.remove('sidebar-collapsed');
+                            sidebar.style.transform = '';
+                            if (overlay) {
+                                overlay.style.opacity = '';
+                                overlay.style.pointerEvents = '';
+                            }
+                        }
+                    }
+                }, { passive: true });
+            }
+        }
     });
 
     // Sidebar Toggle Function
