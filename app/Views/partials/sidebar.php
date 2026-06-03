@@ -1,7 +1,20 @@
+<script>
+    // Apply sidebar state immediately to prevent layout shift/flash
+    (function() {
+        const collapsed = localStorage.getItem('sidebar_collapsed') === 'true';
+        if (collapsed) {
+            document.body.classList.add('sidebar-collapsed');
+        }
+    })();
+</script>
+
 <style>
     .runchise-sidebar {
         width: 240px;
         min-width: 240px;
+        transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                    min-width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         background-color: #E2A794;
         color: white;
         height: 100vh;
@@ -153,7 +166,89 @@
         70% { box-shadow: 0 0 0 10px rgba(255, 159, 0, 0); }
         100% { box-shadow: 0 0 0 0 rgba(255, 159, 0, 0); }
     }
+
+    /* Reset body padding to ensure sidebar is flush with screen edges */
+    body {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* Ensure the inner wrapper remains at 240px to prevent text wrapping */
+    .runchise-sidebar > div {
+        width: 240px;
+        min-width: 240px;
+        flex-shrink: 0;
+    }
+
+    /* Collapsed state: completely slide off-screen */
+    body.sidebar-collapsed .runchise-sidebar {
+        width: 0 !important;
+        min-width: 0 !important;
+        overflow: hidden !important;
+        /* box-shadow: none; */
+    }
+
+    /* Floating Toggle Button styling */
+    .sidebar-floating-toggle {
+        position: fixed;
+        left: 15px;
+        top: 15px;
+        z-index: 1050;
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: #E2A794;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(226, 167, 148, 0.35);
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        opacity: 0;
+        pointer-events: none;
+        transform: scale(0.8);
+    }
+    .sidebar-floating-toggle:hover {
+        background: #c98570;
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba(226, 167, 148, 0.45);
+    }
+    body.sidebar-collapsed .sidebar-floating-toggle {
+        opacity: 1;
+        pointer-events: auto;
+        transform: scale(1);
+    }
+
+    /* Transition for headers/nav to slide smoothly when sidebar collapses/expands */
+    .flex-grow-1 > :first-child,
+    .pos-header {
+        transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    /* Header shifts to prevent overlap with floating toggle button */
+    body.sidebar-collapsed .flex-grow-1 > :first-child {
+        padding-left: 4.5rem !important;
+    }
+    body.sidebar-collapsed .pos-header {
+        padding-left: 4.5rem !important;
+    }
+
+    /* Ensure POS layout takes full screen width when sidebar is collapsed */
+    .pos-layout {
+        transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+    body.sidebar-collapsed .pos-layout {
+        width: 100vw !important;
+        max-width: 100vw !important;
+    }
 </style>
+
+<!-- Floating Toggle Button (Visible when sidebar is collapsed) -->
+<button class="sidebar-floating-toggle" id="sidebarFloatingToggle" onclick="toggleSidebar(event)">
+    <i class="bi bi-list"></i>
+</button>
 
 <div class="runchise-sidebar">
     <div>
@@ -166,8 +261,8 @@
                     <div class="outlet-sub">Semua Outlet</div>
                 </div>
             </div>
-            <button class="outlet-toggle-btn" onclick="location.href='/dashboard'">
-                <i class="bi bi-list-nested"></i>
+            <button class="outlet-toggle-btn" id="sidebarCollapseBtn" onclick="toggleSidebar(event)">
+                <i class="bi bi-list"></i>
             </button>
         </div>
 
@@ -363,4 +458,14 @@
         // Initialize on load
         window.refreshPendingCartWidget();
     });
+
+    // Sidebar Toggle Function
+    function toggleSidebar(e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        const isCollapsed = document.body.classList.toggle('sidebar-collapsed');
+        localStorage.setItem('sidebar_collapsed', isCollapsed ? 'true' : 'false');
+    }
 </script>
