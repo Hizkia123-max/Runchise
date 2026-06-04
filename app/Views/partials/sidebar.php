@@ -174,18 +174,111 @@
     }
 
     /* Ensure the inner wrapper remains at 240px to prevent text wrapping */
-    .runchise-sidebar > div {
+    .runchise-sidebar .sidebar-main-content {
         width: 240px;
         min-width: 240px;
         flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    /* Collapsed state: completely slide off-screen */
-    body.sidebar-collapsed .runchise-sidebar {
-        width: 0 !important;
-        min-width: 0 !important;
-        overflow: hidden !important;
-        /* box-shadow: none; */
+    /* Collapsed Brand Button */
+    .sidebar-brand-collapsed {
+        display: none;
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.15));
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1.25rem;
+        color: white;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        margin: 1rem auto 0.5rem auto;
+        border: 2px solid rgba(255, 255, 255, 0.25);
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .sidebar-brand-collapsed:hover {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.15));
+        transform: scale(1.05);
+        box-shadow: 0 6px 15px rgba(255, 255, 255, 0.15);
+    }
+
+    /* Sidebar Footer user info card */
+    .sidebar-footer {
+        padding: 1rem 1.25rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.18);
+        display: flex;
+        align-items: center;
+        margin-top: auto;
+        transition: padding 0.3s, justify-content 0.3s;
+    }
+    .user-avatar-circle {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgba(255,255,255,0.35), rgba(255,255,255,0.15));
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.95rem;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+        border: 2px solid rgba(255,255,255,0.4);
+        flex-shrink: 0;
+    }
+    .user-info-text {
+        display: flex;
+        flex-direction: column;
+        margin-left: 0.75rem;
+    }
+    .user-name-label {
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: white;
+        line-height: 1.2;
+    }
+    .user-role-label {
+        font-size: 0.68rem;
+        color: rgba(255,255,255,0.85);
+        font-weight: 500;
+        margin-top: 2px;
+    }
+
+    /* Collapsed Pending Cart Widget */
+    .pending-cart-collapsed-alert {
+        display: none;
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #ff9f00, #ff5e00);
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.15rem;
+        margin: 0.5rem auto;
+        position: relative;
+        box-shadow: 0 4px 12px rgba(255, 94, 0, 0.4);
+        animation: pulse-border 2s infinite;
+        text-decoration: none;
+    }
+    .pending-cart-collapsed-badge {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        background: #ef4444;
+        color: white;
+        font-size: 0.65rem;
+        font-weight: 800;
+        padding: 2px 6px;
+        border-radius: 10px;
+        border: 2px solid #E2A794; /* matches sidebar background color */
+        line-height: 1;
     }
 
     /* Floating Toggle Button styling */
@@ -215,11 +308,6 @@
         transform: scale(1.05);
         box-shadow: 0 6px 20px rgba(226, 167, 148, 0.45);
     }
-    body.sidebar-collapsed .sidebar-floating-toggle {
-        opacity: 1;
-        pointer-events: auto;
-        transform: scale(1);
-    }
 
     /* Transition for headers/nav to slide smoothly when sidebar collapses/expands */
     .flex-grow-1 > :first-child,
@@ -227,21 +315,130 @@
         transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
 
-    /* Header shifts to prevent overlap with floating toggle button */
-    body.sidebar-collapsed .flex-grow-1 > :first-child {
-        padding-left: 4.5rem !important;
-    }
-    body.sidebar-collapsed .pos-header {
-        padding-left: 4.5rem !important;
-    }
-
-    /* Ensure POS layout takes full screen width when sidebar is collapsed */
+    /* Ensure POS layout takes proper width when sidebar is collapsed */
     .pos-layout {
         transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
-    body.sidebar-collapsed .pos-layout {
-        width: 100vw !important;
-        max-width: 100vw !important;
+
+    /* Desktop collapsible overrides */
+    @media (min-width: 769px) {
+        /* Collapsed state: narrow sidebar showing only icons */
+        body.sidebar-collapsed .runchise-sidebar {
+            width: 70px !important;
+            min-width: 70px !important;
+            overflow: visible !important;
+        }
+        body.sidebar-collapsed .runchise-sidebar .sidebar-main-content {
+            width: 70px !important;
+            min-width: 70px !important;
+        }
+        
+        /* Show brand and pending cart collapsed versions */
+        body.sidebar-collapsed .sidebar-brand-collapsed {
+            display: flex;
+        }
+        body.sidebar-collapsed .pending-cart-collapsed-alert {
+            display: flex;
+        }
+        
+        /* Hide normal elements when collapsed */
+        body.sidebar-collapsed .sidebar-outlet-header,
+        body.sidebar-collapsed .pending-cart-alert,
+        body.sidebar-collapsed .menu-link span,
+        body.sidebar-collapsed .menu-link .bi-chevron-down,
+        body.sidebar-collapsed .submenu-list,
+        body.sidebar-collapsed .collapse {
+            display: none !important;
+        }
+
+        /* Center footer details when collapsed */
+        body.sidebar-collapsed .sidebar-footer {
+            padding: 1rem 0;
+            justify-content: center;
+        }
+        body.sidebar-collapsed .user-info-text {
+            display: none !important;
+        }
+
+        /* Centered compact menu links */
+        body.sidebar-collapsed .menu-link {
+            width: 44px;
+            height: 44px;
+            padding: 0 !important;
+            margin: 0.5rem auto !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+        }
+        body.sidebar-collapsed .menu-link-content {
+            padding: 0 !important;
+            margin: 0 !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0 !important;
+        }
+        body.sidebar-collapsed .menu-link i {
+            font-size: 1.25rem !important;
+            margin: 0 !important;
+        }
+        body.sidebar-collapsed .menu-link.active {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.15)) !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border-left: none !important;
+        }
+
+        /* Overrides layout offset when collapsed on desktop */
+        body.sidebar-collapsed .pos-layout {
+            width: calc(100vw - 70px) !important;
+            max-width: calc(100vw - 70px) !important;
+        }
+
+        /* Tooltip styling for collapsed sidebar menu links */
+        body.sidebar-collapsed [data-tooltip] {
+            position: relative;
+        }
+        body.sidebar-collapsed [data-tooltip]::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            left: 80px;
+            top: 50%;
+            transform: translateY(-50%) scale(0.85);
+            background: #2C1E1A;
+            color: #f5eae6;
+            padding: 0.4rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 6px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 2000;
+        }
+        body.sidebar-collapsed [data-tooltip]::before {
+            content: '';
+            position: absolute;
+            left: 74px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-width: 5px;
+            border-style: solid;
+            border-color: transparent #2C1E1A transparent transparent;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 2000;
+        }
+        body.sidebar-collapsed [data-tooltip]:hover::after {
+            opacity: 1;
+            transform: translateY(-50%) scale(1);
+        }
+        body.sidebar-collapsed [data-tooltip]:hover::before {
+            opacity: 1;
+        }
     }
 
     /* Mobile responsive overrides for sidebar sliding/swipe */
@@ -293,11 +490,22 @@
             left: 10px;
             top: 10px;
         }
+        
+        body.sidebar-collapsed .sidebar-floating-toggle {
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1);
+        }
 
         /* Adjust content and header styling for mobile collapsed state to avoid unnecessary wide paddings */
         body.sidebar-collapsed .flex-grow-1 > :first-child,
         body.sidebar-collapsed .pos-header {
             padding-left: 3.5rem !important; /* Leave room for floating button on mobile */
+        }
+        
+        body.sidebar-collapsed .pos-layout {
+            width: 100vw !important;
+            max-width: 100vw !important;
         }
     }
 </style>
@@ -311,8 +519,8 @@
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar(event)"></div>
 
 <div class="runchise-sidebar">
-    <div>
-        <!-- Top Outlet Brand Header -->
+    <div class="sidebar-main-content">
+        <!-- Top Outlet Brand Header (Expanded) -->
         <div class="sidebar-outlet-header">
             <div class="outlet-info">
                 <i class="bi bi-shop outlet-icon"></i>
@@ -326,6 +534,11 @@
             </button>
         </div>
 
+        <!-- Collapsed Brand Logo Button (Click to toggle/expand) -->
+        <div class="sidebar-brand-collapsed" onclick="toggleSidebar(event)" data-tooltip="⚡ Runchise (Buka Menu)">
+            <span>S</span>
+        </div>
+
         <!-- Pending Cart Session Resume Notification Widget -->
         <a href="/pos/sessions" class="pending-cart-alert" id="pendingCartNotification">
             <div class="d-flex align-items-center gap-2">
@@ -335,13 +548,19 @@
             <div style="font-size:0.68rem; color:rgba(255,255,255,0.9); margin-top:0.25rem;">Klik untuk mengelola transaksi tertunda.</div>
         </a>
 
+        <!-- Collapsed Pending Cart Widget -->
+        <a href="/pos/sessions" class="pending-cart-collapsed-alert" id="pendingCartCollapsedNotification" data-tooltip="Antrean Tertunda (0)">
+            <i class="bi bi-lightning-charge-fill"></i>
+            <span class="pending-cart-collapsed-badge" id="pendingCartCollapsedCount">0</span>
+        </a>
+
         <!-- Sidebar Navigation List -->
         <ul class="sidebar-menu">
             <!-- Dashboard -->
             <li class="menu-item">
-                <a href="/dashboard" class="menu-link <?= (uri_string() === 'dashboard') ? 'active' : '' ?>">
+                <a href="/dashboard" class="menu-link <?= (uri_string() === 'dashboard') ? 'active' : '' ?>" data-tooltip="Dashboard Utama">
                     <div class="menu-link-content">
-                        <i class="bi bi-grid-fill"></i>
+                        <i class="bi bi-house-door-fill"></i>
                         <span>Dashboard Utama</span>
                     </div>
                 </a>
@@ -349,7 +568,7 @@
 
             <!-- POS & Kasir -->
             <li class="menu-item">
-                <button class="menu-link" data-bs-toggle="collapse" data-bs-target="#menu-kasir" aria-expanded="true">
+                <button class="menu-link" data-bs-toggle="collapse" data-bs-target="#menu-kasir" aria-expanded="true" data-tooltip="Kasir & Transaksi">
                     <div class="menu-link-content">
                         <i class="bi bi-pc-display-horizontal"></i>
                         <span>Kasir & Transaksi</span>
@@ -394,7 +613,7 @@
 
             <!-- Katalog -->
             <li class="menu-item">
-                <button class="menu-link" data-bs-toggle="collapse" data-bs-target="#menu-catalog" aria-expanded="true">
+                <button class="menu-link" data-bs-toggle="collapse" data-bs-target="#menu-catalog" aria-expanded="true" data-tooltip="Katalog Produk">
                     <div class="menu-link-content">
                         <i class="bi bi-box-seam-fill"></i>
                         <span>Katalog Produk</span>
@@ -414,7 +633,7 @@
 
             <!-- Stok -->
             <li class="menu-item">
-                <button class="menu-link" data-bs-toggle="collapse" data-bs-target="#menu-stok" aria-expanded="true">
+                <button class="menu-link" data-bs-toggle="collapse" data-bs-target="#menu-stok" aria-expanded="true" data-tooltip="Stok & Inventori">
                     <div class="menu-link-content">
                         <i class="bi bi-graph-up-arrow"></i>
                         <span>Stok & Inventori</span>
@@ -444,7 +663,7 @@
 
             <!-- Laporan Finansial -->
             <li class="menu-item">
-                <button class="menu-link" data-bs-toggle="collapse" data-bs-target="#menu-analytics" aria-expanded="true">
+                <button class="menu-link" data-bs-toggle="collapse" data-bs-target="#menu-analytics" aria-expanded="true" data-tooltip="Laporan Finansial">
                     <div class="menu-link-content">
                         <i class="bi bi-journal-check"></i>
                         <span>Laporan Finansial</span>
@@ -463,6 +682,22 @@
             </li>
         </ul>
     </div>
+
+    <!-- Sidebar Footer (User details) -->
+    <?php
+    $sessName = session()->get('user_name') ?? 'Admin Runchise';
+    $sessRole = session()->get('user_role') ?? 'TenantOwner';
+    $firstLetter = esc(substr($sessName, 0, 1));
+    ?>
+    <div class="sidebar-footer" data-tooltip="<?= esc($sessName) ?> (<?= esc($sessRole) ?>)">
+        <div class="user-avatar-circle">
+            <?= $firstLetter ?>
+        </div>
+        <div class="user-info-text">
+            <div class="user-name-label"><?= esc($sessName) ?></div>
+            <div class="user-role-label"><?= esc($sessRole) ?></div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -471,6 +706,8 @@
             try {
                 const notifyEl = document.getElementById('pendingCartNotification');
                 const textEl = document.getElementById('pendingCartCountText');
+                const collapsedNotifyEl = document.getElementById('pendingCartCollapsedNotification');
+                const collapsedCountEl = document.getElementById('pendingCartCollapsedCount');
                 
                 // Migrate legacy single pending cart to runchise_pending_carts array if present
                 const singleCart = localStorage.getItem('runchise_pending_cart');
@@ -502,10 +739,25 @@
                     if (textEl) {
                         textEl.textContent = `⚡ Antrean Tertunda (${pendingCarts.length})`;
                     }
+                    if (collapsedCountEl) {
+                        collapsedCountEl.textContent = pendingCarts.length;
+                    }
+                    if (collapsedNotifyEl) {
+                        collapsedNotifyEl.setAttribute('data-tooltip', `Antrean Tertunda (${pendingCarts.length})`);
+                    }
                     if (notifyEl) {
                         notifyEl.style.display = 'block';
                     }
                 } else {
+                    if (textEl) {
+                        textEl.textContent = `⚡ Antrean Tertunda (0)`;
+                    }
+                    if (collapsedCountEl) {
+                        collapsedCountEl.textContent = '0';
+                    }
+                    if (collapsedNotifyEl) {
+                        collapsedNotifyEl.setAttribute('data-tooltip', `Antrean Tertunda (0)`);
+                    }
                     if (notifyEl) {
                         notifyEl.style.display = 'none';
                     }
@@ -517,6 +769,33 @@
 
         // Initialize on load
         window.refreshPendingCartWidget();
+
+        // Expand sidebar when clicking menu links that have collapse triggers if currently collapsed
+        document.querySelectorAll('.menu-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                const isCollapsed = document.body.classList.contains('sidebar-collapsed');
+                if (isCollapsed) {
+                    // If it's a dropdown trigger, prevent expanding/collapsing dropdown while sidebar is collapsed
+                    if (link.hasAttribute('data-bs-toggle')) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+                    // Expand the sidebar
+                    document.body.classList.remove('sidebar-collapsed');
+                    localStorage.setItem('sidebar_collapsed', 'false');
+                    
+                    // Trigger bootstrap collapse to show if it was clicked
+                    const targetId = link.getAttribute('data-bs-target');
+                    if (targetId) {
+                        const targetEl = document.querySelector(targetId);
+                        if (targetEl && typeof bootstrap !== 'undefined') {
+                            const bsCollapse = bootstrap.Collapse.getInstance(targetEl) || new bootstrap.Collapse(targetEl);
+                            bsCollapse.show();
+                        }
+                    }
+                }
+            });
+        });
 
         // Touch Swipe/Drag gesture implementation for mobile sidebar
         const sidebar = document.querySelector('.runchise-sidebar');
