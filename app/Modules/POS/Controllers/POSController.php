@@ -245,4 +245,245 @@ class POSController extends BaseController
 
         return view('App\Modules\POS\Views\analytics', $data);
     }
+
+    public function returns()
+    {
+        $db = \Config\Database::connect();
+        $tenantId = service('tenant')->getId();
+        
+        // Fetch all transactions for this tenant
+        $transactions = [];
+        if ($db->tableExists('transactions')) {
+            $transactions = $db->table('transactions')
+                ->select('transactions.*, pos_sessions.status as session_status')
+                ->join('pos_sessions', 'pos_sessions.id = transactions.pos_session_id', 'left')
+                ->where('transactions.tenant_id', $tenantId)
+                ->orderBy('transactions.created_at', 'DESC')
+                ->get()
+                ->getResultArray();
+                
+            // For each transaction, get its items and the already returned quantities
+            foreach ($transactions as &$tx) {
+                $tx['items'] = $db->table('transaction_items')
+                    ->select('transaction_items.*, products.name as product_name, products.sku')
+                    ->join('products', 'products.id = transaction_items.product_id', 'left')
+                    ->where('transaction_items.transaction_id', $tx['id'])
+                    ->get()
+                    ->getResultArray();
+                
+                // Get already returned quantities for each item in this transaction
+                foreach ($tx['items'] as &$item) {
+                    $returned = $db->table('transaction_return_items')
+                        ->selectSum('quantity')
+                        ->where('transaction_item_id', $item['id'])
+                        ->get()
+                        ->getRowArray();
+                    $item['returned_quantity'] = (float)($returned['quantity'] ?? 0.0);
+                }
+            }
+        }
+
+        // Fetch return history
+        $returnsHistory = [];
+        if ($db->tableExists('transaction_returns')) {
+            $returnsHistory = $db->table('transaction_returns')
+                ->select('transaction_returns.*, transactions.invoice_number, transactions.created_at as transaction_date')
+                ->join('transactions', 'transactions.id = transaction_returns.transaction_id', 'left')
+                ->where('transaction_returns.tenant_id', $tenantId)
+                ->orderBy('transaction_returns.created_at', 'DESC')
+                ->get()
+                ->getResultArray();
+
+            foreach ($returnsHistory as &$ret) {
+                $ret['items'] = $db->table('transaction_return_items')
+                    ->select('transaction_return_items.*, products.name as product_name, products.sku')
+                    ->join('products', 'products.id = transaction_return_items.product_id', 'left')
+                    ->where('transaction_return_items.return_id', $ret['id'])
+                    ->get()
+                    ->getResultArray();
+            }
+        }
+        
+        $data = [
+            'transactions' => $transactions,
+            'returnsHistory' => $returnsHistory,
+            'userName'       => session()->get('user_name') ?? 'Admin Runchise',
+            'userRole'       => session()->get('user_role') ?? 'TenantOwner',
+        ];
+        
+        return view('App\Modules\POS\Views\returns', $data);
+    }
+
+    public function processReturn()
+    {
+        $txId = $this->request->getPost('transaction_id');
+        $returnItems = $this->request->getPost('return_items'); // array of itemId => qty to return
+        $returnReasons = $this->request->getPost('return_reasons'); // array of itemId => reason string
+        $returnToStock = $this->request->getPost('return_to_stock'); // array of itemId => 1 or 0
+        
+        if (empty($txId) || empty($returnItems)) {
+            return redirect()->back()->with('error', 'Tidak ada item yang dipilih untuk diretur.');
+        }
+        
+        $db = \Config\Database::connect();
+        $db->transStart();
+        
+        try {
+            $tenantId = service('tenant')->getId();
+            
+            // Get original transaction
+            $tx = $db->table('transactions')
+                ->where('id', $txId)
+                ->where('tenant_id', $tenantId)
+                ->get()
+                ->getRowArray();
+                
+            if (!$tx) {
+                throw new \RuntimeException('Transaksi tidak ditemukan.');
+            }
+            
+            $totalRefund = 0.0;
+            $itemsToReturnData = [];
+            
+            foreach ($returnItems as $itemId => $qtyToReturn) {
+                $qtyToReturn = (float) $qtyToReturn;
+                if ($qtyToReturn <= 0) continue;
+                
+                // Get transaction item
+                $txItem = $db->table('transaction_items')->where('id', $itemId)->get()->getRowArray();
+                if (!$txItem) {
+                    throw new \RuntimeException('Item transaksi tidak ditemukan.');
+                }
+                
+                // Check already returned quantity
+                $alreadyReturned = $db->table('transaction_return_items')
+                    ->selectSum('quantity')
+                    ->where('transaction_item_id', $itemId)
+                    ->get()
+                    ->getRowArray();
+                $returnedQty = (float)($alreadyReturned['quantity'] ?? 0.0);
+                
+                if (($qtyToReturn + $returnedQty) > $txItem['quantity']) {
+                    throw new \RuntimeException('Total jumlah retur melebihi jumlah pembelian untuk item: ' . $itemId);
+                }
+                
+                // Calculate refund amount proportionately
+                $refundForLine = ($txItem['total'] / $txItem['quantity']) * $qtyToReturn;
+                $totalRefund += $refundForLine;
+                
+                $itemsToReturnData[] = [
+                    'transaction_item_id' => $itemId,
+                    'product_id'          => $txItem['product_id'],
+                    'quantity'            => $qtyToReturn,
+                    'refund_amount'       => $refundForLine,
+                    'reason'              => $returnReasons[$itemId] ?? 'Retur',
+                    'returned_to_stock'   => isset($returnToStock[$itemId]) ? 1 : 0
+                ];
+            }
+            
+            throw new \RuntimeException('DEBUG ITEMS: ' . json_encode([
+                'itemsToReturnData' => $itemsToReturnData,
+                'returnToStock' => $returnToStock
+            ]));
+            
+            if (empty($itemsToReturnData)) {
+                throw new \RuntimeException('Kuantitas retur tidak valid.');
+            }
+            
+            // Insert Return Header
+            $db->table('transaction_returns')->insert([
+                'tenant_id'      => $tenantId,
+                'branch_id'      => $tx['branch_id'],
+                'transaction_id' => $txId,
+                'total_refunded' => $totalRefund,
+                'created_at'     => date('Y-m-d H:i:s'),
+                'updated_at'     => date('Y-m-d H:i:s')
+            ]);
+            
+            $returnId = $db->insertID();
+            
+            // Insert Return Items and adjust inventory stock
+            foreach ($itemsToReturnData as $itemData) {
+                $db->table('transaction_return_items')->insert([
+                    'tenant_id'           => $tenantId,
+                    'return_id'           => $returnId,
+                    'transaction_item_id' => $itemData['transaction_item_id'],
+                    'product_id'          => $itemData['product_id'],
+                    'quantity'            => $itemData['quantity'],
+                    'refund_amount'       => $itemData['refund_amount'],
+                    'reason'              => $itemData['reason'],
+                    'returned_to_stock'   => $itemData['returned_to_stock'],
+                    'created_at'          => date('Y-m-d H:i:s'),
+                    'updated_at'          => date('Y-m-d H:i:s')
+                ]);
+                
+                // Adjust stock if requested
+                if ($itemData['returned_to_stock'] === 1) {
+                    $stock = $db->table('inventory_stocks')
+                        ->where('tenant_id', $tenantId)
+                        ->where('branch_id', $tx['branch_id'])
+                        ->where('product_id', $itemData['product_id'])
+                        ->get()
+                        ->getRowArray();
+                        
+                    if ($stock) {
+                        $db->table('inventory_stocks')
+                            ->where('id', $stock['id'])
+                            ->update([
+                                'quantity' => $stock['quantity'] + $itemData['quantity'],
+                                'updated_at' => date('Y-m-d H:i:s')
+                            ]);
+                    } else {
+                        // Create a stock entry if it doesn't exist
+                        $db->table('inventory_stocks')->insert([
+                            'tenant_id'  => $tenantId,
+                            'branch_id'  => $tx['branch_id'],
+                            'product_id' => $itemData['product_id'],
+                            'quantity'   => $itemData['quantity'],
+                            'created_at' => date('Y-m-d H:i:s'),
+                            'updated_at' => date('Y-m-d H:i:s')
+                        ]);
+                    }
+                }
+            }
+            
+            // Calculate total items returned for this transaction
+            $totalTxItems = $db->table('transaction_items')
+                ->selectSum('quantity')
+                ->where('transaction_id', $txId)
+                ->get()
+                ->getRowArray();
+            $totalTxQty = (float)($totalTxItems['quantity'] ?? 0.0);
+            
+            $totalRetItems = $db->table('transaction_return_items')
+                ->selectSum('quantity')
+                ->join('transaction_returns', 'transaction_returns.id = transaction_return_items.return_id')
+                ->where('transaction_returns.transaction_id', $txId)
+                ->get()
+                ->getRowArray();
+            $totalRetQty = (float)($totalRetItems['quantity'] ?? 0.0);
+            
+            // Update transaction payment status
+            $newStatus = ($totalRetQty >= $totalTxQty) ? 'Refunded' : 'Paid';
+            
+            $db->table('transactions')
+                ->where('id', $txId)
+                ->update([
+                    'payment_status' => $newStatus,
+                    'updated_at' => date('Y-m-d H:i:s')
+                ]);
+                
+            $db->transComplete();
+            
+            if (!$db->transStatus()) {
+                throw new \RuntimeException('DB transaction failed.');
+            }
+            
+            return redirect()->to('/pos/returns')->with('success', 'Retur transaksi berhasil diproses! Total Refund: Rp ' . number_format($totalRefund, 0, ',', '.'));
+            
+        } catch (\Throwable $e) {
+            $db->transRollback();
+            return redirect()->back()->with('error', 'Gagal memproses retur: ' . $e->getMessage());
+        }
+    }
 }

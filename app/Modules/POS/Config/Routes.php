@@ -9,6 +9,8 @@ $routes->group('pos', ['namespace' => 'App\Modules\POS\Controllers', 'filter' =>
     $routes->get('terminal',  'POSController::terminal');
     $routes->get('sessions',  'POSController::sessions');
     $routes->get('analytics', 'POSController::analytics');
+    $routes->get('returns',   'POSController::returns');
+    $routes->post('returns/process', 'POSController::processReturn');
 });
 
 // POS API Routes

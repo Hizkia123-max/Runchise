@@ -600,6 +600,11 @@
                                 <i class="bi bi-tools me-1"></i> Services
                             </a>
                         </li>
+                        <li>
+                            <a href="/pos/returns" class="submenu-link <?= (uri_string() === 'pos/returns') ? 'active' : '' ?>">
+                                <i class="bi bi-arrow-counterclockwise me-1"></i> Retur Transaksi
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </li>
