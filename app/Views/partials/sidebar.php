@@ -320,75 +320,75 @@
         transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
 
+    /* Shared Collapsed state: narrow sidebar showing only icons (both desktop and mobile) */
+    body.sidebar-collapsed .runchise-sidebar {
+        width: 70px !important;
+        min-width: 70px !important;
+        overflow: visible !important;
+    }
+    body.sidebar-collapsed .runchise-sidebar .sidebar-main-content {
+        width: 70px !important;
+        min-width: 70px !important;
+    }
+    
+    /* Show brand and pending cart collapsed versions */
+    body.sidebar-collapsed .sidebar-brand-collapsed {
+        display: flex;
+    }
+    body.sidebar-collapsed .pending-cart-collapsed-alert {
+        display: flex;
+    }
+    
+    /* Hide normal elements when collapsed */
+    body.sidebar-collapsed .sidebar-outlet-header,
+    body.sidebar-collapsed .pending-cart-alert,
+    body.sidebar-collapsed .menu-link span,
+    body.sidebar-collapsed .menu-link .bi-chevron-down,
+    body.sidebar-collapsed .submenu-list,
+    body.sidebar-collapsed .collapse {
+        display: none !important;
+    }
+
+    /* Center footer details when collapsed */
+    body.sidebar-collapsed .sidebar-footer {
+        padding: 1rem 0;
+        justify-content: center;
+    }
+    body.sidebar-collapsed .user-info-text {
+        display: none !important;
+    }
+
+    /* Centered compact menu links */
+    body.sidebar-collapsed .menu-link {
+        width: 44px;
+        height: 44px;
+        padding: 0 !important;
+        margin: 0.5rem auto !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+    }
+    body.sidebar-collapsed .menu-link-content {
+        padding: 0 !important;
+        margin: 0 !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0 !important;
+    }
+    body.sidebar-collapsed .menu-link i {
+        font-size: 1.25rem !important;
+        margin: 0 !important;
+    }
+    body.sidebar-collapsed .menu-link.active {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.15)) !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        border-left: none !important;
+    }
+
     /* Desktop collapsible overrides */
     @media (min-width: 769px) {
-        /* Collapsed state: narrow sidebar showing only icons */
-        body.sidebar-collapsed .runchise-sidebar {
-            width: 70px !important;
-            min-width: 70px !important;
-            overflow: visible !important;
-        }
-        body.sidebar-collapsed .runchise-sidebar .sidebar-main-content {
-            width: 70px !important;
-            min-width: 70px !important;
-        }
-        
-        /* Show brand and pending cart collapsed versions */
-        body.sidebar-collapsed .sidebar-brand-collapsed {
-            display: flex;
-        }
-        body.sidebar-collapsed .pending-cart-collapsed-alert {
-            display: flex;
-        }
-        
-        /* Hide normal elements when collapsed */
-        body.sidebar-collapsed .sidebar-outlet-header,
-        body.sidebar-collapsed .pending-cart-alert,
-        body.sidebar-collapsed .menu-link span,
-        body.sidebar-collapsed .menu-link .bi-chevron-down,
-        body.sidebar-collapsed .submenu-list,
-        body.sidebar-collapsed .collapse {
-            display: none !important;
-        }
-
-        /* Center footer details when collapsed */
-        body.sidebar-collapsed .sidebar-footer {
-            padding: 1rem 0;
-            justify-content: center;
-        }
-        body.sidebar-collapsed .user-info-text {
-            display: none !important;
-        }
-
-        /* Centered compact menu links */
-        body.sidebar-collapsed .menu-link {
-            width: 44px;
-            height: 44px;
-            padding: 0 !important;
-            margin: 0.5rem auto !important;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 12px;
-        }
-        body.sidebar-collapsed .menu-link-content {
-            padding: 0 !important;
-            margin: 0 !important;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0 !important;
-        }
-        body.sidebar-collapsed .menu-link i {
-            font-size: 1.25rem !important;
-            margin: 0 !important;
-        }
-        body.sidebar-collapsed .menu-link.active {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.15)) !important;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            border-left: none !important;
-        }
-
         /* Overrides layout offset when collapsed on desktop */
         body.sidebar-collapsed .pos-layout {
             width: calc(100vw - 70px) !important;
@@ -450,18 +450,20 @@
             bottom: 0;
             height: 100vh !important;
             z-index: 1050 !important;
-            width: 240px !important;
-            min-width: 240px !important;
-            transform: translateX(0);
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            width: 240px;
+            min-width: 240px;
+            transform: none !important;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                        min-width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                        box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
         }
 
         body.sidebar-collapsed .runchise-sidebar {
-            width: 240px !important;
-            min-width: 240px !important;
-            transform: translateX(-100%);
+            width: 70px !important;
+            min-width: 70px !important;
+            transform: none !important;
             box-shadow: none;
-            overflow: visible !important; /* Allow drag handle/swiping to be responsive */
+            overflow: visible !important;
         }
 
         /* Overlay background when sidebar is active on mobile */
@@ -485,22 +487,13 @@
         }
 
         .sidebar-floating-toggle {
-            width: 36px;
-            height: 36px;
-            left: 10px;
-            top: 10px;
-        }
-        
-        body.sidebar-collapsed .sidebar-floating-toggle {
-            opacity: 1;
-            pointer-events: auto;
-            transform: scale(1);
+            display: none !important; /* Hide floating toggle since collapsed sidebar is always visible at 70px */
         }
 
         /* Adjust content and header styling for mobile collapsed state to avoid unnecessary wide paddings */
         body.sidebar-collapsed .flex-grow-1 > :first-child,
         body.sidebar-collapsed .pos-header {
-            padding-left: 3.5rem !important; /* Leave room for floating button on mobile */
+            padding-left: 85px !important; /* Leave room for collapsed sidebar showing icons */
         }
         
         body.sidebar-collapsed .pos-layout {
@@ -536,7 +529,7 @@
 
         <!-- Collapsed Brand Logo Button (Click to toggle/expand) -->
         <div class="sidebar-brand-collapsed" onclick="toggleSidebar(event)" data-tooltip="⚡ Runchise (Buka Menu)">
-            <span>S</span>
+            <i class="bi bi-shop" style="font-size: 1.2rem;"></i>
         </div>
 
         <!-- Pending Cart Session Resume Notification Widget -->
@@ -805,36 +798,11 @@
             let touchStartY = 0;
             let touchCurrentX = 0;
             let isDragging = false;
-            let sidebarWidth = 240;
-            let initialTranslateX = 0;
+            let startWidth = 70;
 
             // Detect if device supports touch
             const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
             if (isTouchDevice) {
-                function getTranslateX() {
-                    const style = window.getComputedStyle(sidebar);
-                    const transform = style.transform;
-                    if (!transform || transform === 'none') {
-                        return document.body.classList.contains('sidebar-collapsed') ? -sidebarWidth : 0;
-                    }
-                    const DOMMatrixClass = window.DOMMatrix || window.WebKitCSSMatrix;
-                    if (DOMMatrixClass) {
-                        try {
-                            const matrix = new DOMMatrixClass(transform);
-                            return matrix.m41;
-                        } catch (e) {
-                            console.warn("Failed to parse transform matrix via DOMMatrix:", e);
-                        }
-                    }
-                    // Fallback string parsing
-                    try {
-                        const values = transform.split('(')[1].split(')')[0].split(',');
-                        return parseFloat(values[4] || 0);
-                    } catch (e) {
-                        return 0;
-                    }
-                }
-
                 document.addEventListener('touchstart', (e) => {
                     if (window.innerWidth > 768) return;
 
@@ -843,23 +811,14 @@
                     touchStartY = touch.clientY;
                     const isCollapsed = document.body.classList.contains('sidebar-collapsed');
 
-                    if (isCollapsed) {
-                        // Start drag open if touch starts near left edge (< 40px)
-                        if (touchStartX < 40) {
-                            isDragging = true;
-                            initialTranslateX = -sidebarWidth;
-                            sidebar.style.transition = 'none';
-                            if (overlay) overlay.style.transition = 'none';
-                        }
-                    } else {
-                        // Start drag close if touch starts on sidebar or overlay
-                        const target = e.target;
-                        if (sidebar.contains(target) || (overlay && overlay.contains(target))) {
-                            isDragging = true;
-                            initialTranslateX = 0;
-                            sidebar.style.transition = 'none';
-                            if (overlay) overlay.style.transition = 'none';
-                        }
+                    // Start dragging if touch is on the sidebar or overlay
+                    const target = e.target;
+                    if (sidebar.contains(target) || (overlay && overlay.contains(target))) {
+                        isDragging = true;
+                        startWidth = isCollapsed ? 70 : 240;
+                        sidebar.style.transition = 'none';
+                        if (overlay) overlay.style.transition = 'none';
+                        sidebar.style.overflowX = 'hidden';
                     }
                 }, { passive: true });
 
@@ -876,14 +835,16 @@
                         return;
                     }
 
-                    let newTranslateX = initialTranslateX + deltaX;
-                    // Clamp translateX between -sidebarWidth and 0
-                    newTranslateX = Math.max(-sidebarWidth, Math.min(0, newTranslateX));
+                    // Calculate new width
+                    let newWidth = startWidth + deltaX;
+                    newWidth = Math.max(70, Math.min(240, newWidth));
 
-                    sidebar.style.transform = `translateX(${newTranslateX}px)`;
-                    
+                    sidebar.style.width = newWidth + 'px';
+                    sidebar.style.minWidth = newWidth + 'px';
+
+                    // Update overlay opacity based on progress
                     if (overlay) {
-                        const progress = (newTranslateX + sidebarWidth) / sidebarWidth;
+                        const progress = (newWidth - 70) / (240 - 70);
                         overlay.style.opacity = progress;
                         overlay.style.pointerEvents = progress > 0.1 ? 'auto' : 'none';
                     }
@@ -893,52 +854,28 @@
                     if (!isDragging) return;
                     isDragging = false;
 
-                    // Reset inline styles to fallback to CSS transition classes
+                    // Reset inline transitions and styles
                     sidebar.style.transition = '';
                     if (overlay) overlay.style.transition = '';
+                    sidebar.style.overflowX = '';
 
-                    const currentTranslate = getTranslateX();
-                    const isCollapsed = document.body.classList.contains('sidebar-collapsed');
-                    const threshold = -sidebarWidth / 2;
+                    const currentWidth = parseFloat(sidebar.style.width) || 70;
+                    
+                    // Clear inline styles to fall back to class-based CSS
+                    sidebar.style.width = '';
+                    sidebar.style.minWidth = '';
+                    if (overlay) {
+                        overlay.style.opacity = '';
+                        overlay.style.pointerEvents = '';
+                    }
 
-                    if (isCollapsed) {
-                        // Dragged past threshold -> Open
-                        if (currentTranslate > threshold) {
-                            document.body.classList.remove('sidebar-collapsed');
-                            localStorage.setItem('sidebar_collapsed', 'false');
-                            sidebar.style.transform = '';
-                            if (overlay) {
-                                overlay.style.opacity = '';
-                                overlay.style.pointerEvents = '';
-                            }
-                        } else {
-                            // Cancel open
-                            document.body.classList.add('sidebar-collapsed');
-                            sidebar.style.transform = '';
-                            if (overlay) {
-                                overlay.style.opacity = '';
-                                overlay.style.pointerEvents = '';
-                            }
-                        }
+                    const threshold = 155; // (70 + 240) / 2
+                    if (currentWidth > threshold) {
+                        document.body.classList.remove('sidebar-collapsed');
+                        localStorage.setItem('sidebar_collapsed', 'false');
                     } else {
-                        // Dragged past threshold -> Close
-                        if (currentTranslate < threshold) {
-                            document.body.classList.add('sidebar-collapsed');
-                            localStorage.setItem('sidebar_collapsed', 'true');
-                            sidebar.style.transform = '';
-                            if (overlay) {
-                                overlay.style.opacity = '';
-                                overlay.style.pointerEvents = '';
-                            }
-                        } else {
-                            // Cancel close (stay open)
-                            document.body.classList.remove('sidebar-collapsed');
-                            sidebar.style.transform = '';
-                            if (overlay) {
-                                overlay.style.opacity = '';
-                                overlay.style.pointerEvents = '';
-                            }
-                        }
+                        document.body.classList.add('sidebar-collapsed');
+                        localStorage.setItem('sidebar_collapsed', 'true');
                     }
                 }, { passive: true });
             }
