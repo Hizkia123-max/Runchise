@@ -548,10 +548,11 @@
         </a>
 
         <!-- Sidebar Navigation List -->
+        <?php $currentUri = uri_string(); $userSessionRole = session()->get('user_role') ?? 'TenantOwner'; ?>
         <ul class="sidebar-menu">
             <!-- Dashboard -->
             <li class="menu-item">
-                <a href="/dashboard" class="menu-link <?= (uri_string() === 'dashboard') ? 'active' : '' ?>" data-tooltip="Dashboard Utama">
+                <a href="/dashboard" class="menu-link <?= ($currentUri === 'dashboard') ? 'active' : '' ?>" data-tooltip="Dashboard Utama">
                     <div class="menu-link-content">
                         <i class="bi bi-house-door-fill"></i>
                         <span>Dashboard Utama</span>
@@ -571,38 +572,48 @@
                 <div class="collapse show" id="menu-kasir">
                     <ul class="submenu-list">
                         <li>
-                            <a href="/pos/terminal" class="submenu-link <?= (uri_string() === 'pos/terminal' && empty(service('request')->getGet('cat'))) ? 'active' : '' ?>">
-                                <i class="bi bi-calculator me-1"></i> Produk Item
+                            <a href="/pos/terminal" class="submenu-link <?= ($currentUri === 'pos/terminal') ? 'active' : '' ?>">
+                                <i class="bi bi-calculator me-1"></i> POS Terminal
                             </a>
                         </li>
                         <li>
-                            <a href="/pos/terminal?cat=food" class="submenu-link <?= (uri_string() === 'pos/terminal' && service('request')->getGet('cat') === 'food') ? 'active' : '' ?>">
-                                <i class="bi bi-egg-fried me-1"></i> Food & Beverage
+                            <a href="/pos/sessions" class="submenu-link <?= ($currentUri === 'pos/sessions') ? 'active' : '' ?>">
+                                <i class="bi bi-clock-history me-1"></i> Shift & Sesi
                             </a>
                         </li>
                         <li>
-                            <a href="/pos/terminal?cat=retail" class="submenu-link <?= (uri_string() === 'pos/terminal' && service('request')->getGet('cat') === 'retail') ? 'active' : '' ?>">
-                                <i class="bi bi-bag-check me-1"></i> Retail
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/pos/terminal?cat=electronics" class="submenu-link <?= (uri_string() === 'pos/terminal' && service('request')->getGet('cat') === 'electronics') ? 'active' : '' ?>">
-                                <i class="bi bi-laptop me-1"></i> Electronics
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/pos/terminal?cat=fashion" class="submenu-link <?= (uri_string() === 'pos/terminal' && service('request')->getGet('cat') === 'fashion') ? 'active' : '' ?>">
-                                <i class="bi bi-sunglasses me-1"></i> Fashion
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/pos/terminal?cat=services" class="submenu-link <?= (uri_string() === 'pos/terminal' && service('request')->getGet('cat') === 'services') ? 'active' : '' ?>">
-                                <i class="bi bi-tools me-1"></i> Services
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/pos/returns" class="submenu-link <?= (uri_string() === 'pos/returns') ? 'active' : '' ?>">
+                            <a href="/pos/returns" class="submenu-link <?= ($currentUri === 'pos/returns') ? 'active' : '' ?>">
                                 <i class="bi bi-arrow-counterclockwise me-1"></i> Retur Barang
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+            <!-- Pembelian (Purchasing) -->
+            <li class="menu-item">
+                <button class="menu-link" data-bs-toggle="collapse" data-bs-target="#menu-purchasing" aria-expanded="<?= (strpos($currentUri, 'purchasing') !== false) ? 'true' : 'false' ?>" data-tooltip="Pembelian">
+                    <div class="menu-link-content">
+                        <i class="bi bi-cart-check-fill"></i>
+                        <span>Pembelian</span>
+                    </div>
+                    <i class="bi bi-chevron-down" style="font-size: 0.75rem;"></i>
+                </button>
+                <div class="collapse <?= (strpos($currentUri, 'purchasing') !== false) ? 'show' : '' ?>" id="menu-purchasing">
+                    <ul class="submenu-list">
+                        <li>
+                            <a href="/purchasing/orders" class="submenu-link <?= ($currentUri === 'purchasing/orders' || $currentUri === 'purchasing/orders/create') ? 'active' : '' ?>">
+                                <i class="bi bi-file-earmark-text me-1"></i> Purchase Order
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/purchasing/receivings" class="submenu-link <?= ($currentUri === 'purchasing/receivings' || strpos($currentUri, 'purchasing/receive') !== false) ? 'active' : '' ?>">
+                                <i class="bi bi-box-arrow-in-down me-1"></i> Penerimaan Barang
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/purchasing/suppliers" class="submenu-link <?= ($currentUri === 'purchasing/suppliers') ? 'active' : '' ?>">
+                                <i class="bi bi-people me-1"></i> Data Supplier
                             </a>
                         </li>
                     </ul>
@@ -621,7 +632,7 @@
                 <div class="collapse show" id="menu-catalog">
                     <ul class="submenu-list">
                         <li>
-                            <a href="/inventory/products" class="submenu-link <?= (uri_string() === 'inventory/products') ? 'active' : '' ?>">
+                            <a href="/inventory/products" class="submenu-link <?= ($currentUri === 'inventory/products') ? 'active' : '' ?>">
                                 <i class="bi bi-tags me-1"></i> Produk & Kategori
                             </a>
                         </li>
@@ -629,7 +640,7 @@
                 </div>
             </li>
 
-            <!-- Stok -->
+            <!-- Stok & Inventori -->
             <li class="menu-item">
                 <button class="menu-link" data-bs-toggle="collapse" data-bs-target="#menu-stok" aria-expanded="true" data-tooltip="Stok & Inventori">
                     <div class="menu-link-content">
@@ -641,45 +652,62 @@
                 <div class="collapse show" id="menu-stok">
                     <ul class="submenu-list">
                         <li>
-                            <a href="/inventory/stock" class="submenu-link <?= (uri_string() === 'inventory/stock') ? 'active' : '' ?>">
+                            <a href="/report/stock-onhand" class="submenu-link <?= ($currentUri === 'report/stock-onhand') ? 'active' : '' ?>">
+                                <i class="bi bi-box-seam me-1"></i> Stok di Tangan
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/report/stock-card" class="submenu-link <?= ($currentUri === 'report/stock-card') ? 'active' : '' ?>">
+                                <i class="bi bi-journal-text me-1"></i> Kartu Stok
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/inventory/stock" class="submenu-link <?= ($currentUri === 'inventory/stock') ? 'active' : '' ?>">
                                 <i class="bi bi-card-checklist me-1"></i> Stock Levels
                             </a>
                         </li>
                         <li>
-                            <a href="/inventory/opname" class="submenu-link <?= (uri_string() === 'inventory/opname') ? 'active' : '' ?>">
+                            <a href="/inventory/opname" class="submenu-link <?= ($currentUri === 'inventory/opname') ? 'active' : '' ?>">
                                 <i class="bi bi-pencil-square me-1"></i> Stock Opname
                             </a>
                         </li>
                         <li>
-                            <a href="/inventory/transfers" class="submenu-link <?= (uri_string() === 'inventory/transfers') ? 'active' : '' ?>">
-                                <i class="bi bi-arrow-left-right me-1"></i> Stock Transfers
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/pos/returns" class="submenu-link <?= (uri_string() === 'pos/returns') ? 'active' : '' ?>">
-                                <i class="bi bi-arrow-counterclockwise me-1"></i> Retur Barang
+                            <a href="/inventory/transfers" class="submenu-link <?= ($currentUri === 'inventory/transfers') ? 'active' : '' ?>">
+                                <i class="bi bi-arrow-left-right me-1"></i> Stock Transfer
                             </a>
                         </li>
                     </ul>
                 </div>
             </li>
 
-            <!-- Laporan Finansial -->
+            <!-- Laporan -->
             <li class="menu-item">
-                <button class="menu-link" data-bs-toggle="collapse" data-bs-target="#menu-analytics" aria-expanded="true" data-tooltip="Laporan Finansial">
+                <button class="menu-link" data-bs-toggle="collapse" data-bs-target="#menu-laporan" aria-expanded="<?= (strpos($currentUri, 'report/') !== false || $currentUri === 'pos/analytics') ? 'true' : 'false' ?>" data-tooltip="Laporan">
                     <div class="menu-link-content">
                         <i class="bi bi-journal-check"></i>
-                        <span>Laporan Finansial</span>
+                        <span>Laporan</span>
                     </div>
                     <i class="bi bi-chevron-down" style="font-size: 0.75rem;"></i>
                 </button>
-                <div class="collapse show" id="menu-analytics">
+                <div class="collapse <?= (strpos($currentUri, 'report/') !== false || $currentUri === 'pos/analytics') ? 'show' : '' ?>" id="menu-laporan">
                     <ul class="submenu-list">
                         <li>
-                            <a href="/pos/analytics" class="submenu-link <?= (uri_string() === 'pos/analytics') ? 'active' : '' ?>">
+                            <a href="/report/sales" class="submenu-link <?= ($currentUri === 'report/sales') ? 'active' : '' ?>">
+                                <i class="bi bi-bar-chart-line me-1"></i> Report Penjualan
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/report/numeric" class="submenu-link <?= ($currentUri === 'report/numeric') ? 'active' : '' ?>">
+                                <i class="bi bi-123 me-1"></i> Reporting Numerik
+                            </a>
+                        </li>
+                        <?php if ($userSessionRole === 'TenantOwner' || $userSessionRole === 'SuperAdmin'): ?>
+                        <li>
+                            <a href="/pos/analytics" class="submenu-link <?= ($currentUri === 'pos/analytics') ? 'active' : '' ?>">
                                 <i class="bi bi-cash-stack me-1"></i> Laba Rugi & Laporan
                             </a>
                         </li>
+                        <?php endif; ?>
                     </ul>
                 </div>
             </li>

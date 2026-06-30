@@ -18,16 +18,27 @@ class InitialDataSeeder extends Seeder
         ]);
         $tenantId = $this->db->insertID();
 
-        // Seed default admin user
-        $email = getenv('admin.email') ?: 'admin@runchise.com';
+        // Seed default owner user
+        $email = getenv('admin.email') ?: 'owner@runchise.com';
         $password = getenv('admin.password') ?: 'Admin@12345';
 
         $this->db->table('users')->insert([
             'tenant_id'     => $tenantId,
-            'name'          => 'Admin Runchise',
+            'name'          => 'Owner Runchise',
             'email'         => $email,
             'password_hash' => password_hash($password, PASSWORD_BCRYPT),
             'role'          => 'TenantOwner',
+            'created_at'    => date('Y-m-d H:i:s'),
+            'updated_at'    => date('Y-m-d H:i:s'),
+        ]);
+
+        // Seed admin/manager user
+        $this->db->table('users')->insert([
+            'tenant_id'     => $tenantId,
+            'name'          => 'Manager Runchise',
+            'email'         => 'admin@runchise.com',
+            'password_hash' => password_hash('Admin@12345', PASSWORD_BCRYPT),
+            'role'          => 'Manager',
             'created_at'    => date('Y-m-d H:i:s'),
             'updated_at'    => date('Y-m-d H:i:s'),
         ]);
@@ -113,6 +124,59 @@ class InitialDataSeeder extends Seeder
                 'quantity'   => rand(5, 100),
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
+            ]);
+        }
+
+
+
+        // --- PURCHASING DATA SEEDER ---
+        // 1. Seed Supplier
+        $this->db->table('suppliers')->insert([
+            'tenant_id'      => $tenantId,
+            'name'           => 'PT. Sumber Rejeki',
+            'contact_person' => 'Bapak Budi',
+            'phone'          => '081234567890',
+            'email'          => 'budi@sumberrejeki.com',
+            'address'        => 'Jl. Industri Raya No. 10, Jakarta',
+            'created_at'     => date('Y-m-d H:i:s'),
+            'updated_at'     => date('Y-m-d H:i:s'),
+        ]);
+        $supplierId = $this->db->insertID();
+
+        // 2. Seed Purchase Order
+        $this->db->table('purchase_orders')->insert([
+            'tenant_id'     => $tenantId,
+            'branch_id'     => $branchId,
+            'supplier_id'   => $supplierId,
+            'po_number'     => 'PO-00001',
+            'order_date'    => date('Y-m-d', strtotime('-5 days')),
+            'expected_date' => date('Y-m-d', strtotime('-2 days')),
+            'status'        => 'Completed',
+            'notes'         => 'Pembelian stok awal bulan',
+            'total_amount'  => 500000,
+            'created_by'    => 1,
+            'created_at'    => date('Y-m-d H:i:s', strtotime('-5 days')),
+            'updated_at'    => date('Y-m-d H:i:s', strtotime('-5 days')),
+        ]);
+        $poId = $this->db->insertID();
+
+        // Add 2 PO Items
+        $poItems = [
+            ['product_id' => $products[0]['id'] ?? 1, 'qty' => 10, 'cost' => 15000], // Nasi Goreng
+            ['product_id' => $products[1]['id'] ?? 2, 'qty' => 20, 'cost' => 2000],  // Es Teh
+        ];
+
+        foreach ($poItems as $item) {
+            $this->db->table('purchase_order_items')->insert([
+                'tenant_id'         => $tenantId,
+                'purchase_order_id' => $poId,
+                'product_id'        => $item['product_id'],
+                'quantity_ordered'  => $item['qty'],
+                'quantity_received' => $item['qty'],
+                'unit_cost'         => $item['cost'],
+                'total_cost'        => $item['qty'] * $item['cost'],
+                'created_at'        => date('Y-m-d H:i:s', strtotime('-5 days')),
+                'updated_at'        => date('Y-m-d H:i:s', strtotime('-5 days')),
             ]);
         }
 

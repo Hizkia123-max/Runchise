@@ -72,6 +72,24 @@ class InventoryController extends BaseController
                             ]);
                         }
                     }
+
+                    // Log to Stock Card
+                    if ($variance != 0) {
+                        $db->table('stock_card_entries')->insert([
+                            'tenant_id'      => $recorded['tenant_id'],
+                            'branch_id'      => $recorded['branch_id'],
+                            'product_id'     => $recorded['product_id'],
+                            'entry_date'     => date('Y-m-d H:i:s'),
+                            'type'           => $variance > 0 ? 'IN' : 'OUT',
+                            'quantity'       => abs($variance),
+                            'balance_after'  => $physicalQty,
+                            'reference_type' => 'Stock Opname',
+                            'reference_id'   => $stockId,
+                            'reference_code' => 'OPN-' . date('Ymd'),
+                            'description'    => 'Opname: ' . ($reasons[$stockId] ?? 'Penyesuaian stok'),
+                            'created_at'     => date('Y-m-d H:i:s'),
+                        ]);
+                    }
                 }
             }
         }
@@ -142,21 +160,40 @@ class InventoryController extends BaseController
                             'quantity' => $newSourceQty,
                             'updated_at' => date('Y-m-d H:i:s'),
                         ]);
+
+                    // Log OUT from source branch
+                    $db->table('stock_card_entries')->insert([
+                        'tenant_id'      => $sourceStock['tenant_id'],
+                        'branch_id'      => $fromBranch,
+                        'product_id'     => $productId,
+                        'entry_date'     => date('Y-m-d H:i:s'),
+                        'type'           => 'OUT',
+                        'quantity'       => $transferQty,
+                        'balance_after'  => $newSourceQty,
+                        'reference_type' => 'Stock Transfer',
+                        'reference_id'   => null,
+                        'reference_code' => 'TRF-' . date('Ymd'),
+                        'description'    => 'Transfer keluar ke branch lain',
+                        'created_at'     => date('Y-m-d H:i:s'),
+                    ]);
                         
                     // 2. Add to target branch
                     $targetStock = $db->table('inventory_stocks')
                         ->where('branch_id', $toBranch)
                         ->where('product_id', $productId)
                         ->get()->getRowArray();
-                        
+
+                    $newTargetQty = 0;
                     if ($targetStock) {
+                        $newTargetQty = $targetStock['quantity'] + $transferQty;
                         $db->table('inventory_stocks')
                             ->where('id', $targetStock['id'])
                             ->update([
-                                'quantity' => $targetStock['quantity'] + $transferQty,
+                                'quantity' => $newTargetQty,
                                 'updated_at' => date('Y-m-d H:i:s'),
                             ]);
                     } else {
+                        $newTargetQty = $transferQty;
                         // Create stock record for target branch
                         $db->table('inventory_stocks')->insert([
                             'tenant_id' => $sourceStock['tenant_id'],
@@ -167,6 +204,22 @@ class InventoryController extends BaseController
                             'updated_at' => date('Y-m-d H:i:s'),
                         ]);
                     }
+
+                    // Log IN to target branch
+                    $db->table('stock_card_entries')->insert([
+                        'tenant_id'      => $sourceStock['tenant_id'],
+                        'branch_id'      => $toBranch,
+                        'product_id'     => $productId,
+                        'entry_date'     => date('Y-m-d H:i:s'),
+                        'type'           => 'IN',
+                        'quantity'       => $transferQty,
+                        'balance_after'  => $newTargetQty,
+                        'reference_type' => 'Stock Transfer',
+                        'reference_id'   => null,
+                        'reference_code' => 'TRF-' . date('Ymd'),
+                        'description'    => 'Transfer masuk dari branch lain',
+                        'created_at'     => date('Y-m-d H:i:s'),
+                    ]);
                 }
             }
         }

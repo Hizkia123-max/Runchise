@@ -83,8 +83,25 @@ class CheckoutService
                     ->first();
 
                 if ($stock) {
+                    $newQty = max(0, $stock['quantity'] - $item['quantity']);
                     $stockModel->update($stock['id'], [
-                        'quantity' => max(0, $stock['quantity'] - $item['quantity']),
+                        'quantity' => $newQty,
+                    ]);
+
+                    // Log to Stock Card
+                    $db->table('stock_card_entries')->insert([
+                        'tenant_id'      => $tenantId,
+                        'branch_id'      => $input['branch_id'],
+                        'product_id'     => $item['product_id'],
+                        'entry_date'     => date('Y-m-d H:i:s'),
+                        'type'           => 'OUT',
+                        'quantity'       => $item['quantity'],
+                        'balance_after'  => $newQty,
+                        'reference_type' => 'POS Sale',
+                        'reference_id'   => $txId,
+                        'reference_code' => $invoiceNumber,
+                        'description'    => 'Penjualan POS',
+                        'created_at'     => date('Y-m-d H:i:s'),
                     ]);
                 }
             }

@@ -422,13 +422,15 @@ class POSController extends BaseController
                         ->getRowArray();
                         
                     if ($stock) {
+                        $newStockQty = $stock['quantity'] + $itemData['quantity'];
                         $db->table('inventory_stocks')
                             ->where('id', $stock['id'])
                             ->update([
-                                'quantity' => $stock['quantity'] + $itemData['quantity'],
+                                'quantity' => $newStockQty,
                                 'updated_at' => date('Y-m-d H:i:s')
                             ]);
                     } else {
+                        $newStockQty = $itemData['quantity'];
                         // Create a stock entry if it doesn't exist
                         $db->table('inventory_stocks')->insert([
                             'tenant_id'  => $tenantId,
@@ -439,6 +441,22 @@ class POSController extends BaseController
                             'updated_at' => date('Y-m-d H:i:s')
                         ]);
                     }
+
+                    // Log to Stock Card
+                    $db->table('stock_card_entries')->insert([
+                        'tenant_id'      => $tenantId,
+                        'branch_id'      => $tx['branch_id'],
+                        'product_id'     => $itemData['product_id'],
+                        'entry_date'     => date('Y-m-d H:i:s'),
+                        'type'           => 'IN',
+                        'quantity'       => $itemData['quantity'],
+                        'balance_after'  => $newStockQty,
+                        'reference_type' => 'Retur Penjualan',
+                        'reference_id'   => $returnId,
+                        'reference_code' => 'RET-' . str_pad($returnId, 5, '0', STR_PAD_LEFT),
+                        'description'    => 'Retur dari transaksi ' . $tx['invoice_number'],
+                        'created_at'     => date('Y-m-d H:i:s'),
+                    ]);
                 }
             }
             

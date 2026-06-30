@@ -36,6 +36,7 @@ class Filters extends BaseFilters
         'performance'   => PerformanceMetrics::class,
         'tenant'        => \App\Filters\TenantFilter::class,
         'session'       => \App\Filters\SessionFilter::class,
+        'role'          => \App\Filters\RoleFilter::class,
     ];
 
     /**
