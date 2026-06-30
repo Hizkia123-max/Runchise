@@ -602,7 +602,7 @@
                         </li>
                         <li>
                             <a href="/pos/returns" class="submenu-link <?= (uri_string() === 'pos/returns') ? 'active' : '' ?>">
-                                <i class="bi bi-arrow-counterclockwise me-1"></i> Retur Transaksi
+                                <i class="bi bi-arrow-counterclockwise me-1"></i> Retur Barang
                             </a>
                         </li>
                     </ul>
@@ -653,6 +653,11 @@
                         <li>
                             <a href="/inventory/transfers" class="submenu-link <?= (uri_string() === 'inventory/transfers') ? 'active' : '' ?>">
                                 <i class="bi bi-arrow-left-right me-1"></i> Stock Transfers
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/pos/returns" class="submenu-link <?= (uri_string() === 'pos/returns') ? 'active' : '' ?>">
+                                <i class="bi bi-arrow-counterclockwise me-1"></i> Retur Barang
                             </a>
                         </li>
                     </ul>

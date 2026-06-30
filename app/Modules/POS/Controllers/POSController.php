@@ -380,12 +380,7 @@ class POSController extends BaseController
                     'returned_to_stock'   => isset($returnToStock[$itemId]) ? 1 : 0
                 ];
             }
-            
-            throw new \RuntimeException('DEBUG ITEMS: ' . json_encode([
-                'itemsToReturnData' => $itemsToReturnData,
-                'returnToStock' => $returnToStock
-            ]));
-            
+
             if (empty($itemsToReturnData)) {
                 throw new \RuntimeException('Kuantitas retur tidak valid.');
             }
