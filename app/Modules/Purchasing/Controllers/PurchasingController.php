@@ -431,4 +431,242 @@ class PurchasingController extends BaseController
         }
         return redirect()->back()->with('error', 'Gagal menambahkan supplier.');
     }
+
+    /**
+     * Show Purchase Returns
+     */
+    public function returns()
+    {
+        $db = \Config\Database::connect();
+        $tenantId = service('tenant')->getId();
+
+        // Fetch completed or partially received POs that have some items received
+        $purchaseOrders = [];
+        if ($db->tableExists('purchase_orders')) {
+            $purchaseOrders = $db->table('purchase_orders')
+                ->select('purchase_orders.*, suppliers.name as supplier_name')
+                ->join('suppliers', 'suppliers.id = purchase_orders.supplier_id', 'left')
+                ->where('purchase_orders.tenant_id', $tenantId)
+                ->whereIn('purchase_orders.status', ['Completed', 'Partially Received'])
+                ->orderBy('purchase_orders.created_at', 'DESC')
+                ->get()
+                ->getResultArray();
+
+            foreach ($purchaseOrders as &$po) {
+                $po['items'] = $db->table('purchase_order_items')
+                    ->select('purchase_order_items.*, products.name as product_name, products.sku')
+                    ->join('products', 'products.id = purchase_order_items.product_id', 'left')
+                    ->where('purchase_order_items.purchase_order_id', $po['id'])
+                    ->get()
+                    ->getResultArray();
+
+                // Get already returned quantities for each item in this PO
+                foreach ($po['items'] as &$item) {
+                    $returned = 0;
+                    if ($db->tableExists('purchase_return_items')) {
+                        $returnedRow = $db->table('purchase_return_items')
+                            ->selectSum('quantity')
+                            ->where('purchase_order_item_id', $item['id'])
+                            ->get()
+                            ->getRowArray();
+                        $returned = (float)($returnedRow['quantity'] ?? 0.0);
+                    }
+                    $item['returned_quantity'] = $returned;
+                }
+            }
+        }
+
+        // Fetch return history
+        $returnsHistory = [];
+        if ($db->tableExists('purchase_returns')) {
+            $returnsHistory = $db->table('purchase_returns')
+                ->select('purchase_returns.*, purchase_orders.po_number, purchase_orders.order_date')
+                ->join('purchase_orders', 'purchase_orders.id = purchase_returns.purchase_order_id', 'left')
+                ->where('purchase_returns.tenant_id', $tenantId)
+                ->orderBy('purchase_returns.created_at', 'DESC')
+                ->get()
+                ->getResultArray();
+
+            foreach ($returnsHistory as &$ret) {
+                $ret['items'] = $db->table('purchase_return_items')
+                    ->select('purchase_return_items.*, products.name as product_name, products.sku')
+                    ->join('products', 'products.id = purchase_return_items.product_id', 'left')
+                    ->where('purchase_return_items.purchase_return_id', $ret['id'])
+                    ->get()
+                    ->getResultArray();
+            }
+        }
+
+        $data = [
+            'purchaseOrders' => $purchaseOrders,
+            'returnsHistory' => $returnsHistory,
+            'userName'       => session()->get('user_name') ?? 'Admin Runchise',
+            'userRole'       => session()->get('user_role') ?? 'TenantOwner',
+        ];
+
+        return view('App\Modules\Purchasing\Views\returns', $data);
+    }
+
+    /**
+     * Process Purchase Return
+     */
+    public function processReturn()
+    {
+        $poId = $this->request->getPost('purchase_order_id');
+        $returnItems = $this->request->getPost('return_items'); // array of itemId => qty to return
+        $returnReasons = $this->request->getPost('return_reasons'); // array of itemId => reason string
+        $deductStock = $this->request->getPost('deduct_stock'); // array of itemId => 1 or 0
+
+        if (empty($poId) || empty($returnItems)) {
+            return redirect()->back()->with('error', 'Tidak ada item yang dipilih untuk diretur.');
+        }
+
+        $db = \Config\Database::connect();
+        $db->transStart();
+
+        try {
+            $tenantId = service('tenant')->getId();
+
+            // Get original PO
+            $po = $db->table('purchase_orders')
+                ->where('id', $poId)
+                ->where('tenant_id', $tenantId)
+                ->get()
+                ->getRowArray();
+
+            if (!$po) {
+                throw new \RuntimeException('Purchase Order tidak ditemukan.');
+            }
+
+            // Generate Return Number
+            $lastRet = $db->table('purchase_returns')
+                ->where('tenant_id', $tenantId)
+                ->orderBy('id', 'DESC')
+                ->limit(1)
+                ->get()->getRowArray();
+            $nextNum = $lastRet ? ((int) substr($lastRet['return_number'], 4)) + 1 : 1;
+            $returnNumber = 'PRT-' . str_pad($nextNum, 5, '0', STR_PAD_LEFT);
+
+            $totalRefund = 0.0;
+            $itemsToReturnData = [];
+
+            foreach ($returnItems as $itemId => $qtyToReturn) {
+                $qtyToReturn = (float) $qtyToReturn;
+                if ($qtyToReturn <= 0) continue;
+
+                // Get PO item
+                $poItem = $db->table('purchase_order_items')->where('id', $itemId)->get()->getRowArray();
+                if (!$poItem) {
+                    throw new \RuntimeException('Item PO tidak ditemukan.');
+                }
+
+                // Check already returned quantity
+                $alreadyReturned = $db->table('purchase_return_items')
+                    ->selectSum('quantity')
+                    ->where('purchase_order_item_id', $itemId)
+                    ->get()
+                    ->getRowArray();
+                $returnedQty = (float)($alreadyReturned['quantity'] ?? 0.0);
+
+                if (($qtyToReturn + $returnedQty) > $poItem['quantity_received']) {
+                    throw new \RuntimeException('Total jumlah retur melebihi jumlah yang diterima untuk item ID: ' . $itemId);
+                }
+
+                // Calculate refund amount proportionately
+                $refundForLine = $qtyToReturn * $poItem['unit_cost'];
+                $totalRefund += $refundForLine;
+
+                $itemsToReturnData[] = [
+                    'purchase_order_item_id' => $itemId,
+                    'product_id'             => $poItem['product_id'],
+                    'quantity'               => $qtyToReturn,
+                    'refund_amount'          => $refundForLine,
+                    'reason'                 => $returnReasons[$itemId] ?? 'Retur ke Supplier',
+                    'deducted_from_stock'    => isset($deductStock[$itemId]) ? 1 : 0
+                ];
+            }
+
+            if (empty($itemsToReturnData)) {
+                throw new \RuntimeException('Kuantitas retur tidak valid.');
+            }
+
+            // Insert Return Header
+            $db->table('purchase_returns')->insert([
+                'tenant_id'         => $tenantId,
+                'branch_id'         => $po['branch_id'],
+                'purchase_order_id' => $poId,
+                'return_number'     => $returnNumber,
+                'total_refunded'    => $totalRefund,
+                'created_by'        => session()->get('user_id'),
+                'created_at'        => date('Y-m-d H:i:s'),
+                'updated_at'        => date('Y-m-d H:i:s')
+            ]);
+
+            $returnId = $db->insertID();
+
+            // Insert Return Items and adjust inventory stock
+            foreach ($itemsToReturnData as $itemData) {
+                $db->table('purchase_return_items')->insert([
+                    'tenant_id'              => $tenantId,
+                    'purchase_return_id'     => $returnId,
+                    'purchase_order_item_id' => $itemData['purchase_order_item_id'],
+                    'product_id'             => $itemData['product_id'],
+                    'quantity'               => $itemData['quantity'],
+                    'refund_amount'          => $itemData['refund_amount'],
+                    'reason'                 => $itemData['reason'],
+                    'deducted_from_stock'    => $itemData['deducted_from_stock'],
+                    'created_at'             => date('Y-m-d H:i:s'),
+                    'updated_at'             => date('Y-m-d H:i:s')
+                ]);
+
+                // Adjust stock if requested
+                if ($itemData['deducted_from_stock'] === 1) {
+                    $stock = $db->table('inventory_stocks')
+                        ->where('tenant_id', $tenantId)
+                        ->where('branch_id', $po['branch_id'])
+                        ->where('product_id', $itemData['product_id'])
+                        ->get()
+                        ->getRowArray();
+
+                    if ($stock) {
+                        $newStockQty = $stock['quantity'] - $itemData['quantity'];
+                        $db->table('inventory_stocks')
+                            ->where('id', $stock['id'])
+                            ->update([
+                                'quantity' => $newStockQty,
+                                'updated_at' => date('Y-m-d H:i:s')
+                            ]);
+
+                        // Log to Stock Card
+                        $db->table('stock_card_entries')->insert([
+                            'tenant_id'      => $tenantId,
+                            'branch_id'      => $po['branch_id'],
+                            'product_id'     => $itemData['product_id'],
+                            'entry_date'     => date('Y-m-d H:i:s'),
+                            'type'           => 'OUT',
+                            'quantity'       => $itemData['quantity'],
+                            'balance_after'  => $newStockQty,
+                            'reference_type' => 'Retur Pembelian',
+                            'reference_id'   => $returnId,
+                            'reference_code' => $returnNumber,
+                            'description'    => 'Retur ke supplier untuk PO ' . $po['po_number'],
+                            'created_at'     => date('Y-m-d H:i:s'),
+                        ]);
+                    }
+                }
+            }
+
+            $db->transComplete();
+
+            if (!$db->transStatus()) {
+                throw new \RuntimeException('DB transaction failed.');
+            }
+
+            return redirect()->to('/purchasing/returns')->with('success', 'Retur pembelian berhasil diproses! Total Refund: Rp ' . number_format($totalRefund, 0, ',', '.'));
+
+        } catch (\Throwable $e) {
+            $db->transRollback();
+            return redirect()->back()->with('error', 'Gagal memproses retur: ' . $e->getMessage());
+        }
+    }
 }

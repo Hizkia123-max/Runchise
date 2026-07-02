@@ -616,6 +616,11 @@
                                 <i class="bi bi-people me-1"></i> Data Supplier
                             </a>
                         </li>
+                        <li>
+                            <a href="/purchasing/returns" class="submenu-link <?= ($currentUri === 'purchasing/returns') ? 'active' : '' ?>">
+                                <i class="bi bi-arrow-counterclockwise me-1"></i> Retur Pembelian
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </li>
