@@ -62,6 +62,10 @@ COPY docker/clevercloud/supervisord.conf /etc/supervisor.d/supervisord.ini
 COPY docker/clevercloud/start.sh /start.sh
 RUN chmod +x /start.sh
 
+# PHP-FPM strips inherited env vars from workers by default (clear_env=yes),
+# which breaks CodeIgniter's env()-based config since it reads $_ENV/$_SERVER
+COPY docker/clevercloud/fpm-pool-env.conf /usr/local/etc/php-fpm.d/zz-env.conf
+
 EXPOSE 8080
 
 CMD ["/start.sh"]
