@@ -5,6 +5,7 @@ vendor
 .env.*
 !env
 docker
+!docker/clevercloud
 tests
 writable/*
 !writable/.gitkeep

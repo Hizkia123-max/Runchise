@@ -1,0 +1,67 @@
+FROM php:8.3-fpm-alpine
+
+# Install system dependencies
+RUN apk add --no-cache \
+    git \
+    curl \
+    nginx \
+    supervisor \
+    gettext \
+    libpng-dev \
+    libxml2-dev \
+    zip \
+    unzip \
+    libzip-dev \
+    icu-dev \
+    oniguruma-dev
+
+# Install PHP extensions
+RUN docker-php-ext-install \
+    intl \
+    mbstring \
+    mysqli \
+    pdo_mysql \
+    gd \
+    zip \
+    xml
+
+# Install Redis extension
+RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
+    && pecl install redis \
+    && docker-php-ext-enable redis \
+    && apk del .build-deps
+
+# Get Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Set working directory
+WORKDIR /var/www/html
+
+# Copy composer config files first to leverage Docker cache
+COPY composer.json composer.lock ./
+
+RUN composer install --no-interaction --no-scripts --no-autoloader --no-dev
+
+# Copy the rest of the application
+COPY . .
+
+RUN composer install --no-interaction --optimize-autoloader --no-dev
+
+# writable/* is excluded by .dockerignore, so recreate the required subdirectories
+RUN mkdir -p /var/www/html/writable/cache \
+    /var/www/html/writable/debugbar \
+    /var/www/html/writable/logs \
+    /var/www/html/writable/session \
+    /var/www/html/writable/uploads \
+    && chown -R www-data:www-data /var/www/html/writable \
+    && chmod -R 775 /var/www/html/writable
+
+# nginx + supervisor config
+COPY docker/clevercloud/nginx.conf.template /etc/nginx/http.d/default.conf.template
+COPY docker/clevercloud/supervisord.conf /etc/supervisor.d/supervisord.ini
+COPY docker/clevercloud/start.sh /start.sh
+RUN chmod +x /start.sh
+
+EXPOSE 8080
+
+CMD ["/start.sh"]
