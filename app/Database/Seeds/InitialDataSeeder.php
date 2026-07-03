@@ -58,7 +58,7 @@ class InitialDataSeeder extends Seeder
         $branchId = $this->db->insertID();
 
         // Seed default categories
-        $categories = ['Food & Beverage', 'Retail', 'Electronics', 'Fashion', 'Services'];
+        $categories = ['Laptops & PCs', 'Components', 'Peripherals', 'Networking', 'Services'];
         $categoryIds = [];
         foreach ($categories as $cat) {
             $this->db->table('categories')->insert([
@@ -72,40 +72,40 @@ class InitialDataSeeder extends Seeder
 
         // Seed sample products across all categories
         $products = [
-            // Food & Beverage
-            ['sku' => 'FB-001', 'name' => 'Nasi Goreng Spesial', 'price' => 35000, 'cost' => 15000, 'reorder_point' => 5, 'category_id' => $categoryIds['Food & Beverage']],
-            ['sku' => 'FB-002', 'name' => 'Es Teh Manis', 'price' => 8000, 'cost' => 2000, 'reorder_point' => 10, 'category_id' => $categoryIds['Food & Beverage']],
-            ['sku' => 'FB-003', 'name' => 'Kopi Susu Aren', 'price' => 22000, 'cost' => 8000, 'reorder_point' => 5, 'category_id' => $categoryIds['Food & Beverage']],
-            ['sku' => 'FB-004', 'name' => 'Ayam Bakar Taliwang', 'price' => 45000, 'cost' => 20000, 'reorder_point' => 3, 'category_id' => $categoryIds['Food & Beverage']],
-            ['sku' => 'FB-005', 'name' => 'Roti Bakar Cokelat', 'price' => 18000, 'cost' => 7000, 'reorder_point' => 5, 'category_id' => $categoryIds['Food & Beverage']],
+            // Laptops & PCs
+            ['sku' => 'PC-001', 'name' => 'Lenovo ThinkPad X1 Carbon', 'price' => 25000000, 'cost' => 20000000, 'reorder_point' => 2, 'category_id' => $categoryIds['Laptops & PCs']],
+            ['sku' => 'PC-002', 'name' => 'Asus ROG Zephyrus G14', 'price' => 30000000, 'cost' => 25000000, 'reorder_point' => 2, 'category_id' => $categoryIds['Laptops & PCs']],
+            ['sku' => 'PC-003', 'name' => 'Dell XPS 15', 'price' => 28000000, 'cost' => 23000000, 'reorder_point' => 1, 'category_id' => $categoryIds['Laptops & PCs']],
+            ['sku' => 'PC-004', 'name' => 'MacBook Air M2', 'price' => 18000000, 'cost' => 15000000, 'reorder_point' => 3, 'category_id' => $categoryIds['Laptops & PCs']],
+            ['sku' => 'PC-005', 'name' => 'Custom Build PC Intel i7', 'price' => 15000000, 'cost' => 12000000, 'reorder_point' => 5, 'category_id' => $categoryIds['Laptops & PCs']],
             
-            // Retail
-            ['sku' => 'RT-001', 'name' => 'Sabun Mandi Cair 500ml', 'price' => 32000, 'cost' => 18000, 'reorder_point' => 5, 'category_id' => $categoryIds['Retail']],
-            ['sku' => 'RT-002', 'name' => 'Pasta Gigi Herbal', 'price' => 15000, 'cost' => 8000, 'reorder_point' => 10, 'category_id' => $categoryIds['Retail']],
-            ['sku' => 'RT-003', 'name' => 'Minyak Goreng 2L', 'price' => 38000, 'cost' => 28000, 'reorder_point' => 5, 'category_id' => $categoryIds['Retail']],
-            ['sku' => 'RT-004', 'name' => 'Tissue Wajah 250s', 'price' => 12000, 'cost' => 6000, 'reorder_point' => 8, 'category_id' => $categoryIds['Retail']],
-            ['sku' => 'RT-005', 'name' => 'Deterjen Bubuk 1kg', 'price' => 26000, 'cost' => 16000, 'reorder_point' => 5, 'category_id' => $categoryIds['Retail']],
+            // Components
+            ['sku' => 'CP-001', 'name' => 'NVIDIA RTX 4070 Ti', 'price' => 14000000, 'cost' => 12000000, 'reorder_point' => 2, 'category_id' => $categoryIds['Components']],
+            ['sku' => 'CP-002', 'name' => 'AMD Ryzen 7 7800X3D', 'price' => 7000000, 'cost' => 6000000, 'reorder_point' => 5, 'category_id' => $categoryIds['Components']],
+            ['sku' => 'CP-003', 'name' => 'Corsair Vengeance 32GB DDR5', 'price' => 2500000, 'cost' => 2000000, 'reorder_point' => 10, 'category_id' => $categoryIds['Components']],
+            ['sku' => 'CP-004', 'name' => 'Samsung 990 PRO 2TB NVMe', 'price' => 3500000, 'cost' => 2800000, 'reorder_point' => 8, 'category_id' => $categoryIds['Components']],
+            ['sku' => 'CP-005', 'name' => 'Seasonic Focus 850W Gold', 'price' => 2200000, 'cost' => 1800000, 'reorder_point' => 5, 'category_id' => $categoryIds['Components']],
             
-            // Electronics
-            ['sku' => 'EL-001', 'name' => 'Wireless Mouse', 'price' => 150000, 'cost' => 80000, 'reorder_point' => 5, 'category_id' => $categoryIds['Electronics']],
-            ['sku' => 'EL-002', 'name' => 'USB-C Cable 2m', 'price' => 45000, 'cost' => 20000, 'reorder_point' => 10, 'category_id' => $categoryIds['Electronics']],
-            ['sku' => 'EL-003', 'name' => 'Mechanical Keyboard', 'price' => 450000, 'cost' => 250000, 'reorder_point' => 3, 'category_id' => $categoryIds['Electronics']],
-            ['sku' => 'EL-004', 'name' => 'LED Monitor 24"', 'price' => 1800000, 'cost' => 1200000, 'reorder_point' => 2, 'category_id' => $categoryIds['Electronics']],
-            ['sku' => 'EL-005', 'name' => 'Powerbank 10000mAh', 'price' => 195000, 'cost' => 110000, 'reorder_point' => 5, 'category_id' => $categoryIds['Electronics']],
+            // Peripherals
+            ['sku' => 'PR-001', 'name' => 'Logitech G Pro X Superlight', 'price' => 2000000, 'cost' => 1500000, 'reorder_point' => 5, 'category_id' => $categoryIds['Peripherals']],
+            ['sku' => 'PR-002', 'name' => 'Keychron Q1 Pro Mechanical', 'price' => 3500000, 'cost' => 2500000, 'reorder_point' => 3, 'category_id' => $categoryIds['Peripherals']],
+            ['sku' => 'PR-003', 'name' => 'LG UltraGear 27" 1440p 165Hz', 'price' => 6000000, 'cost' => 5000000, 'reorder_point' => 2, 'category_id' => $categoryIds['Peripherals']],
+            ['sku' => 'PR-004', 'name' => 'HyperX Cloud III Gaming Headset', 'price' => 1500000, 'cost' => 1100000, 'reorder_point' => 5, 'category_id' => $categoryIds['Peripherals']],
+            ['sku' => 'PR-005', 'name' => 'Elgato Stream Deck MK.2', 'price' => 2800000, 'cost' => 2200000, 'reorder_point' => 3, 'category_id' => $categoryIds['Peripherals']],
             
-            // Fashion
-            ['sku' => 'FS-001', 'name' => 'Kemeja Flannel Pria', 'price' => 185000, 'cost' => 95000, 'reorder_point' => 5, 'category_id' => $categoryIds['Fashion']],
-            ['sku' => 'FS-002', 'name' => 'Celana Chino Slimfit', 'price' => 220000, 'cost' => 115000, 'reorder_point' => 5, 'category_id' => $categoryIds['Fashion']],
-            ['sku' => 'FS-003', 'name' => 'Kaos Polos Cotton 30s', 'price' => 55000, 'cost' => 25000, 'reorder_point' => 10, 'category_id' => $categoryIds['Fashion']],
-            ['sku' => 'FS-004', 'name' => 'Jaket Hoodie Fleece', 'price' => 250000, 'cost' => 130000, 'reorder_point' => 3, 'category_id' => $categoryIds['Fashion']],
-            ['sku' => 'FS-005', 'name' => 'Rok Plisket Wanita', 'price' => 110000, 'cost' => 55000, 'reorder_point' => 5, 'category_id' => $categoryIds['Fashion']],
+            // Networking
+            ['sku' => 'NW-001', 'name' => 'Asus RT-AX88U Router Wi-Fi 6', 'price' => 4500000, 'cost' => 3500000, 'reorder_point' => 3, 'category_id' => $categoryIds['Networking']],
+            ['sku' => 'NW-002', 'name' => 'TP-Link Deco X20 Mesh 3-Pack', 'price' => 3200000, 'cost' => 2500000, 'reorder_point' => 4, 'category_id' => $categoryIds['Networking']],
+            ['sku' => 'NW-003', 'name' => 'Ubiquiti UniFi AP AC Pro', 'price' => 2500000, 'cost' => 2000000, 'reorder_point' => 5, 'category_id' => $categoryIds['Networking']],
+            ['sku' => 'NW-004', 'name' => 'Kabel LAN Cat6 Belden 305m', 'price' => 2000000, 'cost' => 1500000, 'reorder_point' => 2, 'category_id' => $categoryIds['Networking']],
+            ['sku' => 'NW-005', 'name' => 'Switch Hub Gigabit 16-Port', 'price' => 800000, 'cost' => 600000, 'reorder_point' => 5, 'category_id' => $categoryIds['Networking']],
             
             // Services
-            ['sku' => 'SV-001', 'name' => 'Cuci Sepatu Standard', 'price' => 45000, 'cost' => 10000, 'reorder_point' => 5, 'category_id' => $categoryIds['Services']],
-            ['sku' => 'SV-002', 'name' => 'Potong Rambut Pria + Pijat', 'price' => 65000, 'cost' => 15000, 'reorder_point' => 5, 'category_id' => $categoryIds['Services']],
-            ['sku' => 'SV-003', 'name' => 'Jasa Setrika Premium /kg', 'price' => 12000, 'cost' => 2000, 'reorder_point' => 10, 'category_id' => $categoryIds['Services']],
-            ['sku' => 'SV-004', 'name' => 'Cuci Helm Full Face', 'price' => 35000, 'cost' => 8000, 'reorder_point' => 5, 'category_id' => $categoryIds['Services']],
-            ['sku' => 'SV-005', 'name' => 'Deep Cleaning Sepeda', 'price' => 85000, 'cost' => 20000, 'reorder_point' => 3, 'category_id' => $categoryIds['Services']],
+            ['sku' => 'SV-001', 'name' => 'Instalasi Windows & Office', 'price' => 150000, 'cost' => 0, 'reorder_point' => 0, 'category_id' => $categoryIds['Services']],
+            ['sku' => 'SV-002', 'name' => 'Jasa Perakitan PC', 'price' => 300000, 'cost' => 0, 'reorder_point' => 0, 'category_id' => $categoryIds['Services']],
+            ['sku' => 'SV-003', 'name' => 'Cleaning & Ganti Thermal Paste', 'price' => 200000, 'cost' => 20000, 'reorder_point' => 0, 'category_id' => $categoryIds['Services']],
+            ['sku' => 'SV-004', 'name' => 'Data Recovery Ringan', 'price' => 500000, 'cost' => 0, 'reorder_point' => 0, 'category_id' => $categoryIds['Services']],
+            ['sku' => 'SV-005', 'name' => 'Pemasangan Jaringan LAN (titik)', 'price' => 100000, 'cost' => 20000, 'reorder_point' => 0, 'category_id' => $categoryIds['Services']],
         ];
 
         foreach ($products as $product) {
@@ -127,17 +127,15 @@ class InitialDataSeeder extends Seeder
             ]);
         }
 
-
-
         // --- PURCHASING DATA SEEDER ---
         // 1. Seed Supplier
         $this->db->table('suppliers')->insert([
             'tenant_id'      => $tenantId,
-            'name'           => 'PT. Sumber Rejeki',
+            'name'           => 'PT. Indokomputer Jaya',
             'contact_person' => 'Bapak Budi',
             'phone'          => '081234567890',
-            'email'          => 'budi@sumberrejeki.com',
-            'address'        => 'Jl. Industri Raya No. 10, Jakarta',
+            'email'          => 'budi@indokomputer.com',
+            'address'        => 'Mangga Dua Mall Lt. 3, Jakarta',
             'created_at'     => date('Y-m-d H:i:s'),
             'updated_at'     => date('Y-m-d H:i:s'),
         ]);
@@ -153,7 +151,7 @@ class InitialDataSeeder extends Seeder
             'expected_date' => date('Y-m-d', strtotime('-2 days')),
             'status'        => 'Completed',
             'notes'         => 'Pembelian stok awal bulan',
-            'total_amount'  => 500000,
+            'total_amount'  => 45000000,
             'created_by'    => 1,
             'created_at'    => date('Y-m-d H:i:s', strtotime('-5 days')),
             'updated_at'    => date('Y-m-d H:i:s', strtotime('-5 days')),
@@ -162,8 +160,8 @@ class InitialDataSeeder extends Seeder
 
         // Add 2 PO Items
         $poItems = [
-            ['product_id' => $products[0]['id'] ?? 1, 'qty' => 10, 'cost' => 15000], // Nasi Goreng
-            ['product_id' => $products[1]['id'] ?? 2, 'qty' => 20, 'cost' => 2000],  // Es Teh
+            ['product_id' => $products[0]['id'] ?? 1, 'qty' => 2, 'cost' => 20000000], // Lenovo ThinkPad
+            ['product_id' => $products[11]['id'] ?? 12, 'qty' => 2, 'cost' => 2500000],  // Keychron Q1 Pro
         ];
 
         foreach ($poItems as $item) {
