@@ -130,4 +130,25 @@ class Home extends BaseController
 
         return view('dashboard', $data);
     }
+
+    public function reset_database()
+    {
+        if ($this->request->getGet('token') !== 'runchise2026') {
+            return "Unauthorized";
+        }
+
+        try {
+            $migrate = \Config\Services::migrations();
+            $migrate->setNamespace('App');
+            $migrate->regress(0);
+            $migrate->latest();
+
+            $seeder = \Config\Database::seeder();
+            $seeder->call('InitialDataSeeder');
+
+            return "Database successfully reset and seeded on live server!";
+        } catch (\Throwable $e) {
+            return "Error: " . $e->getMessage();
+        }
+    }
 }
