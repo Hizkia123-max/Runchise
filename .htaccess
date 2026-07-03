@@ -1,0 +1,13 @@
+# Disable directory browsing
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Block access to .env and other hidden files with a 404 Not Found
+    RewriteRule ^\.(?!well-known) - [R=404,L]
+
+    # Redirect all requests to the public/ folder if they don't already start with it
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
