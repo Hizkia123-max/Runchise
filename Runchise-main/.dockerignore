@@ -1,0 +1,11 @@
+.git
+.github
+vendor
+.env
+.env.*
+!env
+docker
+!docker/clevercloud
+tests
+writable/*
+!writable/.gitkeep

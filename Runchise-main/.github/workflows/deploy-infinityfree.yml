@@ -1,0 +1,43 @@
+name: Deploy to InfinityFree
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: Install Composer dependencies
+        run: composer install --no-dev --optimize-autoloader --no-interaction --no-progress
+
+      - name: Build flattened htdocs structure
+        run: |
+          mkdir -p build_htdocs
+          cp -R public/. build_htdocs/
+          rm -f build_htdocs/envcheck.php
+          cp -R app build_htdocs/app
+          cp -R vendor build_htdocs/vendor
+          cp -R writable build_htdocs/writable
+          # InfinityFree free plan only allows files inside htdocs/, so app/,
+          # vendor/, writable/ live alongside index.php instead of one level up.
+          sed -i "s|require FCPATH . '../app/Config/Paths.php';|require FCPATH . 'app/Config/Paths.php';|" build_htdocs/index.php
+
+      - name: Deploy to htdocs/
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./build_htdocs/
+          server-dir: ./htdocs/
+          dangerous-clean-slate: false
