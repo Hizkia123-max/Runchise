@@ -9,7 +9,23 @@ class ReportController extends BaseController
     /**
      * Sales Report with date/month/year filter
      */
+    public function salesNumeric()
+    {
+        return $this->salesReportView('App\Modules\Report\Views\sales_report_numeric');
+    }
+
+    public function salesVisual()
+    {
+        return $this->salesReportView('App\Modules\Report\Views\sales_report_visual');
+    }
+
     public function salesReport()
+    {
+        // Keep original route working just in case
+        return $this->salesReportView('App\Modules\Report\Views\sales_report');
+    }
+
+    private function salesReportView($viewName)
     {
         $db = \Config\Database::connect();
         $tenantId = service('tenant')->getId();
@@ -107,7 +123,7 @@ class ReportController extends BaseController
             'userRole'         => session()->get('user_role') ?? 'TenantOwner',
         ];
 
-        return view('App\Modules\Report\Views\sales_report', $data);
+        return view($viewName, $data);
     }
 
     /**

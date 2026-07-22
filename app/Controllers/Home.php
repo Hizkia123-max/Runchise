@@ -131,6 +131,60 @@ class Home extends BaseController
         return view('dashboard', $data);
     }
 
+    public function activity()
+    {
+        $db = \Config\Database::connect();
+        $tenantId = service('tenant')->getId() ?? 1;
+        
+        $today = date('Y-m-d');
+        
+        // Today's transactions
+        $transactions = [];
+        $totalSales = 0;
+        $totalCount = 0;
+        if ($db->tableExists('transactions')) {
+            $transactions = $db->table('transactions')
+                ->select('transactions.*, users.name as cashier_name')
+                ->join('pos_sessions', 'pos_sessions.id = transactions.pos_session_id', 'left')
+                ->join('users', 'users.id = pos_sessions.user_id', 'left')
+                ->where('transactions.tenant_id', $tenantId)
+                ->where('DATE(transactions.created_at)', $today)
+                ->orderBy('transactions.created_at', 'DESC')
+                ->get()->getResultArray();
+                
+            $totalCount = count($transactions);
+            $totalSales = array_sum(array_column($transactions, 'total'));
+            
+            if ($totalCount > 0 && $db->tableExists('transaction_items')) {
+                $txIds = array_column($transactions, 'id');
+                $items = $db->table('transaction_items')
+                    ->select('transaction_items.*, products.name as product_name')
+                    ->join('products', 'products.id = transaction_items.product_id', 'left')
+                    ->whereIn('transaction_items.transaction_id', $txIds)
+                    ->get()->getResultArray();
+                    
+                $itemsByTx = [];
+                foreach ($items as $item) {
+                    $itemsByTx[$item['transaction_id']][] = $item;
+                }
+                
+                foreach ($transactions as &$tx) {
+                    $tx['items'] = $itemsByTx[$tx['id']] ?? [];
+                }
+            }
+        }
+
+        $data = [
+            'transactions' => $transactions,
+            'totalSales' => $totalSales,
+            'totalCount' => $totalCount,
+            'userName' => session()->get('user_name') ?? 'Admin Runchise',
+            'userRole' => session()->get('user_role') ?? 'TenantOwner',
+        ];
+
+        return view('activity', $data);
+    }
+
     public function reset_database()
     {
         if ($this->request->getGet('token') !== 'runchise2026') {

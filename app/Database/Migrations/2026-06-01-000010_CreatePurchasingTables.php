@@ -33,7 +33,7 @@ class CreatePurchasingTables extends Migration
             'po_number'     => ['type' => 'VARCHAR', 'constraint' => 50, 'null' => false],
             'order_date'    => ['type' => 'DATE', 'null' => false],
             'expected_date' => ['type' => 'DATE', 'null' => true],
-            'status'        => ['type' => 'ENUM', 'constraint' => ['Draft','Ordered','Partially Received','Completed','Cancelled'], 'default' => 'Draft'],
+            'status'        => ['type' => 'ENUM', 'constraint' => ['Draft','Ordered','Partially Received','Payment Processed','Completed','Cancelled'], 'default' => 'Draft'],
             'notes'         => ['type' => 'TEXT', 'null' => true],
             'total_amount'  => ['type' => 'DECIMAL', 'constraint' => '15,2', 'default' => 0],
             'created_by'    => ['type' => 'BIGINT', 'unsigned' => true, 'null' => true],

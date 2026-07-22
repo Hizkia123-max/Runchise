@@ -1,0 +1,3 @@
+@echo off
+echo Memulai Sinkronisasi File ke InfinityFree...
+powershell.exe -ExecutionPolicy Bypass -File "%~dp0auto_sync_web.ps1"

@@ -16,4 +16,6 @@ $routes->group('purchasing', ['namespace' => 'App\Modules\Purchasing\Controllers
     $routes->post('suppliers',         'PurchasingController::storeSupplier');
     $routes->get('returns',            'PurchasingController::returns');
     $routes->post('returns/process',   'PurchasingController::processReturn');
+    $routes->get('payments/(:num)',    'PurchasingController::payments/$1');
+    $routes->post('payments/store',    'PurchasingController::storePayment');
 });

@@ -114,6 +114,16 @@ class POSController extends BaseController
         }
         
         $data['products'] = $products;
+
+        // Fetch customers for Walk-in Customer dropdown
+        $data['customers'] = [];
+        if ($db->tableExists('customers')) {
+            $data['customers'] = $db->table('customers')
+                ->where('tenant_id', service('tenant')->getId())
+                ->orderBy('name', 'ASC')
+                ->get()->getResultArray();
+        }
+
         return view('App\Modules\POS\Views\terminal', $data);
     }
 

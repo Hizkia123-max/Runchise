@@ -161,4 +161,16 @@ class ProductController extends BaseController
 
         return redirect()->to('/inventory/products#wasted-pane')->with('success', 'Wasted product logged and stock deducted.');
     }
+
+    public function promos()
+    {
+        return view('App\Modules\Inventory\Views\promos');
+    }
+
+    public function categories()
+    {
+        $catModel = new \App\Modules\Inventory\Models\CategoryModel();
+        $data['categories'] = $catModel->findAll();
+        return view('App\Modules\Inventory\Views\categories', $data);
+    }
 }

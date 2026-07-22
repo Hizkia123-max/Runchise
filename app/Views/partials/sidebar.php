@@ -548,174 +548,60 @@
         </a>
 
         <!-- Sidebar Navigation List -->
-        <?php $currentUri = uri_string(); $userSessionRole = session()->get('user_role') ?? 'TenantOwner'; ?>
+        <?php 
+        $currentUri = uri_string(); 
+        $userSessionRole = session()->get('user_role') ?? 'TenantOwner'; 
+        $menuModel = new \App\Models\MenuModel();
+        $menus = $menuModel->getMenuTree($userSessionRole);
+        ?>
         <ul class="sidebar-menu">
-            <!-- Dashboard -->
-            <li class="menu-item">
-                <a href="/dashboard" class="menu-link <?= ($currentUri === 'dashboard') ? 'active' : '' ?>" data-tooltip="Dashboard Utama">
-                    <div class="menu-link-content">
-                        <i class="bi bi-house-door-fill"></i>
-                        <span>Dashboard Utama</span>
+            <?php foreach ($menus as $menu): ?>
+                <?php 
+                // Check if this menu or its children are active
+                $isActive = false;
+                if (!empty($menu['url']) && (strpos($currentUri, $menu['url']) === 0 || strpos($menu['url'], $currentUri) === 0)) {
+                    $isActive = true;
+                }
+                foreach ($menu['children'] as $child) {
+                    // special logic for exact match or dashboard
+                    if ($child['url'] === 'dashboard' && $currentUri === 'dashboard') {
+                        $isActive = true;
+                    } elseif ($child['url'] !== 'dashboard' && (strpos($currentUri, $child['url']) === 0 || strpos($child['url'], $currentUri) === 0)) {
+                        $isActive = true;
+                    }
+                }
+                $menuId = 'menu-' . $menu['id'];
+                ?>
+                <li class="menu-item">
+                    <button class="menu-link" data-bs-toggle="collapse" data-bs-target="#<?= $menuId ?>" aria-expanded="<?= $isActive ? 'true' : 'false' ?>" data-tooltip="<?= esc($menu['title']) ?>">
+                        <div class="menu-link-content">
+                            <i class="bi <?= esc($menu['icon']) ?>"></i>
+                            <span><?= esc($menu['title']) ?></span>
+                        </div>
+                        <i class="bi bi-chevron-down" style="font-size: 0.75rem;"></i>
+                    </button>
+                    <div class="collapse <?= $isActive ? 'show' : '' ?>" id="<?= $menuId ?>">
+                        <ul class="submenu-list">
+                            <?php foreach ($menu['children'] as $child): ?>
+                                <?php 
+                                // Determine child active state accurately
+                                $isChildActive = false;
+                                if ($child['url'] === 'dashboard' && $currentUri === 'dashboard') {
+                                    $isChildActive = true;
+                                } elseif ($child['url'] !== 'dashboard' && (strpos($currentUri, $child['url']) === 0 || strpos($child['url'], $currentUri) === 0)) {
+                                    $isChildActive = true;
+                                }
+                                ?>
+                                <li>
+                                    <a href="/<?= esc($child['url']) ?>" class="submenu-link <?= $isChildActive ? 'active' : '' ?>">
+                                        <i class="bi <?= esc($child['icon']) ?> me-1"></i> <?= esc($child['title']) ?>
+                                    </a>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
                     </div>
-                </a>
-            </li>
-
-            <!-- POS & Kasir -->
-            <li class="menu-item">
-                <button class="menu-link" data-bs-toggle="collapse" data-bs-target="#menu-kasir" aria-expanded="true" data-tooltip="Kasir & Transaksi">
-                    <div class="menu-link-content">
-                        <i class="bi bi-pc-display-horizontal"></i>
-                        <span>Kasir & Transaksi</span>
-                    </div>
-                    <i class="bi bi-chevron-down" style="font-size: 0.75rem;"></i>
-                </button>
-                <div class="collapse show" id="menu-kasir">
-                    <ul class="submenu-list">
-                        <li>
-                            <a href="/pos/terminal" class="submenu-link <?= ($currentUri === 'pos/terminal') ? 'active' : '' ?>">
-                                <i class="bi bi-calculator me-1"></i> POS Terminal
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/pos/sessions" class="submenu-link <?= ($currentUri === 'pos/sessions') ? 'active' : '' ?>">
-                                <i class="bi bi-clock-history me-1"></i> Shift & Sesi
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/pos/returns" class="submenu-link <?= ($currentUri === 'pos/returns') ? 'active' : '' ?>">
-                                <i class="bi bi-arrow-counterclockwise me-1"></i> Retur Barang
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
-
-            <!-- Pembelian (Purchasing) -->
-            <li class="menu-item">
-                <button class="menu-link" data-bs-toggle="collapse" data-bs-target="#menu-purchasing" aria-expanded="<?= (strpos($currentUri, 'purchasing') !== false) ? 'true' : 'false' ?>" data-tooltip="Pembelian">
-                    <div class="menu-link-content">
-                        <i class="bi bi-cart-check-fill"></i>
-                        <span>Pembelian</span>
-                    </div>
-                    <i class="bi bi-chevron-down" style="font-size: 0.75rem;"></i>
-                </button>
-                <div class="collapse <?= (strpos($currentUri, 'purchasing') !== false) ? 'show' : '' ?>" id="menu-purchasing">
-                    <ul class="submenu-list">
-                        <li>
-                            <a href="/purchasing/orders" class="submenu-link <?= ($currentUri === 'purchasing/orders' || $currentUri === 'purchasing/orders/create') ? 'active' : '' ?>">
-                                <i class="bi bi-file-earmark-text me-1"></i> Purchase Order
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/purchasing/receivings" class="submenu-link <?= ($currentUri === 'purchasing/receivings' || strpos($currentUri, 'purchasing/receive') !== false) ? 'active' : '' ?>">
-                                <i class="bi bi-box-arrow-in-down me-1"></i> Penerimaan Barang
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/purchasing/suppliers" class="submenu-link <?= ($currentUri === 'purchasing/suppliers') ? 'active' : '' ?>">
-                                <i class="bi bi-people me-1"></i> Data Supplier
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/purchasing/returns" class="submenu-link <?= ($currentUri === 'purchasing/returns') ? 'active' : '' ?>">
-                                <i class="bi bi-arrow-counterclockwise me-1"></i> Retur Pembelian
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
-
-            <!-- Katalog -->
-            <li class="menu-item">
-                <button class="menu-link" data-bs-toggle="collapse" data-bs-target="#menu-catalog" aria-expanded="true" data-tooltip="Katalog Produk">
-                    <div class="menu-link-content">
-                        <i class="bi bi-box-seam-fill"></i>
-                        <span>Katalog Produk</span>
-                    </div>
-                    <i class="bi bi-chevron-down" style="font-size: 0.75rem;"></i>
-                </button>
-                <div class="collapse show" id="menu-catalog">
-                    <ul class="submenu-list">
-                        <li>
-                            <a href="/inventory/products" class="submenu-link <?= ($currentUri === 'inventory/products') ? 'active' : '' ?>">
-                                <i class="bi bi-tags me-1"></i> Produk & Kategori
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
-
-            <!-- Stok & Inventori -->
-            <li class="menu-item">
-                <button class="menu-link" data-bs-toggle="collapse" data-bs-target="#menu-stok" aria-expanded="true" data-tooltip="Stok & Inventori">
-                    <div class="menu-link-content">
-                        <i class="bi bi-graph-up-arrow"></i>
-                        <span>Stok & Inventori</span>
-                    </div>
-                    <i class="bi bi-chevron-down" style="font-size: 0.75rem;"></i>
-                </button>
-                <div class="collapse show" id="menu-stok">
-                    <ul class="submenu-list">
-                        <li>
-                            <a href="/report/stock-onhand" class="submenu-link <?= ($currentUri === 'report/stock-onhand') ? 'active' : '' ?>">
-                                <i class="bi bi-box-seam me-1"></i> Stok di Tangan
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/report/stock-card" class="submenu-link <?= ($currentUri === 'report/stock-card') ? 'active' : '' ?>">
-                                <i class="bi bi-journal-text me-1"></i> Kartu Stok
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/inventory/stock" class="submenu-link <?= ($currentUri === 'inventory/stock') ? 'active' : '' ?>">
-                                <i class="bi bi-card-checklist me-1"></i> Stock Levels
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/inventory/opname" class="submenu-link <?= ($currentUri === 'inventory/opname') ? 'active' : '' ?>">
-                                <i class="bi bi-pencil-square me-1"></i> Stock Opname
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/inventory/transfers" class="submenu-link <?= ($currentUri === 'inventory/transfers') ? 'active' : '' ?>">
-                                <i class="bi bi-arrow-left-right me-1"></i> Stock Transfer
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
-
-            <!-- Laporan -->
-            <li class="menu-item">
-                <button class="menu-link" data-bs-toggle="collapse" data-bs-target="#menu-laporan" aria-expanded="<?= (strpos($currentUri, 'report/') !== false || $currentUri === 'pos/analytics') ? 'true' : 'false' ?>" data-tooltip="Laporan">
-                    <div class="menu-link-content">
-                        <i class="bi bi-journal-check"></i>
-                        <span>Laporan</span>
-                    </div>
-                    <i class="bi bi-chevron-down" style="font-size: 0.75rem;"></i>
-                </button>
-                <div class="collapse <?= (strpos($currentUri, 'report/') !== false || $currentUri === 'pos/analytics') ? 'show' : '' ?>" id="menu-laporan">
-                    <ul class="submenu-list">
-                        <li>
-                            <a href="/report/sales" class="submenu-link <?= ($currentUri === 'report/sales') ? 'active' : '' ?>">
-                                <i class="bi bi-bar-chart-line me-1"></i> Report Penjualan
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/report/numeric" class="submenu-link <?= ($currentUri === 'report/numeric') ? 'active' : '' ?>">
-                                <i class="bi bi-123 me-1"></i> Reporting Numerik
-                            </a>
-                        </li>
-                        <?php if ($userSessionRole === 'TenantOwner' || $userSessionRole === 'SuperAdmin'): ?>
-                        <li>
-                            <a href="/pos/analytics" class="submenu-link <?= ($currentUri === 'pos/analytics') ? 'active' : '' ?>">
-                                <i class="bi bi-cash-stack me-1"></i> Laba Rugi & Laporan
-                            </a>
-                        </li>
-                        <?php endif; ?>
-                    </ul>
-                </div>
-            </li>
+                </li>
+            <?php endforeach; ?>
         </ul>
     </div>
 
@@ -729,12 +615,35 @@
         <div class="user-avatar-circle">
             <?= $firstLetter ?>
         </div>
-        <div class="user-info-text">
+        <div class="user-info-text flex-grow-1">
             <div class="user-name-label"><?= esc($sessName) ?></div>
             <div class="user-role-label"><?= esc($sessRole) ?></div>
         </div>
+        <button class="btn btn-sm btn-link text-white p-0 m-0 ms-2" onclick="confirmLogout()" title="Logout">
+            <i class="bi bi-box-arrow-right fs-5"></i>
+        </button>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function confirmLogout() {
+        Swal.fire({
+            title: 'Keluar dari Runchise?',
+            text: "Sesi Anda akan diakhiri.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Ya, Logout',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '/auth/logout';
+            }
+        })
+    }
+</script>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {

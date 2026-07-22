@@ -35,6 +35,7 @@ class CheckoutService
                 $item['total']      = round($lineTotal + $item['tax_amount'], 2);
                 $subtotal += $lineTotal;
             }
+            unset($item);
 
             $discountTotal = array_sum(array_column($items, 'discount_amount'));
             $taxTotal      = array_sum(array_column($items, 'tax_amount'));

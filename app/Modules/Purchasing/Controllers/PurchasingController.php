@@ -97,9 +97,15 @@ class PurchasingController extends BaseController
             $items = [];
 
             foreach ($productIds as $idx => $productId) {
-                $qty = (float) ($quantities[$idx] ?? 0);
-                $cost = (float) ($unitCosts[$idx] ?? 0);
-                if ($qty <= 0 || $cost <= 0) continue;
+                $qty = (float) str_replace(',', '.', $quantities[$idx] ?? 0);
+                $cost = (float) str_replace(',', '.', $unitCosts[$idx] ?? 0);
+                
+                if ($qty <= 0) {
+                    return redirect()->back()->with('error', "Kuantitas untuk produk ID $productId tidak valid (harus > 0).");
+                }
+                if ($cost < 0) {
+                    return redirect()->back()->with('error', "Harga untuk produk ID $productId tidak valid.");
+                }
 
                 $lineTotal = $qty * $cost;
                 $totalAmount += $lineTotal;
@@ -667,6 +673,106 @@ class PurchasingController extends BaseController
         } catch (\Throwable $e) {
             $db->transRollback();
             return redirect()->back()->with('error', 'Gagal memproses retur: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * View PO Payments and Form
+     */
+    public function payments($poId)
+    {
+        $db = \Config\Database::connect();
+        $tenantId = service('tenant')->getId();
+
+        $po = $db->table('purchase_orders')
+            ->select('purchase_orders.*, suppliers.name as supplier_name')
+            ->join('suppliers', 'suppliers.id = purchase_orders.supplier_id', 'left')
+            ->where('purchase_orders.id', $poId)
+            ->where('purchase_orders.tenant_id', $tenantId)
+            ->get()->getRowArray();
+
+        if (!$po) {
+            return redirect()->to('/purchasing/orders')->with('error', 'PO tidak ditemukan.');
+        }
+
+        $payments = [];
+        if ($db->tableExists('purchase_payments')) {
+            $payments = $db->table('purchase_payments')
+                ->where('purchase_order_id', $poId)
+                ->where('tenant_id', $tenantId)
+                ->orderBy('created_at', 'DESC')
+                ->get()->getResultArray();
+        }
+
+        $data = [
+            'po'       => $po,
+            'payments' => $payments,
+            'userName' => session()->get('user_name') ?? 'Admin Runchise',
+            'userRole' => session()->get('user_role') ?? 'TenantOwner',
+        ];
+
+        return view('App\Modules\Purchasing\Views\purchase_payments', $data);
+    }
+
+    /**
+     * Store Payment and Process Status
+     */
+    public function storePayment()
+    {
+        $db = \Config\Database::connect();
+        $tenantId = service('tenant')->getId();
+        
+        $poId = $this->request->getPost('purchase_order_id');
+        $paymentDate = $this->request->getPost('payment_date');
+        $amount = (float) $this->request->getPost('amount');
+        $paymentMethod = $this->request->getPost('payment_method');
+        $proofFile = $this->request->getFile('payment_proof');
+
+        $db->transStart();
+        try {
+            $po = $db->table('purchase_orders')
+                ->where('id', $poId)
+                ->where('tenant_id', $tenantId)
+                ->get()->getRowArray();
+
+            if (!$po) {
+                throw new \RuntimeException('PO tidak ditemukan.');
+            }
+
+            $proofPath = null;
+            if ($proofFile && $proofFile->isValid() && !$proofFile->hasMoved()) {
+                $newName = $proofFile->getRandomName();
+                $proofFile->move(FCPATH . 'uploads/payments', $newName);
+                $proofPath = '/uploads/payments/' . $newName;
+            }
+
+            $db->table('purchase_payments')->insert([
+                'tenant_id'          => $tenantId,
+                'purchase_order_id'  => $poId,
+                'amount'             => $amount,
+                'payment_date'       => $paymentDate,
+                'payment_method'     => $paymentMethod,
+                'payment_proof_path' => $proofPath,
+                'created_by'         => session()->get('user_id'),
+                'created_at'         => date('Y-m-d H:i:s'),
+                'updated_at'         => date('Y-m-d H:i:s'),
+            ]);
+
+            // Update PO Status to 'Payment Processed'
+            $db->table('purchase_orders')
+                ->where('id', $poId)
+                ->update(['status' => 'Payment Processed', 'updated_at' => date('Y-m-d H:i:s')]);
+
+            $db->transComplete();
+
+            if (!$db->transStatus()) {
+                throw new \RuntimeException('Database transaction failed.');
+            }
+
+            return redirect()->back()->with('success', 'Pembayaran berhasil disimpan.');
+        } catch (\Throwable $e) {
+            $db->transRollback();
+            return redirect()->back()->with('error', 'Gagal menyimpan pembayaran: ' . $e->getMessage());
         }
     }
 }

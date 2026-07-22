@@ -19,8 +19,8 @@ class InitialDataSeeder extends Seeder
         $tenantId = $this->db->insertID();
 
         // Seed default owner user
-        $email = getenv('admin.email') ?: 'owner@runchise.com';
-        $password = getenv('admin.password') ?: 'Admin@12345';
+        $email = 'owner@runchise.com';
+        $password = 'Owner@12345';
 
         $this->db->table('users')->insert([
             'tenant_id'     => $tenantId,

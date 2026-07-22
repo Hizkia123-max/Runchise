@@ -91,10 +91,6 @@
             color: var(--text-primary); 
             margin-bottom: 0.35rem; 
             min-height: 2.4em;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
         }
         .product-price { 
             font-size: 0.95rem; 
@@ -274,18 +270,23 @@
             <div class="pos-search">
                 <input id="searchInput" type="text" placeholder="🔍 Search or scan barcode..." autocomplete="off">
             </div>
-            <div style="color: var(--text-muted); font-size:0.85rem;">
-                <i class="bi bi-person-circle"></i> <?= esc(session()->get('user_name') ?? 'Cashier') ?>
+            <div class="d-flex align-items-center gap-3">
+                <div style="color: var(--text-muted); font-size:0.85rem;">
+                    <i class="bi bi-person-circle"></i> <?= esc(session()->get('user_name') ?? 'Cashier') ?>
+                </div>
+                <a href="#" onclick="confirmLogout(event)" class="btn btn-sm btn-outline-danger" style="border-radius: 8px; font-weight: 500;">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </a>
             </div>
         </div>
 
         <div class="category-bar">
             <button class="cat-btn active" data-cat="all">All Items</button>
-            <button class="cat-btn" data-cat="food">Food & Beverage</button>
-            <button class="cat-btn" data-cat="retail">Retail</button>
-            <button class="cat-btn" data-cat="electronics">Electronics</button>
-            <button class="cat-btn" data-cat="fashion">Fashion</button>
-            <button class="cat-btn" data-cat="services">Services</button>
+            <button class="cat-btn" data-cat="laptop">Laptop & PC</button>
+            <button class="cat-btn" data-cat="cpu">Komponen</button>
+            <button class="cat-btn" data-cat="mouse">Aksesoris</button>
+            <button class="cat-btn" data-cat="lain-lain">Jaringan</button>
+            <button class="cat-btn" data-cat="service">Service</button>
         </div>
 
         <div class="product-grid" id="productGrid">
@@ -297,32 +298,54 @@
                     
                     // Map category name to lower-case code matching button data-cat
                     $rawCat = strtolower($p['category_name'] ?? '');
+                    $pNameForCat = strtolower($p['name']);
                     $catCode = 'all';
-                    if (strpos($rawCat, 'food') !== false) {
-                        $catCode = 'food';
-                    } elseif (strpos($rawCat, 'retail') !== false) {
-                        $catCode = 'retail';
-                    } elseif (strpos($rawCat, 'electro') !== false) {
-                        $catCode = 'electronics';
-                    } elseif (strpos($rawCat, 'fashion') !== false) {
-                        $catCode = 'fashion';
-                    } elseif (strpos($rawCat, 'serv') !== false) {
-                        $catCode = 'services';
+                    if (strpos($rawCat, 'laptop') !== false || strpos($rawCat, 'pc') !== false || strpos($pNameForCat, 'lenovo') !== false || strpos($pNameForCat, 'asus') !== false || strpos($pNameForCat, 'dell') !== false || strpos($pNameForCat, 'macbook') !== false) {
+                        $catCode = 'laptop';
+                    } elseif (strpos($rawCat, 'service') !== false) {
+                        $catCode = 'service';
+                    } elseif (strpos($rawCat, 'peripheral') !== false || strpos($pNameForCat, 'mouse') !== false || strpos($pNameForCat, 'keychron') !== false || strpos($pNameForCat, 'headset') !== false || strpos($pNameForCat, 'stream deck') !== false) {
+                        $catCode = 'mouse';
+                    } elseif (strpos($rawCat, 'component') !== false || strpos($pNameForCat, 'ryzen') !== false || strpos($pNameForCat, 'corsair') !== false || strpos($pNameForCat, 'samsung') !== false || strpos($pNameForCat, 'seasonic') !== false || strpos($pNameForCat, 'rtx') !== false || strpos($pNameForCat, 'intel') !== false) {
+                        $catCode = 'cpu';
+                    } else {
+                        $catCode = 'lain-lain';
                     }
                     ?>
                     <?php
                     // Map category code to beautiful icons
                     $emoji = '📦';
-                    if ($catCode === 'food') {
-                        $emoji = '🍛';
-                    } elseif ($catCode === 'retail') {
-                        $emoji = '🧴';
-                    } elseif ($catCode === 'electronics') {
-                        $emoji = '🔌';
-                    } elseif ($catCode === 'fashion') {
-                        $emoji = '👕';
-                    } elseif ($catCode === 'services') {
+                    if ($catCode === 'laptop') {
+                        $emoji = '💻';
+                    } elseif ($catCode === 'service') {
                         $emoji = '🧹';
+                    } elseif ($catCode === 'mouse') {
+                        $emoji = '🖱️';
+                    } elseif ($catCode === 'cpu') {
+                        $emoji = '⚙️';
+                    } elseif ($catCode === 'lain-lain') {
+                        $emoji = '🔌';
+                    }
+                    $imgSrc = null;
+                    $pName = strtolower($p['name']);
+                    if (strpos($pName, 'lenovo') !== false) {
+                        $imgSrc = '/images/products/lenovo.png';
+                    } elseif (strpos($pName, 'asus') !== false) {
+                        $imgSrc = '/images/products/asus.png';
+                    } elseif (strpos($pName, 'dell') !== false) {
+                        $imgSrc = '/images/products/dell.png';
+                    } elseif (strpos($pName, 'macbook') !== false) {
+                        $imgSrc = '/images/products/macbook.png';
+                    } elseif (strpos($pName, 'nvidia') !== false) {
+                        $imgSrc = '/images/products/nvidia.png';
+                    } elseif (strpos($pName, 'amd') !== false || strpos($pName, 'ryzen') !== false) {
+                        $imgSrc = '/images/products/amd.png';
+                    } elseif (strpos($pName, 'corsair') !== false) {
+                        $imgSrc = '/images/products/corsair.png';
+                    } elseif (strpos($pName, 'samsung') !== false) {
+                        $imgSrc = '/images/products/samsung.png';
+                    } elseif (strpos($pName, 'logitech') !== false) {
+                        $imgSrc = '/images/products/logitech.png';
                     }
                     ?>
                     <div class="product-card <?= $isOut ? 'out-of-stock' : '' ?>" 
@@ -336,7 +359,15 @@
                         <?php elseif ($isLow): ?>
                             <span class="stock-badge low">Low</span>
                         <?php endif; ?>
-                        <div class="product-icon"><?= $emoji ?></div>
+                        
+                        <?php if ($imgSrc): ?>
+                            <div class="product-icon" style="height: 60px; display: flex; align-items: center; justify-content: center; margin-bottom: 0.5rem;">
+                                <img src="<?= $imgSrc ?>" alt="<?= esc($p['name']) ?>" style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                            </div>
+                        <?php else: ?>
+                            <div class="product-icon"><?= $emoji ?></div>
+                        <?php endif; ?>
+                        
                         <div class="product-name"><?= esc($p['name']) ?></div>
                         <div class="product-price">Rp <?= number_format($p['price']) ?></div>
                         <div class="product-stock"><?= $isOut ? 'Out of Stock' : 'Stock: ' . $p['stock'] ?></div>
@@ -366,13 +397,17 @@
             <div class="cart-customer">
                 <select id="customerSelect">
                     <option value="">👤 Walk-in Customer</option>
+                    <?php if (isset($customers) && is_array($customers)): ?>
+                        <?php foreach ($customers as $cust): ?>
+                            <option value="<?= $cust['id'] ?>">👤 <?= esc($cust['name']) ?> <?= $cust['phone'] ? ' - ' . esc($cust['phone']) : '' ?></option>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </select>
             </div>
 
             <div class="cart-totals">
                 <div class="total-row"><span>Subtotal</span><span id="subtotalDisplay">Rp 0</span></div>
                 <div class="total-row"><span>Discount</span><span id="discountDisplay">Rp 0</span></div>
-                <div class="total-row"><span>PPN (11%)</span><span id="taxDisplay">Rp 0</span></div>
                 <div class="total-row grand"><span>Grand Total</span><span id="grandTotalDisplay">Rp 0</span></div>
             </div>
 
@@ -382,9 +417,14 @@
                 <button class="pay-btn" data-method="QRIS" id="payQRIS"><i class="bi bi-qr-code"></i> QRIS</button>
             </div>
 
-            <button class="btn btn-outline-warning w-100 mb-2 py-2" id="holdOrderBtn" style="border-radius:12px; font-weight:600; font-size:0.9rem;" disabled>
-                <i class="bi bi-pause-circle"></i> Tunda Pesanan (Hold Order)
-            </button>
+            <div class="d-flex gap-2 mb-2">
+                <button class="btn btn-outline-warning w-100 py-2" id="holdOrderBtn" style="border-radius:12px; font-weight:600; font-size:0.9rem;" disabled>
+                    <i class="bi bi-pause-circle"></i> Tunda
+                </button>
+                <button class="btn btn-outline-info w-100 py-2" id="viewHeldOrdersBtn" style="border-radius:12px; font-weight:600; font-size:0.9rem;" onclick="showHeldOrdersModal()">
+                    <i class="bi bi-card-list"></i> Antrean (<span id="heldCountBadge">0</span>)
+                </button>
+            </div>
 
             <button class="pay-now-btn" id="payNowBtn" disabled>
                 <i class="bi bi-check-circle"></i> Pay Now — <span id="payNowTotal">Rp 0</span>
@@ -397,6 +437,23 @@
 <!-- ==========================================================================
      SIMULATED PAYMENT MODALS & CUSTOM PRINTABLE RECEIPT
      ========================================================================== -->
+
+<!-- Modal Held Orders -->
+<div class="modal fade" id="heldOrdersModal" tabindex="-1" aria-labelledby="heldOrdersModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content" style="border-radius: 16px;">
+            <div class="modal-header border-bottom-0 pb-0">
+                <h5 class="modal-title fw-bold" id="heldOrdersModalLabel"><i class="bi bi-card-list text-info"></i> Antrean Pesanan Tertunda</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="heldOrdersContainer">
+                    <div class="text-center text-muted py-4">Tidak ada pesanan yang ditunda.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Modal QRIS -->
 <div class="modal fade" id="qrisModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="qrisModalLabel" aria-hidden="true">
@@ -1074,9 +1131,89 @@ document.getElementById('holdOrderBtn').addEventListener('click', () => {
     alert(`Order ditunda sebagai "${newHeld.name}"!\nAnda sekarang dapat melayani pelanggan berikutnya.`);
     
     renderCart();
-    
-    if (window.refreshPendingCartWidget) window.refreshPendingCartWidget();
+    updateHeldOrdersBadge();
 });
+
+// Show held orders modal
+function showHeldOrdersModal() {
+    const container = document.getElementById('heldOrdersContainer');
+    let pendingCarts = [];
+    try {
+        pendingCarts = JSON.parse(localStorage.getItem('runchise_pending_carts')) || [];
+    } catch(e) {}
+    
+    if (pendingCarts.length === 0) {
+        container.innerHTML = '<div class="text-center text-muted py-4">Tidak ada pesanan yang ditunda.</div>';
+    } else {
+        container.innerHTML = '';
+        pendingCarts.forEach((order, index) => {
+            let totalItems = 0;
+            let totalPrice = 0;
+            order.items.forEach(i => {
+                totalItems += i.qty;
+                totalPrice += i.price * i.qty;
+            });
+            
+            container.innerHTML += `
+                <div class="card mb-3 border-0 shadow-sm" style="border-radius:12px; border: 1px solid var(--border)!important;">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="fw-bold mb-1">${order.name}</h6>
+                            <div class="text-muted small"><i class="bi bi-clock"></i> ${order.created_at} &bull; ${totalItems} item &bull; ${fmt(totalPrice)}</div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm btn-primary" onclick="restoreHeldOrder(${index})" style="border-radius:8px;">Lanjutkan</button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteHeldOrder(${index})" style="border-radius:8px;"><i class="bi bi-trash"></i></button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+    }
+    
+    new bootstrap.Modal(document.getElementById('heldOrdersModal')).show();
+}
+
+// Restore a held order to active cart
+window.restoreHeldOrder = function(index) {
+    if (cart.length > 0) {
+        if (!confirm('Cart saat ini tidak kosong. Menarik antrean akan mengganti pesanan saat ini. Lanjutkan?')) {
+            return;
+        }
+    }
+    let pendingCarts = JSON.parse(localStorage.getItem('runchise_pending_carts')) || [];
+    if (pendingCarts[index]) {
+        cart.length = 0; // Clear current
+        pendingCarts[index].items.forEach(i => cart.push(i));
+        pendingCarts.splice(index, 1); // Remove from pending
+        localStorage.setItem('runchise_pending_carts', JSON.stringify(pendingCarts));
+        
+        renderCart();
+        updateHeldOrdersBadge();
+        bootstrap.Modal.getInstance(document.getElementById('heldOrdersModal')).hide();
+    }
+};
+
+window.deleteHeldOrder = function(index) {
+    if (confirm('Hapus antrean pesanan ini?')) {
+        let pendingCarts = JSON.parse(localStorage.getItem('runchise_pending_carts')) || [];
+        pendingCarts.splice(index, 1);
+        localStorage.setItem('runchise_pending_carts', JSON.stringify(pendingCarts));
+        updateHeldOrdersBadge();
+        showHeldOrdersModal(); // re-render modal
+    }
+};
+
+function updateHeldOrdersBadge() {
+    let pendingCarts = [];
+    try {
+        pendingCarts = JSON.parse(localStorage.getItem('runchise_pending_carts')) || [];
+    } catch(e) {}
+    document.getElementById('heldCountBadge').textContent = pendingCarts.length;
+}
+
+// Call on load
+document.addEventListener('DOMContentLoaded', updateHeldOrdersBadge);
 
 // Search filter
 function filterProducts() {
@@ -1116,7 +1253,7 @@ function renderCart() {
         emptyEl.style.display = 'block';
         document.getElementById('payNowBtn').disabled = true;
         document.getElementById('holdOrderBtn').disabled = true;
-        updateTotals(0, 0, 0);
+        updateTotals(0, 0);
         localStorage.removeItem('runchise_pending_cart');
         return;
     }
@@ -1143,9 +1280,8 @@ function renderCart() {
         container.appendChild(div);
     });
 
-    const tax   = subtotal * TAX_RATE;
-    const total = subtotal + tax;
-    updateTotals(subtotal, tax, total);
+    const total = subtotal;
+    updateTotals(subtotal, total);
     document.getElementById('payNowBtn').disabled = false;
     document.getElementById('holdOrderBtn').disabled = false;
     
@@ -1153,9 +1289,8 @@ function renderCart() {
     localStorage.setItem('runchise_pending_cart', JSON.stringify(cart));
 }
 
-function updateTotals(sub, tax, grand) {
+function updateTotals(sub, grand) {
     document.getElementById('subtotalDisplay').textContent   = fmt(sub);
-    document.getElementById('taxDisplay').textContent        = fmt(tax);
     document.getElementById('grandTotalDisplay').textContent = fmt(grand);
     document.getElementById('payNowTotal').textContent       = fmt(grand);
 }

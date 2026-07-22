@@ -27,6 +27,7 @@
         .badge-draft { background: rgba(107,114,128,0.12); color: #6b7280; }
         .badge-ordered { background: rgba(59,130,246,0.12); color: #2563eb; }
         .badge-partial { background: rgba(245,158,11,0.12); color: #d97706; }
+        .badge-payment-processed { background: rgba(139,92,246,0.12); color: #7c3aed; }
         .badge-completed { background: rgba(16,185,129,0.12); color: #059669; }
         .badge-cancelled { background: rgba(239,68,68,0.12); color: #dc2626; }
         .btn-action { padding: 0.35rem 0.7rem; border-radius: 8px; font-size: 0.78rem; font-weight: 500; border: 1px solid var(--border-light); background: white; color: var(--text-primary); transition: all 0.2s; text-decoration: none; }
@@ -97,6 +98,7 @@
                                         $statusClass = 'badge-draft';
                                         if ($o['status'] === 'Ordered') $statusClass = 'badge-ordered';
                                         elseif ($o['status'] === 'Partially Received') $statusClass = 'badge-partial';
+                                        elseif ($o['status'] === 'Payment Processed') $statusClass = 'badge-payment-processed';
                                         elseif ($o['status'] === 'Completed') $statusClass = 'badge-completed';
                                         elseif ($o['status'] === 'Cancelled') $statusClass = 'badge-cancelled';
                                     ?>
@@ -109,10 +111,9 @@
                                         <td><span class="badge-status <?= $statusClass ?>"><?= esc($o['status']) ?></span></td>
                                         <td><?= esc($o['creator_name'] ?? '-') ?></td>
                                         <td>
+                                            <a href="/purchasing/payments/<?= $o['id'] ?>" class="btn-action me-1"><i class="bi bi-wallet2 me-1"></i>Pembayaran</a>
                                             <?php if (!in_array($o['status'], ['Completed', 'Cancelled'])): ?>
                                                 <a href="/purchasing/receive/<?= $o['id'] ?>" class="btn-action"><i class="bi bi-box-arrow-in-down me-1"></i>Terima</a>
-                                            <?php else: ?>
-                                                <span class="text-muted" style="font-size:0.78rem;">—</span>
                                             <?php endif; ?>
                                         </td>
                                     </tr>

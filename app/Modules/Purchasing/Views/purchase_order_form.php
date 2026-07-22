@@ -104,7 +104,7 @@
                                 </div>
                                 <div class="col-md-2">
                                     <label class="form-label">Qty *</label>
-                                    <input type="number" name="quantities[]" class="form-control qty-input" min="1" step="1" value="1" required onchange="calcTotal()">
+                                    <input type="number" name="quantities[]" class="form-control qty-input" min="0.01" step="0.01" value="1" required onchange="calcTotal()">
                                 </div>
                                 <div class="col-md-3">
                                     <label class="form-label">Harga Beli /unit *</label>
@@ -154,7 +154,7 @@ function addItem() {
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Qty *</label>
-                    <input type="number" name="quantities[]" class="form-control qty-input" min="1" step="1" value="1" required onchange="calcTotal()">
+                    <input type="number" name="quantities[]" class="form-control qty-input" min="0.01" step="0.01" value="1" required onchange="calcTotal()">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Harga Beli /unit *</label>

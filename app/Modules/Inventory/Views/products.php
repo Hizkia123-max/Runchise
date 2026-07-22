@@ -48,9 +48,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg-dark);color:var(--text-p
                 <button class="nav-link active" id="products-tab" data-bs-toggle="tab" data-bs-target="#products-pane" type="button" role="tab" aria-controls="products-pane" aria-selected="true">📦 Products Catalog</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="categories-tab" data-bs-toggle="tab" data-bs-target="#categories-pane" type="button" role="tab" aria-controls="categories-pane" aria-selected="false">📁 Category Management</button>
-            </li>
-            <li class="nav-item" role="presentation">
                 <button class="nav-link" id="wasted-tab" data-bs-toggle="tab" data-bs-target="#wasted-pane" type="button" role="tab" aria-controls="wasted-pane" aria-selected="false">🗑️ Produk Terbuang (Wasted)</button>
             </li>
         </ul>
@@ -102,56 +99,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg-dark);color:var(--text-p
                             <?php endif; ?>
                             </tbody>
                         </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB 2: Categories List & Add Form -->
-            <div class="tab-pane fade" id="categories-pane" role="tabpanel" aria-labelledby="categories-tab">
-                <div class="row">
-                    <!-- Left Side: Add Category Form -->
-                    <div class="col-md-4 mb-4">
-                        <div class="card-nexapos p-4">
-                            <h5 style="font-weight:700;" class="mb-3">➕ Add New Category</h5>
-                            <form action="/inventory/categories" method="POST">
-                                <?= csrf_field() ?>
-                                <div class="mb-3">
-                                    <label class="form-label" style="color:var(--text-muted); font-size:0.85rem; font-weight:600;">Category Name *</label>
-                                    <input type="text" name="name" class="form-control" placeholder="e.g. Desserts, Beverages" required>
-                                </div>
-                                <button type="submit" class="btn-primary-nexapos w-100 mt-2">Save Category</button>
-                            </form>
-                        </div>
-                    </div>
-
-                    <!-- Right Side: Category List -->
-                    <div class="col-md-8">
-                        <div class="card-nexapos">
-                            <div class="table-responsive">
-                                <table class="table mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Category Name</th>
-                                            <th>Created At</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    <?php if (!empty($categories)): ?>
-                                        <?php foreach ($categories as $cat): ?>
-                                        <tr>
-                                            <td><?= $cat['id'] ?></td>
-                                            <td style="font-weight:600;"><?= esc($cat['name']) ?></td>
-                                            <td style="font-size:0.85rem; color:var(--text-muted);"><?= $cat['created_at'] ?></td>
-                                        </tr>
-                                        <?php endforeach; ?>
-                                    <?php else: ?>
-                                        <tr><td colspan="3" class="text-center py-4" style="color:var(--text-muted);">No categories available. Add one using the form on the left.</td></tr>
-                                    <?php endif; ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -240,13 +187,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg-dark);color:var(--text-p
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // Automatically switch tabs if hash matches (e.g., #wasted-pane)
-    document.addEventListener('DOMContentLoaded', () => {
+    // Function to activate tab based on hash
+    function activateTabFromHash() {
         const hash = window.location.hash;
         if (hash) {
             const activeTabButton = document.querySelector(`button[data-bs-target="${hash}"]`);
             if (activeTabButton) {
-                // Deactivate the active one
+                // Deactivate all
                 document.querySelectorAll('.nav-link').forEach(btn => btn.classList.remove('active'));
                 document.querySelectorAll('.tab-pane').forEach(pane => {
                     pane.classList.remove('show');
@@ -262,7 +209,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg-dark);color:var(--text-p
                 }
             }
         }
-    });
+    }
+
+    // Run on load and on hash change
+    document.addEventListener('DOMContentLoaded', activateTabFromHash);
+    window.addEventListener('hashchange', activateTabFromHash);
 </script>
 </body>
 </html>
