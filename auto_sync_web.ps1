@@ -12,6 +12,9 @@ $filesToUpload = @(
     "app/Database/Seeds/InitialDataSeeder.php",
     "app/Database/Seeds/MenuSeeder.php",
     "app/Models/MenuModel.php",
+    "app/Modules/Authentication/Config/Routes.php",
+    "app/Modules/Authentication/Controllers/AuthController.php",
+    "app/Modules/Authentication/Views/login.php",
     "app/Modules/Inventory/Controllers/ProductController.php",
     "app/Modules/Inventory/Views/categories.php",
     "app/Modules/Inventory/Views/products.php",
@@ -29,7 +32,17 @@ $filesToUpload = @(
     "app/Modules/Report/Views/sales_report_numeric.php",
     "app/Modules/Report/Views/sales_report_visual.php",
     "app/Views/activity.php",
-    "app/Views/partials/sidebar.php"
+    "app/Views/dashboard.php",
+    "app/Views/partials/sidebar.php",
+    "public/images/products/amd.png",
+    "public/images/products/asus.png",
+    "public/images/products/corsair.png",
+    "public/images/products/dell.png",
+    "public/images/products/lenovo.png",
+    "public/images/products/logitech.png",
+    "public/images/products/macbook.png",
+    "public/images/products/nvidia.png",
+    "public/images/products/samsung.png"
 )
 
 function Upload-File {
