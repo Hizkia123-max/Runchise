@@ -182,5 +182,8 @@ class InitialDataSeeder extends Seeder
             echo "✅ Initial data seeded successfully!\n";
             echo "   Login: " . $email . " / " . $password . "\n";
         }
+        
+        // Seed the dynamic menus
+        $this->call('MenuSeeder');
     }
 }
