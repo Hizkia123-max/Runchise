@@ -38,7 +38,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg-dark);color:var(--text-p
     <div class="alert-error"><?= esc(session()->getFlashdata('error')) ?></div>
     <?php endif; ?>
 
-    <form action="<?= isset($product) ? '/inventory/products/update/' . $product['id'] : '/inventory/products' ?>" method="POST">
+    <form action="<?= isset($product) ? '/inventory/products/update/' . $product['id'] : '/inventory/products' ?>" method="POST" enctype="multipart/form-data">
         <?= csrf_field() ?>
         <div class="row">
             <div class="col-md-6 mb-3">
@@ -47,7 +47,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg-dark);color:var(--text-p
             </div>
             <div class="col-md-6 mb-3">
                 <label class="form-label">SKU *</label>
-                <input type="text" name="sku" class="form-control" placeholder="e.g. PROD-001" value="<?= esc($product['sku'] ?? '') ?>" required>
+                <div class="input-group">
+                    <input type="text" id="skuInput" name="sku" class="form-control" placeholder="e.g. PROD-001" value="<?= esc($product['sku'] ?? '') ?>" required>
+                    <button class="btn btn-outline-secondary" type="button" onclick="generateSKU()" style="border-radius: 0 10px 10px 0;"><i class="bi bi-magic"></i> Auto</button>
+                </div>
             </div>
         </div>
         <div class="row">
@@ -83,9 +86,18 @@ body{font-family:'Inter',sans-serif;background:var(--bg-dark);color:var(--text-p
                 <input type="number" name="cost" class="form-control" placeholder="0" step="0.01" min="0" value="<?= esc($product['cost'] ?? '') ?>" required>
             </div>
         </div>
-        <div class="mb-4">
-            <label class="form-label">Description</label>
-            <textarea name="description" class="form-control" rows="3" placeholder="Optional product description..."><?= esc($product['description'] ?? '') ?></textarea>
+        <div class="row mt-4 pt-3 border-top" style="border-color: var(--border) !important;">
+            <div class="col-md-12 mb-3">
+                <label class="form-label fw-bold">Detail Tambahan</label>
+            </div>
+            <div class="col-md-12 mb-3">
+                <label class="form-label">Foto Produk (Opsional)</label>
+                <input type="file" name="image" class="form-control" accept="image/*">
+            </div>
+            <div class="col-md-12 mb-4">
+                <label class="form-label">Keterangan (Description)</label>
+                <textarea name="description" class="form-control" rows="3" placeholder="Optional product description..."><?= esc($product['description'] ?? '') ?></textarea>
+            </div>
         </div>
         <div class="d-flex gap-2">
             <button type="submit" class="btn-save">Save Product</button>
@@ -95,6 +107,17 @@ body{font-family:'Inter',sans-serif;background:var(--bg-dark);color:var(--text-p
 </div>
 
     </div>
+    </div>
 </div>
+<script>
+function generateSKU() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let sku = 'PRD-';
+    for (let i = 0; i < 6; i++) {
+        sku += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    document.getElementById('skuInput').value = sku;
+}
+</script>
 </body>
 </html>

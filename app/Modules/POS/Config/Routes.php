@@ -8,6 +8,7 @@ use CodeIgniter\Router\RouteCollection;
 $routes->group('pos', ['namespace' => 'App\Modules\POS\Controllers', 'filter' => 'session'], function ($routes) {
     $routes->get('terminal',  'POSController::terminal');
     $routes->get('sessions',  'POSController::sessions');
+    $routes->get('history', 'POSController::transactions');
     $routes->get('analytics', 'POSController::analytics');
     $routes->get('returns',   'POSController::returns');
     $routes->post('returns/process', 'POSController::processReturn');

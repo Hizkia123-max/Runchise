@@ -7,6 +7,7 @@ use CodeIgniter\Router\RouteCollection;
 // Inventory Web Routes
 $routes->group('inventory', ['namespace' => 'App\Modules\Inventory\Controllers', 'filter' => 'session'], function ($routes) {
     $routes->get('stock',       'InventoryController::stock');
+    $routes->post('stock/reorder_point', 'InventoryController::updateReorderPoint');
     $routes->get('transfers',   'InventoryController::transfers');
     $routes->post('transfers/apply', 'InventoryController::applyTransfer');
     $routes->get('opname',      'InventoryController::opname');
@@ -17,6 +18,8 @@ $routes->group('inventory', ['namespace' => 'App\Modules\Inventory\Controllers',
     $routes->get('products/edit/(:num)', 'ProductController::edit/$1');
     $routes->post('products/update/(:num)', 'ProductController::update/$1');
     $routes->get('products/delete/(:num)', 'ProductController::delete/$1');
+    $routes->get('promos',                 'ProductController::promos');
+    $routes->post('promos',                'ProductController::promoStore');
     $routes->post('categories',            'ProductController::categoryStore');
     $routes->post('wasted',                'ProductController::wastedStore');
 });

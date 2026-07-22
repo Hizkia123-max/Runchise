@@ -69,13 +69,9 @@
                                 <?php endforeach; ?>
                             </select>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-6">
                             <label class="form-label">Tanggal Order</label>
                             <input type="date" name="order_date" class="form-control" value="<?= date('Y-m-d') ?>">
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Tanggal Exp. Terima</label>
-                            <input type="date" name="expected_date" class="form-control">
                         </div>
                         <div class="col-12">
                             <label class="form-label">Catatan</label>

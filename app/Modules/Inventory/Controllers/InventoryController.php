@@ -17,6 +17,21 @@ class InventoryController extends BaseController
         return view('App\Modules\Inventory\Views\stock', $data);
     }
 
+    public function updateReorderPoint()
+    {
+        $productId = $this->request->getPost('product_id');
+        $reorderPoint = $this->request->getPost('reorder_point');
+        $tenantId = service('tenant')->getId();
+
+        $db = \Config\Database::connect();
+        $db->table('products')
+           ->where('id', $productId)
+           ->where('tenant_id', $tenantId)
+           ->update(['reorder_point' => $reorderPoint]);
+
+        return redirect()->back()->with('success', 'Batas minimum stok berhasil diperbarui.');
+    }
+
     public function opname()
     {
         $db = \Config\Database::connect();

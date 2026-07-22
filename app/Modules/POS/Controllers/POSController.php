@@ -96,7 +96,7 @@ class POSController extends BaseController
             }
         }
         
-        $products = $productModel->select('products.*, categories.name as category_name')
+        $products = $productModel->select('products.*, products.id as id, categories.name as category_name')
             ->join('categories', 'categories.id = products.category_id', 'left')
             ->findAll();
         
@@ -132,6 +132,25 @@ class POSController extends BaseController
         $sessionModel = new \App\Modules\POS\Models\POSSessionModel();
         $data['sessions'] = $sessionModel->orderBy('opened_at', 'DESC')->findAll();
         return view('App\Modules\POS\Views\sessions', $data);
+    }
+
+    public function transactions()
+    {
+        $tenantId = service('tenant')->getId();
+        $db = \Config\Database::connect();
+        
+        $data['transactions'] = [];
+        if ($db->tableExists('transactions')) {
+            $data['transactions'] = $db->table('transactions')
+                ->select('transactions.*, users.name as cashier_name')
+                ->join('pos_sessions', 'pos_sessions.id = transactions.pos_session_id', 'left')
+                ->join('users', 'users.id = pos_sessions.user_id', 'left')
+                ->where('transactions.tenant_id', $tenantId)
+                ->orderBy('transactions.created_at', 'DESC')
+                ->get()->getResultArray();
+        }
+        
+        return view('App\Modules\POS\Views\transactions', $data);
     }
 
     public function analytics()

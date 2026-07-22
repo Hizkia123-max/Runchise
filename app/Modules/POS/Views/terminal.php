@@ -1280,7 +1280,8 @@ function renderCart() {
         container.appendChild(div);
     });
 
-    const total = subtotal;
+    const tax = subtotal * TAX_RATE;
+    const total = subtotal + tax;
     updateTotals(subtotal, total);
     document.getElementById('payNowBtn').disabled = false;
     document.getElementById('holdOrderBtn').disabled = false;

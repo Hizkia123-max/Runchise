@@ -96,9 +96,9 @@ class ProductController extends BaseController
         $input['tenant_id'] = service('tenant')->getId();
 
         if ($model->insert($input)) {
-            return redirect()->to('/inventory/products')->with('success', 'Category added successfully.');
+            return redirect()->back()->with('success', 'Category added successfully.');
         }
-        return redirect()->to('/inventory/products')->with('error', implode(', ', $model->errors()));
+        return redirect()->back()->with('error', implode(', ', $model->errors()));
     }
 
     public function wastedStore()
@@ -164,7 +164,21 @@ class ProductController extends BaseController
 
     public function promos()
     {
-        return view('App\Modules\Inventory\Views\promos');
+        $promoModel = new \App\Modules\Inventory\Models\PromoModel();
+        $data['promos'] = $promoModel->findAll();
+        return view('App\Modules\Inventory\Views\promos', $data);
+    }
+
+    public function promoStore()
+    {
+        $promoModel = new \App\Modules\Inventory\Models\PromoModel();
+        $input = $this->request->getPost();
+        $input['tenant_id'] = service('tenant')->getId();
+
+        if ($promoModel->insert($input)) {
+            return redirect()->to('/inventory/promos')->with('success', 'Promo berhasil ditambahkan.');
+        }
+        return redirect()->to('/inventory/promos')->with('error', 'Gagal menambahkan promo.');
     }
 
     public function categories()

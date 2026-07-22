@@ -2,6 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8"><title>Runchise — Product Catalog</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
 <style>
 :root{--bg-dark:#FAF6F3;--bg-card:#FFFFFF;--text-primary:#2C1E1A;--text-muted:#8A756E;--border:rgba(226,167,148,0.25);--primary:#E2A794;}
 body{font-family:'Inter',sans-serif;background:var(--bg-dark);color:var(--text-primary);min-height:100vh;padding:2rem;}
@@ -61,8 +62,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg-dark);color:var(--text-p
                 </div>
 
                 <div class="card-nexapos">
-                    <div class="table-responsive">
-                        <table class="table mb-0">
+                    <div class="table-responsive p-3">
+                        <table class="table mb-0" id="productsTable">
                             <thead>
                                 <tr>
                                     <th>#</th>
@@ -94,8 +95,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg-dark);color:var(--text-p
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>
-                            <?php else: ?>
-                                <tr><td colspan="8" class="text-center py-4" style="color:var(--text-muted);">No products yet. <a href="/inventory/products/new">Add one</a>.</td></tr>
                             <?php endif; ?>
                             </tbody>
                         </table>
@@ -185,8 +184,26 @@ body{font-family:'Inter',sans-serif;background:var(--bg-dark);color:var(--text-p
     </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 <script>
+    $(document).ready(function() {
+        $('#productsTable').DataTable({
+            "pageLength": 10,
+            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            "language": {
+                "search": "Cari:",
+                "lengthMenu": "Tampilkan _MENU_ data per halaman",
+                "zeroRecords": "Tidak ditemukan data yang sesuai",
+                "info": "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                "infoEmpty": "Data tidak tersedia",
+                "infoFiltered": "(difilter dari _MAX_ total data)"
+            }
+        });
+    });
+
     // Function to activate tab based on hash
     function activateTabFromHash() {
         const hash = window.location.hash;

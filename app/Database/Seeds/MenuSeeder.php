@@ -14,13 +14,14 @@ class MenuSeeder extends Seeder
             // Dashboard
             [
                 'title' => 'Dashboard Utama',
-                'url' => null,
-                'icon' => 'bi-house-door-fill',
+                'url' => '',
+                'icon' => 'bi-grid-1x2',
                 'order_index' => 1,
+                'is_active' => 1,
                 'roles' => '["SuperAdmin", "TenantOwner", "Manager"]',
                 'children' => [
-                    ['title' => 'Ringkasan Bisnis', 'url' => 'dashboard', 'icon' => 'bi-graph-up-arrow', 'order_index' => 1],
-                    ['title' => 'Aktivitas Hari Ini', 'url' => 'dashboard/activity', 'icon' => 'bi-calendar-day', 'order_index' => 2],
+                    ['title' => 'Ringkasan Bisnis', 'url' => 'dashboard', 'icon' => 'bi-bar-chart-line', 'order_index' => 1],
+                    ['title' => 'Aktivitas Hari Ini', 'url' => 'dashboard/activity', 'icon' => 'bi-activity', 'order_index' => 2],
                 ]
             ],
             // Kasir & Transaksi

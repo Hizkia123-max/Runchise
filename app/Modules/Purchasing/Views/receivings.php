@@ -46,6 +46,11 @@
         </div>
 
         <div class="content-area">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <p class="text-muted mb-0" style="font-size:0.85rem;">Riwayat penerimaan barang (Goods Receipt) dari Purchase Order.</p>
+                <a href="/purchasing/orders" class="btn btn-primary-custom" style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border: none; color: white; padding: 0.6rem 1.25rem; border-radius: 10px; font-weight: 600; font-size: 0.85rem; text-decoration: none;"><i class="bi bi-plus-lg me-1"></i> Add Penerimaan Barang (via PO)</a>
+            </div>
+            
             <div class="glass-card">
                 <?php if (empty($receivings)): ?>
                     <div class="empty-state">

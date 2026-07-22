@@ -573,7 +573,7 @@
                 $menuId = 'menu-' . $menu['id'];
                 ?>
                 <li class="menu-item">
-                    <button class="menu-link" data-bs-toggle="collapse" data-bs-target="#<?= $menuId ?>" aria-expanded="<?= $isActive ? 'true' : 'false' ?>" data-tooltip="<?= esc($menu['title']) ?>">
+                    <button class="menu-link <?= $isActive ? 'active' : '' ?>" data-bs-toggle="collapse" data-bs-target="#<?= $menuId ?>" aria-expanded="<?= $isActive ? 'true' : 'false' ?>" data-tooltip="<?= esc($menu['title']) ?>">
                         <div class="menu-link-content">
                             <i class="bi <?= esc($menu['icon']) ?>"></i>
                             <span><?= esc($menu['title']) ?></span>
@@ -629,7 +629,7 @@
 <script>
     function confirmLogout() {
         Swal.fire({
-            title: 'Keluar dari Runchise?',
+            title: 'Apakah Anda Yakin Akan Keluar Dari Sistem?',
             text: "Sesi Anda akan diakhiri.",
             icon: 'warning',
             showCancelButton: true,

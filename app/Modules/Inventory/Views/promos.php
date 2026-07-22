@@ -35,15 +35,88 @@
             <span class="text-muted" style="font-size:0.85rem; font-weight: 500;">Manajemen Kampanye Promosi</span>
         </div>
 
-        <div class="card-nexapos text-center py-5">
-            <i class="bi bi-tags-fill d-block mb-3" style="font-size: 3rem; color: var(--primary); opacity: 0.5;"></i>
-            <h4 style="font-weight: 700;">Diskon & Promo</h4>
-            <p style="color: var(--text-muted); max-width: 400px; margin: 0 auto 1.5rem auto;">
-                Fitur ini sedang dalam tahap pengembangan. Nantinya Anda dapat membuat diskon persentase, potongan harga langsung, atau kampanye promosi berbatas waktu di sini.
-            </p>
-            <button class="btn btn-primary-nexapos" disabled>
-                <i class="bi bi-plus-lg me-1"></i> Buat Promo Baru
-            </button>
+        <?php if (session()->getFlashdata('success')): ?>
+        <div class="alert alert-success mb-3" style="background: rgba(13, 148, 136, 0.15); border: 1px solid rgba(13, 148, 136, 0.3); color: #2dd4bf; border-radius: 10px;"><?= esc(session()->getFlashdata('success')) ?></div>
+        <?php endif; ?>
+
+        <?php if (session()->getFlashdata('error')): ?>
+        <div class="alert alert-danger mb-3" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5; border-radius: 10px;"><?= esc(session()->getFlashdata('error')) ?></div>
+        <?php endif; ?>
+
+        <div class="row">
+            <!-- Left Side: Add Promo Form -->
+            <div class="col-md-4 mb-4">
+                <div class="card-nexapos p-4">
+                    <h5 style="font-weight:700;" class="mb-3">➕ Buat Promo Baru</h5>
+                    <form action="/inventory/promos" method="POST">
+                        <?= csrf_field() ?>
+                        <div class="mb-3">
+                            <label class="form-label" style="color:var(--text-muted); font-size:0.85rem; font-weight:600;">Nama Promo *</label>
+                            <input type="text" name="name" class="form-control" placeholder="e.g. Diskon Akhir Tahun" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" style="color:var(--text-muted); font-size:0.85rem; font-weight:600;">Tipe Diskon</label>
+                            <select name="discount_type" class="form-control">
+                                <option value="percentage">Persentase (%)</option>
+                                <option value="fixed">Nominal Tetap (Rp)</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" style="color:var(--text-muted); font-size:0.85rem; font-weight:600;">Nilai Diskon *</label>
+                            <input type="number" step="0.01" name="discount_value" class="form-control" placeholder="e.g. 10 or 50000" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" style="color:var(--text-muted); font-size:0.85rem; font-weight:600;">Mulai (Opsional)</label>
+                            <input type="date" name="start_date" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" style="color:var(--text-muted); font-size:0.85rem; font-weight:600;">Berakhir (Opsional)</label>
+                            <input type="date" name="end_date" class="form-control">
+                        </div>
+                        <button type="submit" class="btn-primary-nexapos w-100 mt-2">Simpan Promo</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right Side: Promo List -->
+            <div class="col-md-8">
+                <div class="card-nexapos p-0">
+                    <div class="table-responsive">
+                        <table class="table mb-0">
+                            <thead style="background:#faf5f2;">
+                                <tr>
+                                    <th style="padding: 1rem;">Nama Promo</th>
+                                    <th style="padding: 1rem;">Tipe</th>
+                                    <th style="padding: 1rem;">Nilai</th>
+                                    <th style="padding: 1rem;">Masa Berlaku</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <?php if (!empty($promos)): ?>
+                                <?php foreach ($promos as $promo): ?>
+                                <tr>
+                                    <td style="padding: 1rem; font-weight:600;"><?= esc($promo['name']) ?></td>
+                                    <td style="padding: 1rem;"><?= ucfirst($promo['discount_type']) ?></td>
+                                    <td style="padding: 1rem; font-weight:600; color:var(--primary);">
+                                        <?= $promo['discount_type'] === 'percentage' ? $promo['discount_value'] . '%' : 'Rp ' . number_format($promo['discount_value'], 0, ',', '.') ?>
+                                    </td>
+                                    <td style="padding: 1rem; font-size:0.85rem; color:var(--text-muted);">
+                                        <?php 
+                                            $start = $promo['start_date'] ? date('d M Y', strtotime($promo['start_date'])) : '-';
+                                            $end = $promo['end_date'] ? date('d M Y', strtotime($promo['end_date'])) : '-';
+                                            echo $start . ' s/d ' . $end;
+                                        ?>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr><td colspan="4" class="text-center py-4" style="color:var(--text-muted);">Belum ada promo yang ditambahkan.</td></tr>
+                            <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

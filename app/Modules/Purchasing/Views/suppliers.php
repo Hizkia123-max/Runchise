@@ -71,7 +71,7 @@
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Email</label>
-                            <input type="email" name="email" class="form-control" placeholder="supplier@email.com">
+                            <input type="email" name="email" class="form-control" placeholder="supplier@email.com" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" title="Format email tidak valid (contoh: nama@domain.com)">
                         </div>
                         <div class="col-md-9">
                             <label class="form-label">Alamat</label>
@@ -99,6 +99,7 @@
                                     <th>Telepon</th>
                                     <th>Email</th>
                                     <th>Alamat</th>
+                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -110,6 +111,9 @@
                                         <td><?= esc($s['phone'] ?? '-') ?></td>
                                         <td><?= esc($s['email'] ?? '-') ?></td>
                                         <td><?= esc($s['address'] ?? '-') ?></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-custom" onclick='openEditModal(<?= json_encode($s) ?>)'><i class="bi bi-pencil"></i></button>
+                                        </td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -120,6 +124,63 @@
         </div>
     </div>
 </div>
+
+<!-- Edit Supplier Modal -->
+<div class="modal fade" id="editSupplierModal" tabindex="-1">
+    <div class="modal-dialog">
+        <form action="/purchasing/suppliers/update" method="POST" class="modal-content" style="border-radius:16px;">
+            <div class="modal-header border-0 pb-0">
+                <h6 class="modal-title fw-bold">Edit Supplier</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="id" id="edit_id">
+                <div class="mb-3">
+                    <label class="form-label">Nama Supplier *</label>
+                    <input type="text" name="name" id="edit_name" class="form-control" required>
+                </div>
+                <div class="row g-2 mb-3">
+                    <div class="col-6">
+                        <label class="form-label">Contact Person</label>
+                        <input type="text" name="contact_person" id="edit_contact" class="form-control">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label">Telepon</label>
+                        <input type="text" name="phone" id="edit_phone" class="form-control">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" id="edit_email" class="form-control" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" title="Format email tidak valid">
+                </div>
+                <div class="mb-2">
+                    <label class="form-label">Alamat</label>
+                    <textarea name="address" id="edit_address" class="form-control" rows="2"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+                <button type="submit" class="btn btn-primary-custom">Simpan Perubahan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+let editModal;
+document.addEventListener('DOMContentLoaded', () => {
+    editModal = new bootstrap.Modal(document.getElementById('editSupplierModal'));
+});
+function openEditModal(supplier) {
+    document.getElementById('edit_id').value = supplier.id;
+    document.getElementById('edit_name').value = supplier.name;
+    document.getElementById('edit_contact').value = supplier.contact_person;
+    document.getElementById('edit_phone').value = supplier.phone;
+    document.getElementById('edit_email').value = supplier.email;
+    document.getElementById('edit_address').value = supplier.address;
+    editModal.show();
+}
+</script>
 </body>
 </html>

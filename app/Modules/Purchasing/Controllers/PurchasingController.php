@@ -74,7 +74,6 @@ class PurchasingController extends BaseController
 
             $supplierId   = (int) $this->request->getPost('supplier_id');
             $orderDate    = $this->request->getPost('order_date') ?: date('Y-m-d');
-            $expectedDate = $this->request->getPost('expected_date');
             $notes        = $this->request->getPost('notes');
             $productIds   = $this->request->getPost('product_ids') ?? [];
             $quantities   = $this->request->getPost('quantities') ?? [];
@@ -133,7 +132,7 @@ class PurchasingController extends BaseController
                 'supplier_id'   => $supplierId,
                 'po_number'     => $poNumber,
                 'order_date'    => $orderDate,
-                'expected_date' => $expectedDate ?: null,
+                'expected_date' => null,
                 'status'        => 'Ordered',
                 'notes'         => $notes,
                 'total_amount'  => $totalAmount,
@@ -436,6 +435,37 @@ class PurchasingController extends BaseController
             return redirect()->to('/purchasing/suppliers')->with('success', 'Supplier berhasil ditambahkan.');
         }
         return redirect()->back()->with('error', 'Gagal menambahkan supplier.');
+    }
+
+    public function updateSupplier()
+    {
+        $model = new \App\Modules\Purchasing\Models\SupplierModel();
+        $input = $this->request->getPost();
+        
+        // Remove empty ID if any, although we expect it
+        $id = $input['id'] ?? null;
+        if (!$id) {
+            return redirect()->back()->with('error', 'ID Supplier tidak valid.');
+        }
+
+        // Only update if it belongs to tenant
+        $tenantId = service('tenant')->getId();
+        
+        $data = [
+            'name'           => $input['name'],
+            'contact_person' => $input['contact_person'] ?? '',
+            'phone'          => $input['phone'] ?? '',
+            'email'          => $input['email'] ?? '',
+            'address'        => $input['address'] ?? '',
+        ];
+
+        $db = \Config\Database::connect();
+        $db->table('suppliers')
+           ->where('id', $id)
+           ->where('tenant_id', $tenantId)
+           ->update($data);
+
+        return redirect()->to('/purchasing/suppliers')->with('success', 'Supplier berhasil diupdate.');
     }
 
     /**

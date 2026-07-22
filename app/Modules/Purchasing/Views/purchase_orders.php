@@ -67,7 +67,10 @@
 
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <p class="text-muted mb-0" style="font-size:0.85rem;">Kelola Purchase Order (Pembelian Barang) dari supplier.</p>
-                <a href="/purchasing/orders/create" class="btn btn-primary-custom"><i class="bi bi-plus-lg me-1"></i> Buat PO Baru</a>
+                <div class="d-flex gap-2">
+                    <input type="text" id="searchInput" class="form-control form-control-sm border-0" placeholder="🔍 Cari PO / Supplier..." style="border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); min-width: 250px; padding: 0.5rem 1rem;">
+                    <a href="/purchasing/orders/create" class="btn btn-primary-custom"><i class="bi bi-plus-lg me-1"></i> Buat PO Baru</a>
+                </div>
             </div>
 
             <div class="glass-card">
@@ -102,7 +105,7 @@
                                         elseif ($o['status'] === 'Completed') $statusClass = 'badge-completed';
                                         elseif ($o['status'] === 'Cancelled') $statusClass = 'badge-cancelled';
                                     ?>
-                                    <tr>
+                                    <tr class="searchable-row">
                                         <td><strong><?= esc($o['po_number']) ?></strong></td>
                                         <td><?= esc($o['supplier_name'] ?? '-') ?></td>
                                         <td><?= date('d M Y', strtotime($o['order_date'])) ?></td>
@@ -127,5 +130,19 @@
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.getElementById('searchInput')?.addEventListener('keyup', function() {
+    let value = this.value.toLowerCase();
+    let rows = document.querySelectorAll('.searchable-row');
+    
+    rows.forEach(row => {
+        if (row.textContent.toLowerCase().includes(value)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+});
+</script>
 </body>
 </html>
